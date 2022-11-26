@@ -1,17 +1,15 @@
-# Gift Token
+# Version Dapp du contrat "Voting"
 
 ## Contenu de la Dapp
 
-Le projet courant contient le contrat `GiftToken.sol`\
-Lorem Ipsum...
+Le projet courant contient le contrat `Voting.sol`\
+Le contrat a été commenté et des protections ont été ajoutées contre des failles connues
+De plus le contrat est maintenant manipulable via une site Web
 ___________________________________________________________________________________________________________________________________________
 ## Prérequis
 
-Renommer le fichier `env` en `.env`.
-Renseigner votre clé infura.
-
-Pour travailler en local :
-Renseigner votre clé privée Metamask dans le paramètre `PRIVATE_KEY`
+Ajouter un fichier `.env` à la racine du projet.
+Veuillez y ajouter ensuite la clé privée de votre compte Metamask dans un paramètre `PRIVATE_KEY`
 ___________________________________________________________________________________________________________________________________________
 ## Utilisation
 

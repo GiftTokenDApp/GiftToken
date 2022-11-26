@@ -1,0 +1,112 @@
+.App {
+  text-align: center;
+}
+
+.App-current-wallet {
+  float: right;
+  height: 1.2rem;
+  background-color: #D1D5DE;
+  color: #393E45;
+  margin-top: 1px;
+  padding-top: 0.1rem;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+  font-size: 0.8rem;
+  text-align: center;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.App-header {
+  max-height: 10vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  width: 100%;
+}
+
+.App-header-title {
+  font-size: calc(10px + 2vmin);
+}
+
+.App-header-h1 {
+  margin-bottom: 0px;
+}
+
+.App-header-network {
+  max-height: 30px;
+  font-size: 1.7vmin;
+}
+
+.App-body {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 25px;
+  min-height: 50vh;
+}
+
+.App-body-block {
+  background-color: white;
+  margin: 30px;
+  min-height: 300px;
+}
+
+.proposals-block {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.App-body-block-title {
+  background-color: #95a3c0;
+  color: #282c34;
+  min-height: 3.5vh;
+  margin-top: 0px;
+  padding-top: 1vh;
+  font-size: calc(4px + 2vmin);
+}
+
+.App-footer {
+  background-color: white;
+  color: black;
+  min-height: 26vh;
+  width: 80%;
+  margin: 0 30px 0 30px;
+  text-align: left;
+}
+
+.input-text {
+  width: 80px;
+  text-align: center;
+  height: 1.3rem;
+  border-right: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.button {
+  width: 70px;
+  height: 1.7rem;
+  background-color: #D1D5DE;
+  color: #393E45;
+  padding-left: 0.85rem;
+  padding-right: 0.8rem;
+  text-align: center;
+}
+
+.button-only {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.button-text {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
