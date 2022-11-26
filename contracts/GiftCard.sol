@@ -19,9 +19,9 @@ contract GiftCard is Ownable {
 
     uint256 public releaseDate;
 
-    uint256 public goalToBeAchieved;
+    uint256 public goalToBeReleased ;
 
-    uint256 public dateToBeAchieved;
+    uint256 public dateToBeReleased ;
 
     address public creator;
 
@@ -45,7 +45,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the creator account
      */
     modifier isCreator() {
-        require(hasRole(msg.sender, Role.Creator), "You're not the creator");
+        require(getIsCreator(msg.sender), "You're not the creator");
         _;
     }
 
@@ -53,7 +53,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by a participant account
      */
     modifier isParticipant() {
-        require(hasRole(msg.sender, Role.Participant), "You're not a participant");
+        require(getIsParticipant(msg.sender), "You're not a participant");
         _;
     }
 
@@ -61,7 +61,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the beneficiary account
      */
     modifier isBeneficiary() {
-        require(hasRole(msg.sender, Role.Beneficiary), "You're not the beneficiary");
+        require(getIsBeneficiary(msg.sender), "You're not the beneficiary");
         _;
     }
 
@@ -69,8 +69,8 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is withdrawable
      */
     modifier isWithdrawable() {
-        require(goalToBeAchieved <= currentGoal, "Card's goal isn't reached");
-        require(dateToBeAchieved <= block.timestamp, "Card's released date isn't reached");
+        require(goalToBeReleased  <= currentGoal, "Card's goal isn't reached");
+        require(dateToBeReleased  <= block.timestamp, "Card's released date isn't reached");
         _;
     }
 
@@ -98,11 +98,27 @@ contract GiftCard is Ownable {
 
     /**
      * @notice Construct a card
-     * @param _creator Creator's address
+     * @param _creator Card's creator address
+     * @param _title Card's title (optional)
+     * @param _goalToBeReleased Card's goal value to be released (optional)
+     * @param _dateToBeReleased Card's date value to be released (optional)
+     * @param _beneficiary Card's beneficiary address (optional)
      */
-    constructor(address _creator) payable {
+    constructor(address _creator, 
+        string memory _title,
+        uint _goalToBeReleased ,
+        uint _dateToBeReleased ,
+        address _beneficiary
+    ) payable {
+        require(_creator != address(0), "Creator's address is mandatory");
+
         creationDate = block.timestamp;
         creator = _creator;
+        title = _title;
+        goalToBeReleased  = _goalToBeReleased;
+        dateToBeReleased  = _dateToBeReleased;
+        beneficiary = _beneficiary;
+
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
 
@@ -110,14 +126,30 @@ contract GiftCard is Ownable {
     }
 
     /**
-     * @notice Get if address has role
-     * @dev Internal function without access restriction
+     * @notice Get if address is the creator
      * @param _address Role's address
-     * @param _role The role
      * @return bool
      */
-    function hasRole(address _address, Role _role) internal view returns(bool) {
-        return roles[_address][uint(_role)-1];
+    function getIsCreator(address _address) public view returns(bool) {
+        return hasRole(_address, Role.Creator);
+    }
+
+    /**
+     * @notice Get if address is a participant
+     * @param _address Role's address
+     * @return bool
+     */
+    function getIsParticipant(address _address) public view returns(bool) {
+        return hasRole(_address, Role.Participant);
+    }
+
+    /**
+     * @notice Get if address is the beneficiary
+     * @param _address Role's address
+     * @return bool
+     */
+    function getIsBeneficiary(address _address) public view returns(bool) {
+        return hasRole(_address, Role.Beneficiary);
     }
 
     /**
@@ -148,7 +180,7 @@ contract GiftCard is Ownable {
         uint lastIndex = _startIndex + _pageSize;
         require(lastIndex <= participants.length, "Read index out of bounds");
 
-        address[] memory result;
+        address[] memory result = new address[](_pageSize);
 
         for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
             result[cpt] = participants[_startIndex + cpt];
@@ -173,6 +205,17 @@ contract GiftCard is Ownable {
     function release(address payable _to, uint _value) external isNotReleased isWithdrawable {
         require(_value <= currentGoal, "Transfered's value exceeds the card's content");
         transfer(_to, _value);
+    }
+
+    /**
+     * @notice Get if address has role
+     * @dev Internal function without access restriction
+     * @param _address Role's address
+     * @param _role The role
+     * @return bool
+     */
+    function hasRole(address _address, Role _role) internal view returns(bool) {
+        return roles[_address][uint(_role)-1];
     }
 
     /**
