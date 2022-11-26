@@ -27,7 +27,7 @@ contract GiftCard is Ownable {
 
     address public beneficiary;
 
-    address[] public participants;
+    address[] private participants;
 
     uint256 public currentGoal;
 
@@ -131,6 +131,33 @@ contract GiftCard is Ownable {
     }
 
     /**
+     * @notice Get participants's count
+     * @return uint
+     */
+    function getParticipantsCount() external view returns(uint) {
+        return participants.length;
+    }
+
+    /**
+     * @notice Get participants's list with pagination
+     * @param _startIndex The Start index
+     * @param _pageSize The page size
+     * @return address[]
+     */
+    function getParticipants(uint _startIndex, uint _pageSize) external view returns(address[] memory) {
+        uint lastIndex = _startIndex + _pageSize;
+        require(lastIndex <= participants.length, "Read index out of bounds");
+
+        address[] memory result;
+
+        for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
+            result[cpt] = participants[_startIndex + cpt];
+        }
+
+        return result;
+    }
+
+    /**
      * @notice Release all card content
      * @param _to Participant's address
      */
@@ -158,6 +185,7 @@ contract GiftCard is Ownable {
         currentGoal += _value;
         holdings[_participant] += _value;
         addRole(_participant, Role.Participant);
+        participants.push(_participant);
 
         emit Participated(_participant, _value);
     }
