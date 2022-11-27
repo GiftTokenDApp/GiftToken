@@ -4,10 +4,12 @@
 import type {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -26,17 +28,38 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface GiftTokenInterface extends utils.Interface {
+export interface GiftFactoryInterface extends utils.Interface {
   functions: {
+    "createCard(string,string,uint256,uint256,address)": FunctionFragment;
+    "links(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "owner" | "renounceOwnership" | "transferOwnership"
+    nameOrSignatureOrTopic:
+      | "createCard"
+      | "links"
+      | "owner"
+      | "renounceOwnership"
+      | "transferOwnership"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "createCard",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "links",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -47,6 +70,8 @@ export interface GiftTokenInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "createCard", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "links", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -58,11 +83,34 @@ export interface GiftTokenInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "CardCreated(address,uint256)": EventFragment;
+    "Funding(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "CardCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Funding"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface CardCreatedEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type CardCreatedEvent = TypedEvent<
+  [string, BigNumber],
+  CardCreatedEventObject
+>;
+
+export type CardCreatedEventFilter = TypedEventFilter<CardCreatedEvent>;
+
+export interface FundingEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type FundingEvent = TypedEvent<[string, BigNumber], FundingEventObject>;
+
+export type FundingEventFilter = TypedEventFilter<FundingEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -76,12 +124,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface GiftToken extends BaseContract {
+export interface GiftFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GiftTokenInterface;
+  interface: GiftFactoryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -103,6 +151,21 @@ export interface GiftToken extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    createCard(
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _dateToBeReleased: PromiseOrValue<BigNumberish>,
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    links(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -114,6 +177,21 @@ export interface GiftToken extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  createCard(
+    _title: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    _goalToBeReleased: PromiseOrValue<BigNumberish>,
+    _dateToBeReleased: PromiseOrValue<BigNumberish>,
+    _beneficiary: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  links(
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -127,6 +205,21 @@ export interface GiftToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    createCard(
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _dateToBeReleased: PromiseOrValue<BigNumberish>,
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    links(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
@@ -138,6 +231,15 @@ export interface GiftToken extends BaseContract {
   };
 
   filters: {
+    "CardCreated(address,uint256)"(
+      arg0?: null,
+      arg1?: null
+    ): CardCreatedEventFilter;
+    CardCreated(arg0?: null, arg1?: null): CardCreatedEventFilter;
+
+    "Funding(address,uint256)"(arg0?: null, arg1?: null): FundingEventFilter;
+    Funding(arg0?: null, arg1?: null): FundingEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -149,6 +251,21 @@ export interface GiftToken extends BaseContract {
   };
 
   estimateGas: {
+    createCard(
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _dateToBeReleased: PromiseOrValue<BigNumberish>,
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    links(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -162,6 +279,21 @@ export interface GiftToken extends BaseContract {
   };
 
   populateTransaction: {
+    createCard(
+      _title: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _dateToBeReleased: PromiseOrValue<BigNumberish>,
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    links(
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(

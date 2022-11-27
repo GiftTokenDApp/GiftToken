@@ -21,9 +21,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GiftCard__factory>;
     getContractFactory(
-      name: "GiftToken",
+      name: "GiftFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GiftToken__factory>;
+    ): Promise<Contracts.GiftFactory__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -36,10 +36,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.GiftCard>;
     getContractAt(
-      name: "GiftToken",
+      name: "GiftFactory",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.GiftToken>;
+    ): Promise<Contracts.GiftFactory>;
 
     // default types
     getContractFactory(

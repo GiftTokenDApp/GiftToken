@@ -76,7 +76,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is not opened
      */
     modifier isNotOpened() {
-        require(isOpen, "Card's is opened");
+        require(!isOpen, "Card's is opened");
         _;
     }
 
@@ -111,15 +111,16 @@ contract GiftCard is Ownable {
      * @param _dateToBeReleased Card's date value to be released (optional)
      * @param _beneficiary Card's beneficiary address (optional)
      */
-    constructor(address _creator, 
+    constructor(
+        address _creator, 
         string memory _title,
         string memory _description,
-        uint _goalToBeReleased ,
-        uint _dateToBeReleased ,
+        uint _goalToBeReleased,
+        uint _dateToBeReleased,
         address _beneficiary
     ) payable {
         require(_creator != address(0), "Creator's address is mandatory");
-        require(bytes(title).length > 0, "Title is mandatory");
+        require(bytes(_title).length > 0, "Title is mandatory");
 
         creationDate = block.timestamp;
         creator = _creator;

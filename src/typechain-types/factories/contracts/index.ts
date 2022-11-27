@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { GiftCard__factory } from "./GiftCard__factory";
-export { GiftToken__factory } from "./GiftToken__factory";
+export { GiftFactory__factory } from "./GiftFactory__factory";

@@ -32,19 +32,20 @@ export interface GiftCardInterface extends utils.Interface {
     "beneficiary()": FunctionFragment;
     "creationDate()": FunctionFragment;
     "creator()": FunctionFragment;
-    "currentGoal()": FunctionFragment;
     "dateToBeReleased()": FunctionFragment;
     "description()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
     "getIsCreator(address)": FunctionFragment;
     "getIsParticipant(address)": FunctionFragment;
+    "getParticipants()": FunctionFragment;
+    "getParticipants(uint256)": FunctionFragment;
     "getParticipants(uint256,uint256)": FunctionFragment;
     "getParticipantsCount()": FunctionFragment;
     "goalToBeReleased()": FunctionFragment;
+    "isOpen()": FunctionFragment;
     "owner()": FunctionFragment;
     "release(address,uint256)": FunctionFragment;
     "releaseAll(address)": FunctionFragment;
-    "releaseDate()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "title()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -55,19 +56,20 @@ export interface GiftCardInterface extends utils.Interface {
       | "beneficiary"
       | "creationDate"
       | "creator"
-      | "currentGoal"
       | "dateToBeReleased"
       | "description"
       | "getIsBeneficiary"
       | "getIsCreator"
       | "getIsParticipant"
-      | "getParticipants"
+      | "getParticipants()"
+      | "getParticipants(uint256)"
+      | "getParticipants(uint256,uint256)"
       | "getParticipantsCount"
       | "goalToBeReleased"
+      | "isOpen"
       | "owner"
       | "release"
       | "releaseAll"
-      | "releaseDate"
       | "renounceOwnership"
       | "title"
       | "transferOwnership"
@@ -82,10 +84,6 @@ export interface GiftCardInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "creator", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "currentGoal",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "dateToBeReleased",
     values?: undefined
@@ -107,7 +105,15 @@ export interface GiftCardInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getParticipants",
+    functionFragment: "getParticipants()",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getParticipants(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getParticipants(uint256,uint256)",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -118,6 +124,7 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "goalToBeReleased",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "isOpen", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "release",
@@ -126,10 +133,6 @@ export interface GiftCardInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "releaseAll",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "releaseDate",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -151,10 +154,6 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "creator", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "currentGoal",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "dateToBeReleased",
     data: BytesLike
   ): Result;
@@ -175,7 +174,15 @@ export interface GiftCardInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getParticipants",
+    functionFragment: "getParticipants()",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getParticipants(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getParticipants(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -186,13 +193,10 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "goalToBeReleased",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isOpen", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "releaseAll", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "releaseDate",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -204,17 +208,29 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "AmountTransfered(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Participated(address,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
-    "Transfered(address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AmountTransfered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Participated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProperlyCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfered"): EventFragment;
 }
+
+export interface AmountTransferedEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type AmountTransferedEvent = TypedEvent<
+  [string, BigNumber],
+  AmountTransferedEventObject
+>;
+
+export type AmountTransferedEventFilter =
+  TypedEventFilter<AmountTransferedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -243,17 +259,6 @@ export interface ProperlyCreatedEventObject {}
 export type ProperlyCreatedEvent = TypedEvent<[], ProperlyCreatedEventObject>;
 
 export type ProperlyCreatedEventFilter = TypedEventFilter<ProperlyCreatedEvent>;
-
-export interface TransferedEventObject {
-  arg0: string;
-  arg1: BigNumber;
-}
-export type TransferedEvent = TypedEvent<
-  [string, BigNumber],
-  TransferedEventObject
->;
-
-export type TransferedEventFilter = TypedEventFilter<TransferedEvent>;
 
 export interface GiftCard extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -288,8 +293,6 @@ export interface GiftCard extends BaseContract {
 
     creator(overrides?: CallOverrides): Promise<[string]>;
 
-    currentGoal(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     dateToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
@@ -309,7 +312,14 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getParticipants(
+    "getParticipants()"(overrides?: CallOverrides): Promise<[string[]]>;
+
+    "getParticipants(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    "getParticipants(uint256,uint256)"(
       _startIndex: PromiseOrValue<BigNumberish>,
       _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -318,6 +328,8 @@ export interface GiftCard extends BaseContract {
     getParticipantsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     goalToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isOpen(overrides?: CallOverrides): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -331,8 +343,6 @@ export interface GiftCard extends BaseContract {
       _to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    releaseDate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -351,8 +361,6 @@ export interface GiftCard extends BaseContract {
   creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
   creator(overrides?: CallOverrides): Promise<string>;
-
-  currentGoal(overrides?: CallOverrides): Promise<BigNumber>;
 
   dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -373,7 +381,14 @@ export interface GiftCard extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getParticipants(
+  "getParticipants()"(overrides?: CallOverrides): Promise<string[]>;
+
+  "getParticipants(uint256)"(
+    _startIndex: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  "getParticipants(uint256,uint256)"(
     _startIndex: PromiseOrValue<BigNumberish>,
     _pageSize: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -382,6 +397,8 @@ export interface GiftCard extends BaseContract {
   getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isOpen(overrides?: CallOverrides): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -395,8 +412,6 @@ export interface GiftCard extends BaseContract {
     _to: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  releaseDate(overrides?: CallOverrides): Promise<BigNumber>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -415,8 +430,6 @@ export interface GiftCard extends BaseContract {
     creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
     creator(overrides?: CallOverrides): Promise<string>;
-
-    currentGoal(overrides?: CallOverrides): Promise<BigNumber>;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -437,7 +450,14 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getParticipants(
+    "getParticipants()"(overrides?: CallOverrides): Promise<string[]>;
+
+    "getParticipants(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    "getParticipants(uint256,uint256)"(
       _startIndex: PromiseOrValue<BigNumberish>,
       _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -446,6 +466,8 @@ export interface GiftCard extends BaseContract {
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isOpen(overrides?: CallOverrides): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -460,8 +482,6 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    releaseDate(overrides?: CallOverrides): Promise<BigNumber>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     title(overrides?: CallOverrides): Promise<string>;
@@ -473,6 +493,12 @@ export interface GiftCard extends BaseContract {
   };
 
   filters: {
+    "AmountTransfered(address,uint256)"(
+      arg0?: null,
+      arg1?: null
+    ): AmountTransferedEventFilter;
+    AmountTransfered(arg0?: null, arg1?: null): AmountTransferedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -490,12 +516,6 @@ export interface GiftCard extends BaseContract {
 
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
-
-    "Transfered(address,uint256)"(
-      arg0?: null,
-      arg1?: null
-    ): TransferedEventFilter;
-    Transfered(arg0?: null, arg1?: null): TransferedEventFilter;
   };
 
   estimateGas: {
@@ -504,8 +524,6 @@ export interface GiftCard extends BaseContract {
     creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
     creator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    currentGoal(overrides?: CallOverrides): Promise<BigNumber>;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -526,7 +544,14 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getParticipants(
+    "getParticipants()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getParticipants(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getParticipants(uint256,uint256)"(
       _startIndex: PromiseOrValue<BigNumberish>,
       _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -535,6 +560,8 @@ export interface GiftCard extends BaseContract {
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isOpen(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -548,8 +575,6 @@ export interface GiftCard extends BaseContract {
       _to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    releaseDate(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -570,8 +595,6 @@ export interface GiftCard extends BaseContract {
 
     creator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    currentGoal(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     dateToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -591,7 +614,16 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getParticipants(
+    "getParticipants()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getParticipants(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getParticipants(uint256,uint256)"(
       _startIndex: PromiseOrValue<BigNumberish>,
       _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -602,6 +634,8 @@ export interface GiftCard extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     goalToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isOpen(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -615,8 +649,6 @@ export interface GiftCard extends BaseContract {
       _to: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    releaseDate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

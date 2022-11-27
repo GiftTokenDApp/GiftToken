@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { GiftCard } from "./GiftCard";
-export type { GiftToken } from "./GiftToken";
+export type { GiftFactory } from "./GiftFactory";
