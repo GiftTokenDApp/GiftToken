@@ -17,11 +17,9 @@ contract GiftCard is Ownable {
 
     uint256 public creationDate;
 
-    uint256 public releaseDate;
+    uint256 public goalToBeReleased;
 
-    uint256 public goalToBeReleased ;
-
-    uint256 public dateToBeReleased ;
+    uint256 public dateToBeReleased;
 
     address public creator;
 
@@ -29,17 +27,17 @@ contract GiftCard is Ownable {
 
     address[] private participants;
 
-    uint256 public currentGoal;
-
     mapping(address => bool[3]) roles;
 
     mapping(address => uint) holdings;
+
+    bool public isOpen;
 
     event ProperlyCreated();
 
     event Participated(address, uint);
 
-    event Transfered(address, uint);
+    event AmountTransfered(address, uint);
 
     /**
      * @notice Throws if called by the creator account
@@ -55,7 +53,7 @@ contract GiftCard is Ownable {
     modifier isParticipant() {
         require(getIsParticipant(msg.sender), "You're not a participant");
         _;
-    }
+    } 
 
     /**
      * @notice Throws if called by the beneficiary account
@@ -69,16 +67,24 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is withdrawable
      */
     modifier isWithdrawable() {
-        require(goalToBeReleased  <= currentGoal, "Card's goal isn't reached");
-        require(dateToBeReleased  <= block.timestamp, "Card's released date isn't reached");
+        require(goalToBeReleased <= address(this).balance, "Card's goal isn't reached");
+        require(dateToBeReleased <= block.timestamp, "Card's released date isn't reached");
         _;
     }
 
     /**
-     * @notice Throws if called by the card is not released
+     * @notice Throws if called by the card is not opened
      */
-    modifier isNotReleased() {
-        require(releaseDate == 0, "Card's is released");
+    modifier isNotOpened() {
+        require(isOpen, "Card's is opened");
+        _;
+    }
+
+    /**
+     * @notice Throws if called by the card is not completly released
+     */
+    modifier isNotCompletlyReleased() {
+        require(address(this).balance == 0, "Card's is completly released");
         _;
     }
 
@@ -99,25 +105,33 @@ contract GiftCard is Ownable {
     /**
      * @notice Construct a card
      * @param _creator Card's creator address
-     * @param _title Card's title (optional)
+     * @param _title Card's title
+     * @param _description Card's title (optional)
      * @param _goalToBeReleased Card's goal value to be released (optional)
      * @param _dateToBeReleased Card's date value to be released (optional)
      * @param _beneficiary Card's beneficiary address (optional)
      */
     constructor(address _creator, 
         string memory _title,
+        string memory _description,
         uint _goalToBeReleased ,
         uint _dateToBeReleased ,
         address _beneficiary
     ) payable {
         require(_creator != address(0), "Creator's address is mandatory");
+        require(bytes(title).length > 0, "Title is mandatory");
 
         creationDate = block.timestamp;
         creator = _creator;
         title = _title;
+        description = _description;
         goalToBeReleased  = _goalToBeReleased;
         dateToBeReleased  = _dateToBeReleased;
-        beneficiary = _beneficiary;
+        beneficiary = _beneficiary; 
+
+        if (beneficiary != address(0)) {
+            addRole(beneficiary, Role.Beneficiary);
+        }
 
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
@@ -171,6 +185,32 @@ contract GiftCard is Ownable {
     }
 
     /**
+     * @notice Get participants's list
+     * @return address[]
+     */
+    function getParticipants() external view returns(address[] memory) {
+        return participants;
+    }
+
+    /**
+     * @notice Get participants's list after a start index
+     * @param _startIndex The Start index
+     * @return address[]
+     */
+    function getParticipants(uint _startIndex) external view returns(address[] memory) {
+
+        require(_startIndex <= participants.length, "Read index out of bounds");
+
+        address[] memory result = new address[](participants.length-_startIndex);
+
+        for (uint cpt = _startIndex; cpt < participants.length; cpt++) {
+            result[cpt] = participants[_startIndex + cpt];
+        }
+
+        return result;
+    }
+
+    /**
      * @notice Get participants's list with pagination
      * @param _startIndex The Start index
      * @param _pageSize The page size
@@ -193,8 +233,8 @@ contract GiftCard is Ownable {
      * @notice Release all card content
      * @param _to Participant's address
      */
-    function releaseAll(address payable _to) external isNotReleased isWithdrawable {
-        transfer(_to, currentGoal);
+    function releaseAll(address payable _to) external isBeneficiary isNotCompletlyReleased isWithdrawable {
+        transfer(_to, address(this).balance);
     }
 
     /**
@@ -202,8 +242,8 @@ contract GiftCard is Ownable {
      * @param _to Participant's address
      * @param _value Participant's address
      */
-    function release(address payable _to, uint _value) external isNotReleased isWithdrawable {
-        require(_value <= currentGoal, "Transfered's value exceeds the card's content");
+    function release(address payable _to, uint _value) external isBeneficiary isNotCompletlyReleased isWithdrawable {
+        require(_value <= address(this).balance, "Transfered's value exceeds the card's content");
         transfer(_to, _value);
     }
 
@@ -224,8 +264,7 @@ contract GiftCard is Ownable {
      * @param _participant Participant's address
      * @param _value Participation's value
      */
-    function participate(address _participant, uint _value) internal isNotReleased {
-        currentGoal += _value;
+    function participate(address _participant, uint _value) internal isNotOpened {
         holdings[_participant] += _value;
         addRole(_participant, Role.Participant);
         participants.push(_participant);
@@ -240,10 +279,10 @@ contract GiftCard is Ownable {
      * @param _value A custom value
      */
     function transfer(address payable _to, uint _value) internal {
-        releaseDate = block.timestamp;
+        isOpen = true;
         (bool sent, ) = _to.call{value: _value}("");
         require(sent, "Failed to send value");
 
-        emit Transfered(_to, _value);
+        emit AmountTransfered(_to, _value);
     }
 }
