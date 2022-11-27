@@ -31,7 +31,7 @@ async function getMetamaskAccounts(windows: IWindow): Promise<string[]> {
 */
 function getMetamaskContract(windows: IWindow, address: Address, abi: ABI) : Contract {
     const provider = getMetamaskProvider(windows);
-    return new ethers.Contract(address, abi, provider);
+    's address    return new ethers.Contract(address as string, abi, provider);
 }
 
 /**
@@ -39,7 +39,7 @@ function getMetamaskContract(windows: IWindow, address: Address, abi: ABI) : Con
 */
 function getMetamaskSignedContract(windows: IWindow, address: Address, abi: ABI) : Contract {
     const signer = getMetamaskSigner(windows);
-    return new ethers.Contract(address, abi, signer);
+    return new ethers.Contract(address as string, abi, signer);
 }
 
 /**
