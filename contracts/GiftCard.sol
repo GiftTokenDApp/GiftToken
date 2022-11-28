@@ -84,7 +84,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is not completly released
      */
     modifier isNotCompletlyReleased() {
-        require(address(this).balance == 0, "Card's is completly released");
+        require(address(this).balance > 0, "Card's is completly released");
         _;
     }
 

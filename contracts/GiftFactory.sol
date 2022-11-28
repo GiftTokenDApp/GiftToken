@@ -51,8 +51,8 @@ contract GiftFactory is Ownable {
         uint _dateToBeReleased,
         address _beneficiary
     ) payable external {
-        require(msg.value > 10 ** 16, "Insufficient found");
-        
+        require(msg.value > 10 ** 15, "Insufficient found");
+
         GiftCard card = (new GiftCard){value: msg.value}(msg.sender, _title, _description, _goalToBeReleased, _dateToBeReleased, _beneficiary);
         address cardAddress = address(card);
         links[msg.sender].push(cardAddress);
