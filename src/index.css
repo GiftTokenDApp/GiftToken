@@ -1,15 +1,49 @@
-body {
-  background-color: #282c34;
-  height: 100%;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "PoppinsLight";
+    src: url("./assets/fonts/Poppins/Poppins-Light.ttf");
+}
+@font-face {
+    font-family: "PoppinsRegular";
+    src: url("./assets/fonts/Poppins/Poppins-Regular.ttf");
+}
+@font-face {
+    font-family: "PoppinsSemiBold";
+    src: url("./assets/fonts/Poppins/Poppins-SemiBold.ttf");
+}
+@font-face {
+    font-family: "PoppinsBold";
+    src: url("./assets/fonts/Poppins/Poppins-Bold.ttf");
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.flexJIC{
+    @apply flex justify-center items-center
+}
+
+.btnBase {
+    @apply w-72 flexJIC py-4 px-10 rounded-full text-center text-xl font-medium transition;
+}
+.btnBaseFull {
+    @apply btnBase mt-5;
+}
+.btnGray {
+    @apply btnBaseFull bg-darkerGray text-lightTurquoise hover:bg-darkGray hover:text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey;
+}
+.btnHeaderGray {
+    @apply btnBase -mt-4 hover:scale-110 hover:bg-darkGray hover:text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey md:mr-6 md:mt-0;
+}
+.btnHeaderGray-clicked {
+    @apply btnBase -mt-4 bg-darkGray text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey md:mr-6 md:mt-0;
+}
+.btnPurple {
+    @apply btnBaseFull bg-lightPurple text-darkerGray hover:bg-lighterPurple hover:text-darkGray disabled:bg-darkGrey disabled:text-lightGrey;
+}
+.btnTurquoise {
+    @apply btnBaseFull bg-lightTurquoise text-darkerGray hover:bg-lighterTurquoise hover:text-darkGray disabled:bg-darkGrey disabled:text-lightGrey;
+}
+.transition {
+  @apply transition-all hover:scale-110 cursor-pointer
 }

@@ -1,0 +1,12 @@
+.burgerMenuAnimation {
+  transition: transform 0.5s ease;
+}
+.burgerMenuAnimation1 {
+  transform: translateY(0.91rem) rotate(45deg);
+}
+.burgerMenuAnimation2 {
+  transform: rotate(-45deg);
+}
+.burgerMenuAnimation3 {
+  transform: translateY(-0.91rem) rotate(45deg);
+}
