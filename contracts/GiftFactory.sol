@@ -59,4 +59,57 @@ contract GiftFactory is Ownable {
 
         emit CardCreated(cardAddress, msg.value);
     }
+
+    /**
+     * @notice Get for an address its links's count
+     * @return uint
+     */
+    function getLinksCount(address _visitor) external view returns(uint) {
+        return links[_visitor].length;
+    }
+
+    /**
+     * @notice Get for an address its links's list
+     * @return address[]
+     */
+    function getLinks(address _visitor) external view returns(address[] memory) {
+        return links[_visitor];
+    }
+
+    /**
+     * @notice Get for an address its links's list after a start index
+     * @param _startIndex The Start index
+     * @return address[]
+     */
+    function getLinks(address _visitor, uint _startIndex) external view returns(address[] memory) {
+
+        require(_startIndex <= links[_visitor].length, "Read index out of bounds");
+
+        address[] memory result = new address[](links[_visitor].length-_startIndex);
+
+        for (uint cpt = _startIndex; cpt < links[_visitor].length; cpt++) {
+            result[cpt] = links[_visitor][_startIndex + cpt];
+        }
+
+        return result;
+    }
+
+    /**
+     * @notice Get for an address its links's list with pagination
+     * @param _startIndex The Start index
+     * @param _pageSize The page size
+     * @return address[]
+     */
+    function getParticipants(address _visitor, uint _startIndex, uint _pageSize) external view returns(address[] memory) {
+        uint lastIndex = _startIndex + _pageSize;
+        require(lastIndex <= links[_visitor].length, "Read index out of bounds");
+
+        address[] memory result = new address[](_pageSize);
+
+        for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
+            result[cpt] = links[_visitor][_startIndex + cpt];
+        }
+
+        return result;
+    }
 }
