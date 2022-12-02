@@ -3,69 +3,52 @@ import EthContext from "./EthContext";
 import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer, actions } from "./state";
 import { IEthContextProps, StateTypes } from "./interfaces";
-// import { ethers } from "ethers";
-// import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
+import { ethers } from "ethers";
+import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
 
 let FactoryAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 const EthContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [mainContextState, mainContextDispatch] = useReducer(reducer, initialState);
-  // const [cardAddress, setCardAddress] = useState(null);
-  // const [error, setError] = useState('');
+  const [cardAddress, setCardAddress] = useState(null);
+  const [nb, setNb] = useState(0)
+  const [error, setError] = useState('');
 
-  // async function getBalance() {
-  //   if(typeof window.ethereum !== 'undefined') {
-  //     const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //     const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);
-  //     try {
-  //       let overrides = {
-  //         from: accounts[0]
-  //       }
-  //       const data = await contract.links(overrides,0);
-  //       setCardAddress(data.toString());
-  //     } catch (err) {
-  //       setError('Une erreur est survenue.');
-  //     }
-  //   }
-  // }
+  async function getAddress() {
+    if(typeof window.ethereum !== 'undefined') {
+      const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);        
+      try {
+          const value = await contract.links(accounts[0],nb);
+          console.log(value.toString());
+          setCardAddress(value);
+      } catch (err) {
+          err && setError(err.toString());
+      }
+    }
+  }    
 
-  // async function transfer(amount: any) {
-  //   console.log("AAAA");
-  //   if(!amount) {
-  //     return;
-  //   }
-  //   if(typeof window.ethereum !== 'undefined') {
-  //     const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //     const signer = provider.getSigner();
-  //     try {
-  //       console.log('CCC');
-  //       const tx = {
-  //         from: accounts[0],
-  //         to: FactoryAddress,
-  //         value: ethers.utils.parseEther(amount)
-  //       }
-  //       const transaction = await signer.sendTransaction(tx);
-  //       await transaction.wait();
-  //       console.log('DDD');
-  //       getBalance();
-  //       console.log('Transfert effectué.');
-  //     } catch (err) {
-  //       setError('Une erreur est survenue.');
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getBalance()
-  //   // transfer(22);
-  // }, [])
-  
-  // useEffect(() => {
-  //   console.log(cardAddress);
-  // }, [cardAddress])
-  
+  async function createCard(_title: string, _description: string, _goalToBeReleased: number, _dateToBeReleased: number, _beneficiary: string) {
+      if(typeof window.ethereum !== 'undefined') {
+          const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);   
+          const signer = provider.getSigner();
+          try {
+              const trx = {
+                  from: accounts[0],
+                  value: ethers.utils.parseEther("1"),
+              }
+              const transaction = await contract.connect(signer).createCard(_title, _description, _goalToBeReleased, _dateToBeReleased, _beneficiary, trx);               
+              await transaction.wait();
+              console.log('Carté créée.');
+              setNb(nb => nb + 1);
+          } catch (err) {
+              err && setError(err.toString());
+          }
+      }
+  }
 
   // const init = useCallback(
   //   async artifact => {

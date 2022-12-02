@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 1337,
-      // accounts: defaultHardhatAccounts
+      accounts: defaultHardhatAccounts
     },
     // goerli: {
     //   chainId: 5,
