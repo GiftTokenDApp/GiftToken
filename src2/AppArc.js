@@ -131,28 +131,28 @@
 //     }
 //   }
 
-//   logError(origine: string, error: any) {
+// //   logError(origine: string, error: any) {
 
-//     let errorMessage: string = 'Open your console to maybe have more information';
+// //     let errorMessage: string = 'Open your console to maybe have more information';
 
-//     if (typeof error === 'string') {
-//         errorMessage = error;
-//     }
-//     else if (error != null) {
+// //     if (typeof error === 'string') {
+// //         errorMessage = error;
+// //     }
+// //     else if (error != null) {
         
-//         if (typeof error.reason === 'string') {
-//             const reason: string = (error.reason as string) ?? '';
+// //         if (typeof error.reason === 'string') {
+// //             const reason: string = (error.reason as string) ?? '';
 
-//             if (reason.length > 0) {
+// //             if (reason.length > 0) {
 
-//                 errorMessage = reason.replace('Error:', '')
-//                                     .replace('VM Exception while processing transaction: ', '');
-//             }
-//         }
-//         else if (typeof error.message === 'string') {
-//             errorMessage = error.message;
-//         }
-//     }
+// //                 errorMessage = reason.replace('Error:', '')
+// //                                     .replace('VM Exception while processing transaction: ', '');
+// //             }
+// //         }
+// //         else if (typeof error.message === 'string') {
+// //             errorMessage = error.message;
+// //         }
+// //     }
 
 //     this.addLog({level: LogLevel.error, date: new Date(), message:`Error - ${origine} : ${errorMessage}`});
 // }

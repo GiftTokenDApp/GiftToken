@@ -1,6 +1,7 @@
-import React, { useReducer } from "react";
+import React, { useCallback, useEffect, useReducer } from "react";
 import EthContext from "./EthContext";
-import { reducer, initialState } from "./state";
+import { reducer, initialState, actions } from "./state";
+import { ethers } from "hardhat";
 
 function EthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -8,20 +9,26 @@ function EthProvider({ children }) {
   // const init = useCallback(
   //   async artifact => {
   //     if (artifact) {
-  //       const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  //       const accounts = await web3.eth.requestAccounts();
-  //       const networkID = await web3.eth.net.getId();
+  //       // const web3 = new ethers.providers.Web3Provider(window.ethereum);
+  //       // const accounts = await web3.eth.requestAccounts();
+  //       // const networkID = await web3.eth.net.getId();
+  //       // const { abi } = artifact;
+  //       const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //       // let address, contract;
+  //       const contractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
+  //       let contract;
   //       const { abi } = artifact;
-  //       let address, contract;
   //       try {
-  //         address = artifact.networks[networkID].address;
-  //         contract = new web3.eth.Contract(abi, address);
+  //         contract = new ethers.providers.Contract(contractAddress, abi, provider);
+  //         // address = artifact.networks[networkID].address;
   //       } catch (err) {
   //         console.error(err.data.data);
   //       }
   //       dispatch({
   //         type: actions.init,
-  //         data: { artifact, web3, accounts, networkID, contract }
+  //         data: { artifact, accounts, contract }
+  //         // data: { artifact, web3, accounts, networkID, contract }
   //       });
   //     }
   //   }, []);
@@ -29,7 +36,7 @@ function EthProvider({ children }) {
   // useEffect(() => {
   //   const tryInit = async () => {
   //     try {
-  //       const artifact = require("../../contracts/Voting.json");
+  //       const artifact = require("../../artifacts/contracts/GiftFactory.sol");
   //       init(artifact);
   //     } catch (err) {
   //       console.error(err);
@@ -44,6 +51,8 @@ function EthProvider({ children }) {
   //   const handleChange = () => {
   //     init(state.artifact);
   //   };
+
+  //   console.log(state);
 
   //   events.forEach(e => window.ethereum.on(e, handleChange));
   //   return () => {

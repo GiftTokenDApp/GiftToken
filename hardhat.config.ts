@@ -17,24 +17,25 @@ const defaultHardhatAccounts: HardhatNetworkAccountUserConfig[] = [
 const INFURA_KEY: string = process.env.INFURA_KEY ?? '';
 const PRIVATE_KEY: string = process.env.PRIVATE_KEY ?? '';
 
-if (PRIVATE_KEY!= undefined) {
+if (PRIVATE_KEY !== undefined) {
   defaultHardhatAccounts.unshift({privateKey:`${process.env.PRIVATE_KEY}`, balance:defaultEthBalance});
 }
 
-
-
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
+  paths: {
+    artifacts: './src/artifacts',
+  },
   networks: {
     hardhat: {
       chainId: 1337,
-      accounts: defaultHardhatAccounts
+      // accounts: defaultHardhatAccounts
     },
-    goerli: {
-      chainId: 5,
-      url: `https://goerli.infura.io/v3/${INFURA_KEY}`,
-      accounts: [PRIVATE_KEY]
-    }
+    // goerli: {
+    //   chainId: 5,
+    //   url: `https://goerli.infura.io/v3/${INFURA_KEY}`,
+    //   accounts: [PRIVATE_KEY]
+    // }
   },
   typechain: {
     outDir: 'src/typechain-types',

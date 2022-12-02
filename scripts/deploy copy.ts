@@ -1,12 +1,12 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const GiftFactory = await ethers.getContractFactory("GiftFactory");
-  const giftFactory = await GiftFactory.deploy();
+  const GiftCard = await ethers.getContractFactory("GiftCard");
+  const giftCard = await GiftCard.deploy();
 
-  await giftFactory.deployed();
+  await giftCard.deployed();
 
-  console.log(`Deployed contract to ${giftFactory.address}`);
+  console.log(`Deployed contract to ${giftCard.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
