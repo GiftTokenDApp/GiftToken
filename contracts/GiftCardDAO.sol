@@ -55,20 +55,32 @@ contract GiftCardDAO is GiftCard {
         address _beneficiary
     ) GiftCard(_creator, _title, _description, _requierementToBeReleased, _dateToBeReleased, _beneficiary) payable {}
 
-    function askOutpassedRequierements(string memory _description) external isNotOpened() isOpenabledProposal() {
+    /**
+     * @notice Create a proposal to outpass requierements
+     * @param _description Role's address
+     */
+    function createOutpassedRequierementsProposal(string memory _description) external isNotOpened() isOpenabledProposal() {
         require(status < CardStatus.FundingReached || dateToBeReleased > block.timestamp, "Card's requierements are already reached");
 
         proposalBeneficiary = NULLADDRESS;
         addProposal(CardProposalType.AskOutpassedRequierements, _description);
     }
 
-    function declareAsBeneficiary(address _beneficiary, string memory _description) external isNotOpened() isOpenabledProposal() {
+    /**
+     * @notice Create a proposal to declare a beneficiary
+     * @param _description Role's address
+     */
+    function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isNotOpened() isOpenabledProposal() {
         require(beneficiary == NULLADDRESS, "A beneficiary already exists");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.DeclaredBeneficiary, _description);
     }
 
+    /**
+     * @notice Create a proposal to change a beneficiary
+     * @param _description Role's address
+     */
     function changeBeneficiary(address _beneficiary, string memory _description) external isNotOpened() isOpenabledProposal() {
         require(beneficiary != NULLADDRESS, "No beneficiary exists");
 
@@ -76,6 +88,12 @@ contract GiftCardDAO is GiftCard {
         addProposal(CardProposalType.ChangedBeneficiary, _description);
     }
 
+    /**
+     * @notice Add a proposal
+     * @dev Internal function without access restriction
+     * @param _proposalType Proposal's type
+     * @param _description The description
+     */
     function addProposal(CardProposalType _proposalType, string memory _description) internal {
         currentProposal = Proposal(currentProposal.id++, msg.sender, block.timestamp, _proposalType, _description, CardProposalResult.Pending, 0);
 

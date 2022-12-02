@@ -29,14 +29,14 @@ import type {
 
 export interface GiftCardDAOInterface extends utils.Interface {
   functions: {
-    "askOutpassedRequierements(string)": FunctionFragment;
     "beneficiary()": FunctionFragment;
     "changeBeneficiary(address,string)": FunctionFragment;
+    "createDeclaredBeneficiaryProposal(address,string)": FunctionFragment;
+    "createOutpassedRequierementsProposal(string)": FunctionFragment;
     "creationDate()": FunctionFragment;
     "creator()": FunctionFragment;
     "currentProposal()": FunctionFragment;
     "dateToBeReleased()": FunctionFragment;
-    "declareAsBeneficiary(address,string)": FunctionFragment;
     "description()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
     "getIsCreator(address)": FunctionFragment;
@@ -59,14 +59,14 @@ export interface GiftCardDAOInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "askOutpassedRequierements"
       | "beneficiary"
       | "changeBeneficiary"
+      | "createDeclaredBeneficiaryProposal"
+      | "createOutpassedRequierementsProposal"
       | "creationDate"
       | "creator"
       | "currentProposal"
       | "dateToBeReleased"
-      | "declareAsBeneficiary"
       | "description"
       | "getIsBeneficiary"
       | "getIsCreator"
@@ -88,16 +88,20 @@ export interface GiftCardDAOInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "askOutpassedRequierements",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "beneficiary",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "changeBeneficiary",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createDeclaredBeneficiaryProposal",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createOutpassedRequierementsProposal",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "creationDate",
@@ -111,10 +115,6 @@ export interface GiftCardDAOInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "dateToBeReleased",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "declareAsBeneficiary",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "description",
@@ -181,15 +181,19 @@ export interface GiftCardDAOInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "askOutpassedRequierements",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "beneficiary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "changeBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createDeclaredBeneficiaryProposal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createOutpassedRequierementsProposal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -203,10 +207,6 @@ export interface GiftCardDAOInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "dateToBeReleased",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "declareAsBeneficiary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -428,15 +428,21 @@ export interface GiftCardDAO extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    askOutpassedRequierements(
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     beneficiary(overrides?: CallOverrides): Promise<[string]>;
 
     changeBeneficiary(
       _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    createDeclaredBeneficiaryProposal(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    createOutpassedRequierementsProposal(
       _description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -460,12 +466,6 @@ export interface GiftCardDAO extends BaseContract {
     >;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    declareAsBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
 
@@ -545,15 +545,21 @@ export interface GiftCardDAO extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  askOutpassedRequierements(
-    _description: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   beneficiary(overrides?: CallOverrides): Promise<string>;
 
   changeBeneficiary(
     _beneficiary: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  createDeclaredBeneficiaryProposal(
+    _beneficiary: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  createOutpassedRequierementsProposal(
     _description: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -577,12 +583,6 @@ export interface GiftCardDAO extends BaseContract {
   >;
 
   dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
-
-  declareAsBeneficiary(
-    _beneficiary: PromiseOrValue<string>,
-    _description: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   description(overrides?: CallOverrides): Promise<string>;
 
@@ -662,15 +662,21 @@ export interface GiftCardDAO extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    askOutpassedRequierements(
-      _description: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     beneficiary(overrides?: CallOverrides): Promise<string>;
 
     changeBeneficiary(
       _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createDeclaredBeneficiaryProposal(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createOutpassedRequierementsProposal(
       _description: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -694,12 +700,6 @@ export interface GiftCardDAO extends BaseContract {
     >;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
-
-    declareAsBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
-      _description: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     description(overrides?: CallOverrides): Promise<string>;
 
@@ -842,15 +842,21 @@ export interface GiftCardDAO extends BaseContract {
   };
 
   estimateGas: {
-    askOutpassedRequierements(
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     beneficiary(overrides?: CallOverrides): Promise<BigNumber>;
 
     changeBeneficiary(
       _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    createDeclaredBeneficiaryProposal(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    createOutpassedRequierementsProposal(
       _description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -862,12 +868,6 @@ export interface GiftCardDAO extends BaseContract {
     currentProposal(overrides?: CallOverrides): Promise<BigNumber>;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
-
-    declareAsBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -938,15 +938,21 @@ export interface GiftCardDAO extends BaseContract {
   };
 
   populateTransaction: {
-    askOutpassedRequierements(
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     beneficiary(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     changeBeneficiary(
       _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createDeclaredBeneficiaryProposal(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createOutpassedRequierementsProposal(
       _description: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -958,12 +964,6 @@ export interface GiftCardDAO extends BaseContract {
     currentProposal(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    declareAsBeneficiary(
-      _beneficiary: PromiseOrValue<string>,
-      _description: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
