@@ -67,7 +67,7 @@ contract GiftCard is Ownable {
     }
 
     /**
-     * @notice Throws if called by the card is withdrawable
+     * @notice Throws if the card is withdrawable
      */
     modifier isWithdrawable() {
         require(status > CardStatus.FundingStarted, "Card's goal isn't reached");
@@ -76,7 +76,7 @@ contract GiftCard is Ownable {
     }
 
     /**
-     * @notice Throws if called by the card is not opened
+     * @notice Throws if the card is not opened
      */
     modifier isNotOpened() {
         require(status < CardStatus.PartiallyReleased, "Card's is opened");
@@ -84,7 +84,7 @@ contract GiftCard is Ownable {
     }
 
     /**
-     * @notice Throws if called by the card is not completly released
+     * @notice Throws if the card is not completly released
      */
     modifier isNotCompletlyReleased() {
         require(status < CardStatus.Released, "Card's is completly released");

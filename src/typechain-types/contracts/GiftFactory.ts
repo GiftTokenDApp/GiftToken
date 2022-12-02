@@ -31,6 +31,7 @@ import type {
 export interface GiftFactoryInterface extends utils.Interface {
   functions: {
     "createCard(string,string,uint256,uint256,address)": FunctionFragment;
+    "getIfCardExists(address)": FunctionFragment;
     "getLinks(address)": FunctionFragment;
     "getLinks(address,uint256,uint256)": FunctionFragment;
     "getLinks(address,uint256)": FunctionFragment;
@@ -43,6 +44,7 @@ export interface GiftFactoryInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "createCard"
+      | "getIfCardExists"
       | "getLinks(address)"
       | "getLinks(address,uint256,uint256)"
       | "getLinks(address,uint256)"
@@ -61,6 +63,10 @@ export interface GiftFactoryInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getIfCardExists",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getLinks(address)",
@@ -93,6 +99,10 @@ export interface GiftFactoryInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "createCard", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getIfCardExists",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getLinks(address)",
     data: BytesLike
@@ -197,6 +207,11 @@ export interface GiftFactory extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getIfCardExists(
+      _card: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -241,6 +256,11 @@ export interface GiftFactory extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getIfCardExists(
+    _card: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   "getLinks(address)"(
     _visitor: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -284,6 +304,11 @@ export interface GiftFactory extends BaseContract {
       _beneficiary: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getIfCardExists(
+      _card: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
@@ -348,6 +373,11 @@ export interface GiftFactory extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getIfCardExists(
+      _card: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -391,6 +421,11 @@ export interface GiftFactory extends BaseContract {
       _dateToBeReleased: PromiseOrValue<BigNumberish>,
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getIfCardExists(
+      _card: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLinks(address)"(
