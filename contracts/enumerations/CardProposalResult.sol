@@ -4,8 +4,9 @@ pragma solidity 0.8.17;
 enum CardProposalResult {
     Unknown,
     Pending,
-    Validated,
-    ValidatedWithCreatorWeight,
+    Approved,
+    ApprovedWithCreatorWeight,
     Refused,
-    RefusedWithCreatorWeight
+    RefusedWithCreatorWeight,
+    Equality
 }

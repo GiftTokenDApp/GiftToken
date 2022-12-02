@@ -27,6 +27,40 @@ import type {
   PromiseOrValue,
 } from "../common";
 
+export type ProposalStruct = {
+  id: PromiseOrValue<BigNumberish>;
+  initiator: PromiseOrValue<string>;
+  creationDate: PromiseOrValue<BigNumberish>;
+  proposalType: PromiseOrValue<BigNumberish>;
+  description: PromiseOrValue<string>;
+  proposalResult: PromiseOrValue<BigNumberish>;
+  closedDate: PromiseOrValue<BigNumberish>;
+  approvedCount: PromiseOrValue<BigNumberish>;
+  refusedCount: PromiseOrValue<BigNumberish>;
+};
+
+export type ProposalStructOutput = [
+  BigNumber,
+  string,
+  BigNumber,
+  number,
+  string,
+  number,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  id: BigNumber;
+  initiator: string;
+  creationDate: BigNumber;
+  proposalType: number;
+  description: string;
+  proposalResult: number;
+  closedDate: BigNumber;
+  approvedCount: BigNumber;
+  refusedCount: BigNumber;
+};
+
 export interface GiftCardDAOInterface extends utils.Interface {
   functions: {
     "beneficiary()": FunctionFragment;
@@ -45,8 +79,10 @@ export interface GiftCardDAOInterface extends utils.Interface {
     "getParticipants(uint256)": FunctionFragment;
     "getParticipants(uint256,uint256)": FunctionFragment;
     "getParticipantsCount()": FunctionFragment;
+    "getProposals()": FunctionFragment;
     "getStatus()": FunctionFragment;
-    "lastProposal(uint256)": FunctionFragment;
+    "getVote(address)": FunctionFragment;
+    "lastProposals(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "proposalBeneficiary()": FunctionFragment;
     "release(address,uint256)": FunctionFragment;
@@ -55,6 +91,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
     "requierementToBeReleased()": FunctionFragment;
     "title()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "vote(bool)": FunctionFragment;
   };
 
   getFunction(
@@ -75,8 +112,10 @@ export interface GiftCardDAOInterface extends utils.Interface {
       | "getParticipants(uint256)"
       | "getParticipants(uint256,uint256)"
       | "getParticipantsCount"
+      | "getProposals"
       | "getStatus"
-      | "lastProposal"
+      | "getVote"
+      | "lastProposals"
       | "owner"
       | "proposalBeneficiary"
       | "release"
@@ -85,6 +124,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
       | "requierementToBeReleased"
       | "title"
       | "transferOwnership"
+      | "vote"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -148,9 +188,17 @@ export interface GiftCardDAOInterface extends utils.Interface {
     functionFragment: "getParticipantsCount",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getProposals",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getStatus", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "lastProposal",
+    functionFragment: "getVote",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastProposals",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -178,6 +226,10 @@ export interface GiftCardDAOInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "vote",
+    values: [PromiseOrValue<boolean>]
   ): string;
 
   decodeFunctionResult(
@@ -241,9 +293,14 @@ export interface GiftCardDAOInterface extends utils.Interface {
     functionFragment: "getParticipantsCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lastProposal",
+    functionFragment: "getProposals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getVote", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastProposals",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -266,6 +323,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "vote", data: BytesLike): Result;
 
   events: {
     "AmountTransfered(address,uint256)": EventFragment;
@@ -274,7 +332,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
     "ParticipantVoted(uint256,address,bool)": EventFragment;
     "Participated(address,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
-    "PropositionClosed(uint256,address)": EventFragment;
+    "PropositionClosed(uint256,uint256)": EventFragment;
     "PropositionOpened(uint256,address)": EventFragment;
     "RequirementsOutpassed()": EventFragment;
     "StatusChanged(uint256,uint256)": EventFragment;
@@ -359,10 +417,10 @@ export type ProperlyCreatedEventFilter = TypedEventFilter<ProperlyCreatedEvent>;
 
 export interface PropositionClosedEventObject {
   arg0: BigNumber;
-  arg1: string;
+  arg1: BigNumber;
 }
 export type PropositionClosedEvent = TypedEvent<
-  [BigNumber, string],
+  [BigNumber, BigNumber],
   PropositionClosedEventObject
 >;
 
@@ -454,7 +512,17 @@ export interface GiftCardDAO extends BaseContract {
     currentProposal(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        number,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
@@ -462,6 +530,8 @@ export interface GiftCardDAO extends BaseContract {
         description: string;
         proposalResult: number;
         closedDate: BigNumber;
+        approvedCount: BigNumber;
+        refusedCount: BigNumber;
       }
     >;
 
@@ -499,13 +569,30 @@ export interface GiftCardDAO extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getProposals(overrides?: CallOverrides): Promise<[ProposalStructOutput[]]>;
+
     getStatus(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    lastProposal(
+    getVote(
+      _voter: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    lastProposals(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        number,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
@@ -513,6 +600,8 @@ export interface GiftCardDAO extends BaseContract {
         description: string;
         proposalResult: number;
         closedDate: BigNumber;
+        approvedCount: BigNumber;
+        refusedCount: BigNumber;
       }
     >;
 
@@ -543,6 +632,11 @@ export interface GiftCardDAO extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    vote(
+      _isApproved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   beneficiary(overrides?: CallOverrides): Promise<string>;
@@ -571,7 +665,17 @@ export interface GiftCardDAO extends BaseContract {
   currentProposal(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      number,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
       id: BigNumber;
       initiator: string;
       creationDate: BigNumber;
@@ -579,6 +683,8 @@ export interface GiftCardDAO extends BaseContract {
       description: string;
       proposalResult: number;
       closedDate: BigNumber;
+      approvedCount: BigNumber;
+      refusedCount: BigNumber;
     }
   >;
 
@@ -616,13 +722,30 @@ export interface GiftCardDAO extends BaseContract {
 
   getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getProposals(overrides?: CallOverrides): Promise<ProposalStructOutput[]>;
+
   getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-  lastProposal(
+  getVote(
+    _voter: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  lastProposals(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+    [
+      BigNumber,
+      string,
+      BigNumber,
+      number,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
       id: BigNumber;
       initiator: string;
       creationDate: BigNumber;
@@ -630,6 +753,8 @@ export interface GiftCardDAO extends BaseContract {
       description: string;
       proposalResult: number;
       closedDate: BigNumber;
+      approvedCount: BigNumber;
+      refusedCount: BigNumber;
     }
   >;
 
@@ -661,6 +786,11 @@ export interface GiftCardDAO extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  vote(
+    _isApproved: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     beneficiary(overrides?: CallOverrides): Promise<string>;
 
@@ -688,7 +818,17 @@ export interface GiftCardDAO extends BaseContract {
     currentProposal(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        number,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
@@ -696,6 +836,8 @@ export interface GiftCardDAO extends BaseContract {
         description: string;
         proposalResult: number;
         closedDate: BigNumber;
+        approvedCount: BigNumber;
+        refusedCount: BigNumber;
       }
     >;
 
@@ -733,13 +875,30 @@ export interface GiftCardDAO extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getProposals(overrides?: CallOverrides): Promise<ProposalStructOutput[]>;
+
     getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lastProposal(
+    getVote(
+      _voter: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lastProposals(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      [
+        BigNumber,
+        string,
+        BigNumber,
+        number,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
@@ -747,6 +906,8 @@ export interface GiftCardDAO extends BaseContract {
         description: string;
         proposalResult: number;
         closedDate: BigNumber;
+        approvedCount: BigNumber;
+        refusedCount: BigNumber;
       }
     >;
 
@@ -773,6 +934,11 @@ export interface GiftCardDAO extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    vote(
+      _isApproved: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -819,7 +985,7 @@ export interface GiftCardDAO extends BaseContract {
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
 
-    "PropositionClosed(uint256,address)"(
+    "PropositionClosed(uint256,uint256)"(
       arg0?: null,
       arg1?: null
     ): PropositionClosedEventFilter;
@@ -901,9 +1067,16 @@ export interface GiftCardDAO extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getProposals(overrides?: CallOverrides): Promise<BigNumber>;
+
     getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lastProposal(
+    getVote(
+      _voter: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lastProposals(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -933,6 +1106,11 @@ export interface GiftCardDAO extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    vote(
+      _isApproved: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1001,9 +1179,16 @@ export interface GiftCardDAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getProposals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getStatus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    lastProposal(
+    getVote(
+      _voter: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastProposals(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1037,6 +1222,11 @@ export interface GiftCardDAO extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    vote(
+      _isApproved: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

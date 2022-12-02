@@ -83,7 +83,7 @@ contract GiftCard is Ownable {
     /**
      * @notice Throws if the card is not opened
      */
-    modifier isNotOpened() {
+    modifier isCardNotOpened() {
         require(status < CardStatus.PartiallyReleased, "Card is opened");
         _;
     }
@@ -298,7 +298,7 @@ contract GiftCard is Ownable {
      * @param _participant Participant's address
      * @param _value Participation's value
      */
-    function participate(address _participant, uint _value) internal isNotOpened {
+    function participate(address _participant, uint _value) internal isCardNotOpened {
         
         if (requierementToBeReleased <= address(this).balance) {
             changeStatus(CardStatus.FundingReached);
