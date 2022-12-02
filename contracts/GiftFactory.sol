@@ -12,7 +12,7 @@ import "./enumerations/CardStatus.sol";
  */
 contract GiftFactory is Ownable {
 
-    mapping(address => CardStatus) private cardsStatus; 
+    mapping(address => bool) private cardsExists;
 
     mapping(address => address[]) private links; 
 
@@ -24,7 +24,7 @@ contract GiftFactory is Ownable {
      * @notice Throws if the card exists
      */
     modifier IsExistingCard(address _card) {
-        require(getIfCardExists(_card), "Card not exists");
+        require(cardsExists[_card], "Card not exists");
         _;
     }
 
@@ -66,19 +66,10 @@ contract GiftFactory is Ownable {
 
         GiftCard card = (new GiftCard){value: msg.value}(msg.sender, _title, _description, _fundingToBeReleased, _dateToBeReleased, _beneficiary);
         address cardAddress = address(card);
-        cardsStatus[cardAddress] = CardStatus(card.getStatus());
+        cardsExists[cardAddress] = true;
         links[msg.sender].push(cardAddress);
 
         emit CardCreated(cardAddress, msg.value);
-    }
-
-    /**
-     * @notice Get if card exists
-     * @param _card Card's address
-     * @return bool
-     */
-    function getIfCardExists(address _card) public view returns(bool) {
-        return cardsStatus[_card] > CardStatus.Unknown;
     }
 
     /**
