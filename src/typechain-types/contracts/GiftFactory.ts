@@ -35,7 +35,6 @@ export interface GiftFactoryInterface extends utils.Interface {
     "getLinks(address,uint256,uint256)": FunctionFragment;
     "getLinks(address,uint256)": FunctionFragment;
     "getLinksCount(address)": FunctionFragment;
-    "links(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -48,7 +47,6 @@ export interface GiftFactoryInterface extends utils.Interface {
       | "getLinks(address,uint256,uint256)"
       | "getLinks(address,uint256)"
       | "getLinksCount"
-      | "links"
       | "owner"
       | "renounceOwnership"
       | "transferOwnership"
@@ -84,10 +82,6 @@ export interface GiftFactoryInterface extends utils.Interface {
     functionFragment: "getLinksCount",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "links",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -115,7 +109,6 @@ export interface GiftFactoryInterface extends utils.Interface {
     functionFragment: "getLinksCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "links", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -198,7 +191,7 @@ export interface GiftFactory extends BaseContract {
     createCard(
       _title: PromiseOrValue<string>,
       _description: PromiseOrValue<string>,
-      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _fundingToBeReleased: PromiseOrValue<BigNumberish>,
       _dateToBeReleased: PromiseOrValue<BigNumberish>,
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -227,12 +220,6 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    links(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -248,7 +235,7 @@ export interface GiftFactory extends BaseContract {
   createCard(
     _title: PromiseOrValue<string>,
     _description: PromiseOrValue<string>,
-    _goalToBeReleased: PromiseOrValue<BigNumberish>,
+    _fundingToBeReleased: PromiseOrValue<BigNumberish>,
     _dateToBeReleased: PromiseOrValue<BigNumberish>,
     _beneficiary: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -277,12 +264,6 @@ export interface GiftFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  links(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
@@ -298,7 +279,7 @@ export interface GiftFactory extends BaseContract {
     createCard(
       _title: PromiseOrValue<string>,
       _description: PromiseOrValue<string>,
-      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _fundingToBeReleased: PromiseOrValue<BigNumberish>,
       _dateToBeReleased: PromiseOrValue<BigNumberish>,
       _beneficiary: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -326,12 +307,6 @@ export interface GiftFactory extends BaseContract {
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    links(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -367,7 +342,7 @@ export interface GiftFactory extends BaseContract {
     createCard(
       _title: PromiseOrValue<string>,
       _description: PromiseOrValue<string>,
-      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _fundingToBeReleased: PromiseOrValue<BigNumberish>,
       _dateToBeReleased: PromiseOrValue<BigNumberish>,
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -393,12 +368,6 @@ export interface GiftFactory extends BaseContract {
 
     getLinksCount(
       _visitor: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    links(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -418,7 +387,7 @@ export interface GiftFactory extends BaseContract {
     createCard(
       _title: PromiseOrValue<string>,
       _description: PromiseOrValue<string>,
-      _goalToBeReleased: PromiseOrValue<BigNumberish>,
+      _fundingToBeReleased: PromiseOrValue<BigNumberish>,
       _dateToBeReleased: PromiseOrValue<BigNumberish>,
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -444,12 +413,6 @@ export interface GiftFactory extends BaseContract {
 
     getLinksCount(
       _visitor: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    links(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

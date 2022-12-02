@@ -41,8 +41,8 @@ export interface GiftCardInterface extends utils.Interface {
     "getParticipants(uint256)": FunctionFragment;
     "getParticipants(uint256,uint256)": FunctionFragment;
     "getParticipantsCount()": FunctionFragment;
+    "getStatus()": FunctionFragment;
     "goalToBeReleased()": FunctionFragment;
-    "isOpen()": FunctionFragment;
     "owner()": FunctionFragment;
     "release(address,uint256)": FunctionFragment;
     "releaseAll(address)": FunctionFragment;
@@ -65,8 +65,8 @@ export interface GiftCardInterface extends utils.Interface {
       | "getParticipants(uint256)"
       | "getParticipants(uint256,uint256)"
       | "getParticipantsCount"
+      | "getStatus"
       | "goalToBeReleased"
-      | "isOpen"
       | "owner"
       | "release"
       | "releaseAll"
@@ -120,11 +120,11 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "getParticipantsCount",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getStatus", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "goalToBeReleased",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "isOpen", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "release",
@@ -189,11 +189,11 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "getParticipantsCount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "goalToBeReleased",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "isOpen", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "releaseAll", data: BytesLike): Result;
@@ -212,12 +212,14 @@ export interface GiftCardInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "Participated(address,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
+    "StatusChanged(uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AmountTransfered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Participated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProperlyCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StatusChanged"): EventFragment;
 }
 
 export interface AmountTransferedEventObject {
@@ -259,6 +261,17 @@ export interface ProperlyCreatedEventObject {}
 export type ProperlyCreatedEvent = TypedEvent<[], ProperlyCreatedEventObject>;
 
 export type ProperlyCreatedEventFilter = TypedEventFilter<ProperlyCreatedEvent>;
+
+export interface StatusChangedEventObject {
+  arg0: BigNumber;
+  arg1: BigNumber;
+}
+export type StatusChangedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  StatusChangedEventObject
+>;
+
+export type StatusChangedEventFilter = TypedEventFilter<StatusChangedEvent>;
 
 export interface GiftCard extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -327,9 +340,9 @@ export interface GiftCard extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    goalToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getStatus(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    isOpen(overrides?: CallOverrides): Promise<[boolean]>;
+    goalToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -396,9 +409,9 @@ export interface GiftCard extends BaseContract {
 
   getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-  goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+  getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-  isOpen(overrides?: CallOverrides): Promise<boolean>;
+  goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -465,9 +478,9 @@ export interface GiftCard extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+    getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isOpen(overrides?: CallOverrides): Promise<boolean>;
+    goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -516,6 +529,12 @@ export interface GiftCard extends BaseContract {
 
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
+
+    "StatusChanged(uint256,uint256)"(
+      arg0?: null,
+      arg1?: null
+    ): StatusChangedEventFilter;
+    StatusChanged(arg0?: null, arg1?: null): StatusChangedEventFilter;
   };
 
   estimateGas: {
@@ -559,9 +578,9 @@ export interface GiftCard extends BaseContract {
 
     getParticipantsCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+    getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isOpen(overrides?: CallOverrides): Promise<BigNumber>;
+    goalToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -633,9 +652,9 @@ export interface GiftCard extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    goalToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getStatus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isOpen(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    goalToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./GiftCard.sol";
+import "./enumerations/CardStatus.sol";
 
 /**
  * @title Contract for GiftFactory
@@ -11,7 +12,9 @@ import "./GiftCard.sol";
  */
 contract GiftFactory is Ownable {
 
-    mapping(address => address[]) public links; 
+    mapping(address => CardStatus) private cardStatus; 
+
+    mapping(address => address[]) private links; 
 
     event Funding(address, uint);
 
@@ -40,21 +43,22 @@ contract GiftFactory is Ownable {
      * @notice Create a card
      * @param _title Card's title
      * @param _description Card's title (optional)
-     * @param _goalToBeReleased Card's goal value to be released (optional)
+     * @param _fundingToBeReleased Card's funding value to be released (optional)
      * @param _dateToBeReleased Card's date value to be released (optional)
      * @param _beneficiary Card's beneficiary address (optional)
      */
     function createCard(
         string memory _title,
         string memory _description,
-        uint _goalToBeReleased,
+        uint _fundingToBeReleased,
         uint _dateToBeReleased,
         address _beneficiary
     ) payable external {
         require(msg.value > 10 ** 15, "Insufficient found");
 
-        GiftCard card = (new GiftCard){value: msg.value}(msg.sender, _title, _description, _goalToBeReleased, _dateToBeReleased, _beneficiary);
+        GiftCard card = (new GiftCard){value: msg.value}(msg.sender, _title, _description, _fundingToBeReleased, _dateToBeReleased, _beneficiary);
         address cardAddress = address(card);
+        cardStatus[cardAddress] = CardStatus(card.getStatus());
         links[msg.sender].push(cardAddress);
 
         emit CardCreated(cardAddress, msg.value);

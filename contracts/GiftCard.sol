@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./enumerations/Role.sol";
+import "./enumerations/CardStatus.sol";
 
 /**
  * @title Contract for Gift card
@@ -31,9 +32,11 @@ contract GiftCard is Ownable {
 
     mapping(address => uint) holdings;
 
-    bool public isOpen;
+    CardStatus private status;
 
     event ProperlyCreated();
+    
+    event StatusChanged(uint, uint);
 
     event Participated(address, uint);
 
@@ -67,7 +70,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is withdrawable
      */
     modifier isWithdrawable() {
-        require(goalToBeReleased <= address(this).balance, "Card's goal isn't reached");
+        require(status > CardStatus.FundingStarted, "Card's goal isn't reached");
         require(dateToBeReleased <= block.timestamp, "Card's released date isn't reached");
         _;
     }
@@ -76,7 +79,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is not opened
      */
     modifier isNotOpened() {
-        require(!isOpen, "Card's is opened");
+        require(status < CardStatus.PartiallyReleased, "Card's is opened");
         _;
     }
 
@@ -84,7 +87,7 @@ contract GiftCard is Ownable {
      * @notice Throws if called by the card is not completly released
      */
     modifier isNotCompletlyReleased() {
-        require(address(this).balance > 0, "Card's is completly released");
+        require(status < CardStatus.Released, "Card's is completly released");
         _;
     }
 
@@ -122,6 +125,7 @@ contract GiftCard is Ownable {
         require(_creator != address(0), "Creator's address is mandatory");
         require(bytes(_title).length > 0, "Title is mandatory");
 
+        status = CardStatus.FundingStarted;
         creationDate = block.timestamp;
         creator = _creator;
         title = _title;
@@ -138,6 +142,14 @@ contract GiftCard is Ownable {
         participate(_creator, msg.value);
 
         emit ProperlyCreated();
+    }
+
+    /**
+     * @notice Get card status
+     * @return uint
+     */
+    function getStatus() public view returns(uint) {
+        return uint(status);
     }
 
     /**
@@ -260,12 +272,33 @@ contract GiftCard is Ownable {
     }
 
     /**
+     * @notice Change status of this card
+     * @dev Internal function without access restriction
+     * @param _newStatus New status
+     */
+    function changeStatus(CardStatus _newStatus) internal {
+
+        if (status != _newStatus) {
+            return;
+        }
+
+        status = _newStatus;
+
+        emit StatusChanged(uint(_newStatus)-1, uint(_newStatus));
+    }
+
+    /**
      * @notice Participates for this card
      * @dev Internal function without access restriction
      * @param _participant Participant's address
      * @param _value Participation's value
      */
     function participate(address _participant, uint _value) internal isNotOpened {
+        
+        if (goalToBeReleased <= address(this).balance) {
+            changeStatus(CardStatus.FundingReached);
+        }
+        
         holdings[_participant] += _value;
         addRole(_participant, Role.Participant);
         participants.push(_participant);
@@ -280,10 +313,18 @@ contract GiftCard is Ownable {
      * @param _value A custom value
      */
     function transfer(address payable _to, uint _value) internal {
-        isOpen = true;
+
+        if (_value < address(this).balance) {
+            changeStatus(CardStatus.PartiallyReleased);
+        }
+
         (bool sent, ) = _to.call{value: _value}("");
         require(sent, "Failed to send value");
 
         emit AmountTransfered(_to, _value);
+
+        if (address(this).balance == 0) {
+            changeStatus(CardStatus.Released);
+        }
     }
 }
