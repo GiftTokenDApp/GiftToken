@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { GiftCard__factory } from "./GiftCard__factory";
+export { GiftCardDAO__factory } from "./GiftCardDAO__factory";
 export { GiftFactory__factory } from "./GiftFactory__factory";

@@ -5,7 +5,7 @@ enum CardStatus {
     Unknown,
     FundingStarted,
     FundingReached,
-    OpeningForced,
+    RequirementsOutpassed,
     PartiallyReleased,
     Released
 }

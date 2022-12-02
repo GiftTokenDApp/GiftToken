@@ -4,6 +4,9 @@ pragma solidity 0.8.17;
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./enumerations/Role.sol";
 import "./enumerations/CardStatus.sol";
+import "./enumerations/CardProposalType.sol";
+import "./enumerations/CardProposalResult.sol";
+import "./structures/Proposal.sol";
 
 /**
  * @title Contract for Gift card
@@ -12,13 +15,15 @@ import "./enumerations/CardStatus.sol";
  */
 contract GiftCard is Ownable {
 
+    address internal constant NULLADDRESS = address(0);
+
     string public title;
 
     string public description;
 
     uint256 public creationDate;
 
-    uint256 public goalToBeReleased;
+    uint256 public requierementToBeReleased;
 
     uint256 public dateToBeReleased;
 
@@ -26,13 +31,13 @@ contract GiftCard is Ownable {
 
     address public beneficiary;
 
-    address[] private participants;
+    address[] internal participants;
 
     mapping(address => bool[3]) roles;
 
     mapping(address => uint) holdings;
 
-    CardStatus private status;
+    CardStatus internal status;
 
     event ProperlyCreated();
     
@@ -70,7 +75,7 @@ contract GiftCard is Ownable {
      * @notice Throws if the card is withdrawable
      */
     modifier isWithdrawable() {
-        require(status > CardStatus.FundingStarted, "Card's goal isn't reached");
+        require(status > CardStatus.FundingStarted, "Card's requierement isn't reached");
         require(dateToBeReleased <= block.timestamp, "Card's released date isn't reached");
         _;
     }
@@ -79,7 +84,7 @@ contract GiftCard is Ownable {
      * @notice Throws if the card is not opened
      */
     modifier isNotOpened() {
-        require(status < CardStatus.PartiallyReleased, "Card's is opened");
+        require(status < CardStatus.PartiallyReleased, "Card is opened");
         _;
     }
 
@@ -87,7 +92,7 @@ contract GiftCard is Ownable {
      * @notice Throws if the card is not completly released
      */
     modifier isNotCompletlyReleased() {
-        require(status < CardStatus.Released, "Card's is completly released");
+        require(status < CardStatus.Released, "Card is completly released");
         _;
     }
 
@@ -110,7 +115,7 @@ contract GiftCard is Ownable {
      * @param _creator Card's creator address
      * @param _title Card's title
      * @param _description Card's title (optional)
-     * @param _goalToBeReleased Card's goal value to be released (optional)
+     * @param _requierementToBeReleased Card's requierement value to be released (optional)
      * @param _dateToBeReleased Card's date value to be released (optional)
      * @param _beneficiary Card's beneficiary address (optional)
      */
@@ -118,11 +123,11 @@ contract GiftCard is Ownable {
         address _creator, 
         string memory _title,
         string memory _description,
-        uint _goalToBeReleased,
+        uint _requierementToBeReleased,
         uint _dateToBeReleased,
         address _beneficiary
     ) payable {
-        require(_creator != address(0), "Creator's address is mandatory");
+        require(_creator != NULLADDRESS, "Creator's address is mandatory");
         require(bytes(_title).length > 0, "Title is mandatory");
 
         status = CardStatus.FundingStarted;
@@ -130,11 +135,11 @@ contract GiftCard is Ownable {
         creator = _creator;
         title = _title;
         description = _description;
-        goalToBeReleased  = _goalToBeReleased;
+        requierementToBeReleased  = _requierementToBeReleased;
         dateToBeReleased  = _dateToBeReleased;
         beneficiary = _beneficiary; 
 
-        if (beneficiary != address(0)) {
+        if (beneficiary != NULLADDRESS) {
             addRole(beneficiary, Role.Beneficiary);
         }
 
@@ -295,7 +300,7 @@ contract GiftCard is Ownable {
      */
     function participate(address _participant, uint _value) internal isNotOpened {
         
-        if (goalToBeReleased <= address(this).balance) {
+        if (requierementToBeReleased <= address(this).balance) {
             changeStatus(CardStatus.FundingReached);
         }
         

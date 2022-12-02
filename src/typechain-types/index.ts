@@ -10,5 +10,7 @@ export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
 export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { GiftCard } from "./contracts/GiftCard";
 export { GiftCard__factory } from "./factories/contracts/GiftCard__factory";
+export type { GiftCardDAO } from "./contracts/GiftCardDAO";
+export { GiftCardDAO__factory } from "./factories/contracts/GiftCardDAO__factory";
 export type { GiftFactory } from "./contracts/GiftFactory";
 export { GiftFactory__factory } from "./factories/contracts/GiftFactory__factory";

@@ -27,12 +27,16 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface GiftCardInterface extends utils.Interface {
+export interface GiftCardDAOInterface extends utils.Interface {
   functions: {
+    "askOutpassedRequierements(string)": FunctionFragment;
     "beneficiary()": FunctionFragment;
+    "changeBeneficiary(address,string)": FunctionFragment;
     "creationDate()": FunctionFragment;
     "creator()": FunctionFragment;
+    "currentProposal()": FunctionFragment;
     "dateToBeReleased()": FunctionFragment;
+    "declareAsBeneficiary(address,string)": FunctionFragment;
     "description()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
     "getIsCreator(address)": FunctionFragment;
@@ -42,7 +46,9 @@ export interface GiftCardInterface extends utils.Interface {
     "getParticipants(uint256,uint256)": FunctionFragment;
     "getParticipantsCount()": FunctionFragment;
     "getStatus()": FunctionFragment;
+    "lastProposal(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "proposalBeneficiary()": FunctionFragment;
     "release(address,uint256)": FunctionFragment;
     "releaseAll(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -53,10 +59,14 @@ export interface GiftCardInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "askOutpassedRequierements"
       | "beneficiary"
+      | "changeBeneficiary"
       | "creationDate"
       | "creator"
+      | "currentProposal"
       | "dateToBeReleased"
+      | "declareAsBeneficiary"
       | "description"
       | "getIsBeneficiary"
       | "getIsCreator"
@@ -66,7 +76,9 @@ export interface GiftCardInterface extends utils.Interface {
       | "getParticipants(uint256,uint256)"
       | "getParticipantsCount"
       | "getStatus"
+      | "lastProposal"
       | "owner"
+      | "proposalBeneficiary"
       | "release"
       | "releaseAll"
       | "renounceOwnership"
@@ -76,8 +88,16 @@ export interface GiftCardInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "askOutpassedRequierements",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "beneficiary",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeBeneficiary",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "creationDate",
@@ -85,8 +105,16 @@ export interface GiftCardInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "creator", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "currentProposal",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "dateToBeReleased",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "declareAsBeneficiary",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "description",
@@ -121,7 +149,15 @@ export interface GiftCardInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getStatus", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "lastProposal",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proposalBeneficiary",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "release",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -145,7 +181,15 @@ export interface GiftCardInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "askOutpassedRequierements",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "beneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeBeneficiary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -154,7 +198,15 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "creator", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "currentProposal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "dateToBeReleased",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "declareAsBeneficiary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -190,7 +242,15 @@ export interface GiftCardInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lastProposal",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proposalBeneficiary",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "releaseAll", data: BytesLike): Result;
   decodeFunctionResult(
@@ -209,16 +269,26 @@ export interface GiftCardInterface extends utils.Interface {
 
   events: {
     "AmountTransfered(address,uint256)": EventFragment;
+    "BeneficiaryChanged(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "ParticipantVoted(uint256,address,bool)": EventFragment;
     "Participated(address,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
+    "PropositionClosed(uint256,address)": EventFragment;
+    "PropositionOpened(uint256,address)": EventFragment;
+    "RequirementsOutpassed()": EventFragment;
     "StatusChanged(uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AmountTransfered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeneficiaryChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParticipantVoted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Participated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProperlyCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PropositionClosed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PropositionOpened"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RequirementsOutpassed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StatusChanged"): EventFragment;
 }
 
@@ -234,6 +304,18 @@ export type AmountTransferedEvent = TypedEvent<
 export type AmountTransferedEventFilter =
   TypedEventFilter<AmountTransferedEvent>;
 
+export interface BeneficiaryChangedEventObject {
+  arg0: string;
+  arg1: string;
+}
+export type BeneficiaryChangedEvent = TypedEvent<
+  [string, string],
+  BeneficiaryChangedEventObject
+>;
+
+export type BeneficiaryChangedEventFilter =
+  TypedEventFilter<BeneficiaryChangedEvent>;
+
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
   newOwner: string;
@@ -245,6 +327,19 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface ParticipantVotedEventObject {
+  arg0: BigNumber;
+  arg1: string;
+  arg2: boolean;
+}
+export type ParticipantVotedEvent = TypedEvent<
+  [BigNumber, string, boolean],
+  ParticipantVotedEventObject
+>;
+
+export type ParticipantVotedEventFilter =
+  TypedEventFilter<ParticipantVotedEvent>;
 
 export interface ParticipatedEventObject {
   arg0: string;
@@ -262,6 +357,39 @@ export type ProperlyCreatedEvent = TypedEvent<[], ProperlyCreatedEventObject>;
 
 export type ProperlyCreatedEventFilter = TypedEventFilter<ProperlyCreatedEvent>;
 
+export interface PropositionClosedEventObject {
+  arg0: BigNumber;
+  arg1: string;
+}
+export type PropositionClosedEvent = TypedEvent<
+  [BigNumber, string],
+  PropositionClosedEventObject
+>;
+
+export type PropositionClosedEventFilter =
+  TypedEventFilter<PropositionClosedEvent>;
+
+export interface PropositionOpenedEventObject {
+  arg0: BigNumber;
+  arg1: string;
+}
+export type PropositionOpenedEvent = TypedEvent<
+  [BigNumber, string],
+  PropositionOpenedEventObject
+>;
+
+export type PropositionOpenedEventFilter =
+  TypedEventFilter<PropositionOpenedEvent>;
+
+export interface RequirementsOutpassedEventObject {}
+export type RequirementsOutpassedEvent = TypedEvent<
+  [],
+  RequirementsOutpassedEventObject
+>;
+
+export type RequirementsOutpassedEventFilter =
+  TypedEventFilter<RequirementsOutpassedEvent>;
+
 export interface StatusChangedEventObject {
   arg0: BigNumber;
   arg1: BigNumber;
@@ -273,12 +401,12 @@ export type StatusChangedEvent = TypedEvent<
 
 export type StatusChangedEventFilter = TypedEventFilter<StatusChangedEvent>;
 
-export interface GiftCard extends BaseContract {
+export interface GiftCardDAO extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GiftCardInterface;
+  interface: GiftCardDAOInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -300,13 +428,44 @@ export interface GiftCard extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    askOutpassedRequierements(
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     beneficiary(overrides?: CallOverrides): Promise<[string]>;
+
+    changeBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     creationDate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     creator(overrides?: CallOverrides): Promise<[string]>;
 
+    currentProposal(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+        id: BigNumber;
+        initiator: string;
+        creationDate: BigNumber;
+        proposalType: number;
+        description: string;
+        proposalResult: number;
+        closedDate: BigNumber;
+      }
+    >;
+
     dateToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    declareAsBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
 
@@ -342,7 +501,24 @@ export interface GiftCard extends BaseContract {
 
     getStatus(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    lastProposal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+        id: BigNumber;
+        initiator: string;
+        creationDate: BigNumber;
+        proposalType: number;
+        description: string;
+        proposalResult: number;
+        closedDate: BigNumber;
+      }
+    >;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    proposalBeneficiary(overrides?: CallOverrides): Promise<[string]>;
 
     release(
       _to: PromiseOrValue<string>,
@@ -369,13 +545,44 @@ export interface GiftCard extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  askOutpassedRequierements(
+    _description: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   beneficiary(overrides?: CallOverrides): Promise<string>;
+
+  changeBeneficiary(
+    _beneficiary: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
   creator(overrides?: CallOverrides): Promise<string>;
 
+  currentProposal(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      id: BigNumber;
+      initiator: string;
+      creationDate: BigNumber;
+      proposalType: number;
+      description: string;
+      proposalResult: number;
+      closedDate: BigNumber;
+    }
+  >;
+
   dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+  declareAsBeneficiary(
+    _beneficiary: PromiseOrValue<string>,
+    _description: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   description(overrides?: CallOverrides): Promise<string>;
 
@@ -411,7 +618,24 @@ export interface GiftCard extends BaseContract {
 
   getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
+  lastProposal(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+      id: BigNumber;
+      initiator: string;
+      creationDate: BigNumber;
+      proposalType: number;
+      description: string;
+      proposalResult: number;
+      closedDate: BigNumber;
+    }
+  >;
+
   owner(overrides?: CallOverrides): Promise<string>;
+
+  proposalBeneficiary(overrides?: CallOverrides): Promise<string>;
 
   release(
     _to: PromiseOrValue<string>,
@@ -438,13 +662,44 @@ export interface GiftCard extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    askOutpassedRequierements(
+      _description: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     beneficiary(overrides?: CallOverrides): Promise<string>;
+
+    changeBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
     creator(overrides?: CallOverrides): Promise<string>;
 
+    currentProposal(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+        id: BigNumber;
+        initiator: string;
+        creationDate: BigNumber;
+        proposalType: number;
+        description: string;
+        proposalResult: number;
+        closedDate: BigNumber;
+      }
+    >;
+
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    declareAsBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     description(overrides?: CallOverrides): Promise<string>;
 
@@ -480,7 +735,24 @@ export interface GiftCard extends BaseContract {
 
     getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
+    lastProposal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, string, BigNumber, number, string, number, BigNumber] & {
+        id: BigNumber;
+        initiator: string;
+        creationDate: BigNumber;
+        proposalType: number;
+        description: string;
+        proposalResult: number;
+        closedDate: BigNumber;
+      }
+    >;
+
     owner(overrides?: CallOverrides): Promise<string>;
+
+    proposalBeneficiary(overrides?: CallOverrides): Promise<string>;
 
     release(
       _to: PromiseOrValue<string>,
@@ -512,6 +784,12 @@ export interface GiftCard extends BaseContract {
     ): AmountTransferedEventFilter;
     AmountTransfered(arg0?: null, arg1?: null): AmountTransferedEventFilter;
 
+    "BeneficiaryChanged(address,address)"(
+      arg0?: null,
+      arg1?: null
+    ): BeneficiaryChangedEventFilter;
+    BeneficiaryChanged(arg0?: null, arg1?: null): BeneficiaryChangedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -520,6 +798,17 @@ export interface GiftCard extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "ParticipantVoted(uint256,address,bool)"(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
+    ): ParticipantVotedEventFilter;
+    ParticipantVoted(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
+    ): ParticipantVotedEventFilter;
 
     "Participated(address,uint256)"(
       arg0?: null,
@@ -530,6 +819,21 @@ export interface GiftCard extends BaseContract {
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
 
+    "PropositionClosed(uint256,address)"(
+      arg0?: null,
+      arg1?: null
+    ): PropositionClosedEventFilter;
+    PropositionClosed(arg0?: null, arg1?: null): PropositionClosedEventFilter;
+
+    "PropositionOpened(uint256,address)"(
+      arg0?: null,
+      arg1?: null
+    ): PropositionOpenedEventFilter;
+    PropositionOpened(arg0?: null, arg1?: null): PropositionOpenedEventFilter;
+
+    "RequirementsOutpassed()"(): RequirementsOutpassedEventFilter;
+    RequirementsOutpassed(): RequirementsOutpassedEventFilter;
+
     "StatusChanged(uint256,uint256)"(
       arg0?: null,
       arg1?: null
@@ -538,13 +842,32 @@ export interface GiftCard extends BaseContract {
   };
 
   estimateGas: {
+    askOutpassedRequierements(
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     beneficiary(overrides?: CallOverrides): Promise<BigNumber>;
+
+    changeBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     creationDate(overrides?: CallOverrides): Promise<BigNumber>;
 
     creator(overrides?: CallOverrides): Promise<BigNumber>;
 
+    currentProposal(overrides?: CallOverrides): Promise<BigNumber>;
+
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    declareAsBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -580,7 +903,14 @@ export interface GiftCard extends BaseContract {
 
     getStatus(overrides?: CallOverrides): Promise<BigNumber>;
 
+    lastProposal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    proposalBeneficiary(overrides?: CallOverrides): Promise<BigNumber>;
 
     release(
       _to: PromiseOrValue<string>,
@@ -608,13 +938,32 @@ export interface GiftCard extends BaseContract {
   };
 
   populateTransaction: {
+    askOutpassedRequierements(
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     beneficiary(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    changeBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     creationDate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     creator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    currentProposal(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     dateToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    declareAsBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      _description: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -654,7 +1003,16 @@ export interface GiftCard extends BaseContract {
 
     getStatus(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    lastProposal(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    proposalBeneficiary(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     release(
       _to: PromiseOrValue<string>,
