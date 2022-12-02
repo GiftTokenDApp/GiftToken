@@ -32,9 +32,9 @@ export interface GiftFactoryInterface extends utils.Interface {
   functions: {
     "createCard(string,string,uint256,uint256,address)": FunctionFragment;
     "getLinks(address)": FunctionFragment;
+    "getLinks(address,uint256,uint256)": FunctionFragment;
     "getLinks(address,uint256)": FunctionFragment;
     "getLinksCount(address)": FunctionFragment;
-    "getParticipants(address,uint256,uint256)": FunctionFragment;
     "links(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -45,9 +45,9 @@ export interface GiftFactoryInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "createCard"
       | "getLinks(address)"
+      | "getLinks(address,uint256,uint256)"
       | "getLinks(address,uint256)"
       | "getLinksCount"
-      | "getParticipants"
       | "links"
       | "owner"
       | "renounceOwnership"
@@ -69,20 +69,20 @@ export interface GiftFactoryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getLinks(address,uint256,uint256)",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getLinks(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getLinksCount",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getParticipants",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "links",
@@ -104,15 +104,15 @@ export interface GiftFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getLinks(address,uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLinks(address,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLinksCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getParticipants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "links", data: BytesLike): Result;
@@ -209,6 +209,13 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
+    "getLinks(address,uint256,uint256)"(
+      _visitor: PromiseOrValue<string>,
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     "getLinks(address,uint256)"(
       _visitor: PromiseOrValue<string>,
       _startIndex: PromiseOrValue<BigNumberish>,
@@ -219,13 +226,6 @@ export interface GiftFactory extends BaseContract {
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    getParticipants(
-      _visitor: PromiseOrValue<string>,
-      _startIndex: PromiseOrValue<BigNumberish>,
-      _pageSize: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
 
     links(
       arg0: PromiseOrValue<string>,
@@ -259,6 +259,13 @@ export interface GiftFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
+  "getLinks(address,uint256,uint256)"(
+    _visitor: PromiseOrValue<string>,
+    _startIndex: PromiseOrValue<BigNumberish>,
+    _pageSize: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   "getLinks(address,uint256)"(
     _visitor: PromiseOrValue<string>,
     _startIndex: PromiseOrValue<BigNumberish>,
@@ -269,13 +276,6 @@ export interface GiftFactory extends BaseContract {
     _visitor: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getParticipants(
-    _visitor: PromiseOrValue<string>,
-    _startIndex: PromiseOrValue<BigNumberish>,
-    _pageSize: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
 
   links(
     arg0: PromiseOrValue<string>,
@@ -309,6 +309,13 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string[]>;
 
+    "getLinks(address,uint256,uint256)"(
+      _visitor: PromiseOrValue<string>,
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
     "getLinks(address,uint256)"(
       _visitor: PromiseOrValue<string>,
       _startIndex: PromiseOrValue<BigNumberish>,
@@ -319,13 +326,6 @@ export interface GiftFactory extends BaseContract {
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getParticipants(
-      _visitor: PromiseOrValue<string>,
-      _startIndex: PromiseOrValue<BigNumberish>,
-      _pageSize: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
 
     links(
       arg0: PromiseOrValue<string>,
@@ -378,6 +378,13 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "getLinks(address,uint256,uint256)"(
+      _visitor: PromiseOrValue<string>,
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "getLinks(address,uint256)"(
       _visitor: PromiseOrValue<string>,
       _startIndex: PromiseOrValue<BigNumberish>,
@@ -386,13 +393,6 @@ export interface GiftFactory extends BaseContract {
 
     getLinksCount(
       _visitor: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getParticipants(
-      _visitor: PromiseOrValue<string>,
-      _startIndex: PromiseOrValue<BigNumberish>,
-      _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -429,6 +429,13 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "getLinks(address,uint256,uint256)"(
+      _visitor: PromiseOrValue<string>,
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     "getLinks(address,uint256)"(
       _visitor: PromiseOrValue<string>,
       _startIndex: PromiseOrValue<BigNumberish>,
@@ -437,13 +444,6 @@ export interface GiftFactory extends BaseContract {
 
     getLinksCount(
       _visitor: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getParticipants(
-      _visitor: PromiseOrValue<string>,
-      _startIndex: PromiseOrValue<BigNumberish>,
-      _pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

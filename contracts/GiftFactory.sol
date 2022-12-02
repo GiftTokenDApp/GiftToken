@@ -100,7 +100,7 @@ contract GiftFactory is Ownable {
      * @param _pageSize The page size
      * @return address[]
      */
-    function getParticipants(address _visitor, uint _startIndex, uint _pageSize) external view returns(address[] memory) {
+    function getLinks(address _visitor, uint _startIndex, uint _pageSize) external view returns(address[] memory) {
         uint lastIndex = _startIndex + _pageSize;
         require(lastIndex <= links[_visitor].length, "Read index out of bounds");
 
