@@ -31,17 +31,19 @@ export type ProposalStruct = {
   id: PromiseOrValue<BigNumberish>;
   initiator: PromiseOrValue<string>;
   creationDate: PromiseOrValue<BigNumberish>;
+  closureDate: PromiseOrValue<BigNumberish>;
   proposalType: PromiseOrValue<BigNumberish>;
   description: PromiseOrValue<string>;
   proposalResult: PromiseOrValue<BigNumberish>;
-  closedDate: PromiseOrValue<BigNumberish>;
   approvedCount: PromiseOrValue<BigNumberish>;
   refusedCount: PromiseOrValue<BigNumberish>;
+  closedDate: PromiseOrValue<BigNumberish>;
 };
 
 export type ProposalStructOutput = [
   BigNumber,
   string,
+  BigNumber,
   BigNumber,
   number,
   string,
@@ -53,12 +55,13 @@ export type ProposalStructOutput = [
   id: BigNumber;
   initiator: string;
   creationDate: BigNumber;
+  closureDate: BigNumber;
   proposalType: number;
   description: string;
   proposalResult: number;
-  closedDate: BigNumber;
   approvedCount: BigNumber;
   refusedCount: BigNumber;
+  closedDate: BigNumber;
 };
 
 export interface GiftCardDAOInterface extends utils.Interface {
@@ -72,6 +75,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
     "currentProposal()": FunctionFragment;
     "dateToBeReleased()": FunctionFragment;
     "description()": FunctionFragment;
+    "determinateProposalResult()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
     "getIsCreator(address)": FunctionFragment;
     "getIsParticipant(address)": FunctionFragment;
@@ -105,6 +109,7 @@ export interface GiftCardDAOInterface extends utils.Interface {
       | "currentProposal"
       | "dateToBeReleased"
       | "description"
+      | "determinateProposalResult"
       | "getIsBeneficiary"
       | "getIsCreator"
       | "getIsParticipant"
@@ -158,6 +163,10 @@ export interface GiftCardDAOInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "description",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "determinateProposalResult",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -263,6 +272,10 @@ export interface GiftCardDAOInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "description",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "determinateProposalResult",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -516,6 +529,7 @@ export interface GiftCardDAO extends BaseContract {
         BigNumber,
         string,
         BigNumber,
+        BigNumber,
         number,
         string,
         number,
@@ -526,18 +540,23 @@ export interface GiftCardDAO extends BaseContract {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
+        closureDate: BigNumber;
         proposalType: number;
         description: string;
         proposalResult: number;
-        closedDate: BigNumber;
         approvedCount: BigNumber;
         refusedCount: BigNumber;
+        closedDate: BigNumber;
       }
     >;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
+
+    determinateProposalResult(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     getIsBeneficiary(
       _address: PromiseOrValue<string>,
@@ -586,6 +605,7 @@ export interface GiftCardDAO extends BaseContract {
         BigNumber,
         string,
         BigNumber,
+        BigNumber,
         number,
         string,
         number,
@@ -596,12 +616,13 @@ export interface GiftCardDAO extends BaseContract {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
+        closureDate: BigNumber;
         proposalType: number;
         description: string;
         proposalResult: number;
-        closedDate: BigNumber;
         approvedCount: BigNumber;
         refusedCount: BigNumber;
+        closedDate: BigNumber;
       }
     >;
 
@@ -669,6 +690,7 @@ export interface GiftCardDAO extends BaseContract {
       BigNumber,
       string,
       BigNumber,
+      BigNumber,
       number,
       string,
       number,
@@ -679,18 +701,23 @@ export interface GiftCardDAO extends BaseContract {
       id: BigNumber;
       initiator: string;
       creationDate: BigNumber;
+      closureDate: BigNumber;
       proposalType: number;
       description: string;
       proposalResult: number;
-      closedDate: BigNumber;
       approvedCount: BigNumber;
       refusedCount: BigNumber;
+      closedDate: BigNumber;
     }
   >;
 
   dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
   description(overrides?: CallOverrides): Promise<string>;
+
+  determinateProposalResult(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getIsBeneficiary(
     _address: PromiseOrValue<string>,
@@ -739,6 +766,7 @@ export interface GiftCardDAO extends BaseContract {
       BigNumber,
       string,
       BigNumber,
+      BigNumber,
       number,
       string,
       number,
@@ -749,12 +777,13 @@ export interface GiftCardDAO extends BaseContract {
       id: BigNumber;
       initiator: string;
       creationDate: BigNumber;
+      closureDate: BigNumber;
       proposalType: number;
       description: string;
       proposalResult: number;
-      closedDate: BigNumber;
       approvedCount: BigNumber;
       refusedCount: BigNumber;
+      closedDate: BigNumber;
     }
   >;
 
@@ -822,6 +851,7 @@ export interface GiftCardDAO extends BaseContract {
         BigNumber,
         string,
         BigNumber,
+        BigNumber,
         number,
         string,
         number,
@@ -832,18 +862,21 @@ export interface GiftCardDAO extends BaseContract {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
+        closureDate: BigNumber;
         proposalType: number;
         description: string;
         proposalResult: number;
-        closedDate: BigNumber;
         approvedCount: BigNumber;
         refusedCount: BigNumber;
+        closedDate: BigNumber;
       }
     >;
 
     dateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<string>;
+
+    determinateProposalResult(overrides?: CallOverrides): Promise<void>;
 
     getIsBeneficiary(
       _address: PromiseOrValue<string>,
@@ -892,6 +925,7 @@ export interface GiftCardDAO extends BaseContract {
         BigNumber,
         string,
         BigNumber,
+        BigNumber,
         number,
         string,
         number,
@@ -902,12 +936,13 @@ export interface GiftCardDAO extends BaseContract {
         id: BigNumber;
         initiator: string;
         creationDate: BigNumber;
+        closureDate: BigNumber;
         proposalType: number;
         description: string;
         proposalResult: number;
-        closedDate: BigNumber;
         approvedCount: BigNumber;
         refusedCount: BigNumber;
+        closedDate: BigNumber;
       }
     >;
 
@@ -1037,6 +1072,10 @@ export interface GiftCardDAO extends BaseContract {
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
+    determinateProposalResult(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getIsBeneficiary(
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1144,6 +1183,10 @@ export interface GiftCardDAO extends BaseContract {
     dateToBeReleased(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    determinateProposalResult(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     getIsBeneficiary(
       _address: PromiseOrValue<string>,

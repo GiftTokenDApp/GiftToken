@@ -33,10 +33,26 @@ contract GiftCardDAO is GiftCard {
     event PropositionClosed(uint, uint);
 
     /**
-     * @notice Throws if the card is not completly released
+     * @notice Throws if a new proposal can't be opened
      */
-    modifier isOpenabledProposal() {
+    modifier isOpenableProposal() {
         require(currentProposal.proposalResult != CardProposalResult.Pending, "A proposal is already in progress");
+        _;
+    }
+
+    /**
+     * @notice Throws if voting isn't opened
+     */
+    modifier isVoteOpenedProposal() {
+        require(currentProposal.proposalResult == CardProposalResult.Pending, "Current proposal status not allows voting");
+        _;
+    }
+
+    /**
+     * @notice Throws if the current proposal is closable
+     */
+    modifier isClosableProposal() {
+        require(currentProposal.closureDate > block.timestamp, "Current proposal can't be closed");
         _;
     }
 
@@ -62,7 +78,7 @@ contract GiftCardDAO is GiftCard {
      * @notice Create a proposal to outpass requierements
      * @param _description Role's address
      */
-    function createOutpassedRequierementsProposal(string memory _description) external isCardNotOpened() isOpenabledProposal() {
+    function createOutpassedRequierementsProposal(string memory _description) external isCardNotOpened() isOpenableProposal() {
         require(status < CardStatus.FundingReached || dateToBeReleased > block.timestamp, "Card's requierements are already reached");
 
         proposalBeneficiary = NULLADDRESS;
@@ -73,7 +89,7 @@ contract GiftCardDAO is GiftCard {
      * @notice Create a proposal to declare a beneficiary
      * @param _description Role's address
      */
-    function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenabledProposal() {
+    function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
         require(beneficiary == NULLADDRESS, "A beneficiary already exists");
 
         proposalBeneficiary = _beneficiary;
@@ -84,7 +100,7 @@ contract GiftCardDAO is GiftCard {
      * @notice Create a proposal to change a beneficiary
      * @param _description Role's address
      */
-    function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenabledProposal() {
+    function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
         require(beneficiary != NULLADDRESS, "No beneficiary exists");
 
         proposalBeneficiary = _beneficiary;
@@ -122,7 +138,7 @@ contract GiftCardDAO is GiftCard {
      * @notice Vote for current proposal
      * @param _isApproved Vote
      */
-    function vote(bool _isApproved) external {
+    function vote(bool _isApproved) external isVoteOpenedProposal {
         require(getVote(msg.sender) == uint(VoteResult.Unknown), "You already have vote");
 
         if (_isApproved) {
@@ -136,31 +152,11 @@ contract GiftCardDAO is GiftCard {
     }
 
     /**
-     * @notice Add a proposal
-     * @dev Internal function without access restriction
-     * @param _proposalType Proposal's type
-     * @param _description The description
-     */
-    function addProposal(CardProposalType _proposalType, string memory _description) internal {
-
-        uint8 cpt = 0;
-
-        while (cpt < lastProposals.length-1 && lastProposals[cpt].id > 0) {
-            lastProposals[cpt+1] = lastProposals[cpt];
-            cpt++;
-        }
-
-        lastProposals[0] = currentProposal;
-        currentProposal = Proposal(currentProposal.id++, msg.sender, block.timestamp, _proposalType, _description, CardProposalResult.Pending, 0, 0, 0);
-
-        emit PropositionOpened(currentProposal.id, msg.sender);
-    }
-
-    /**
      * @notice Determinate proposal result
-     * @dev Internal function without access restriction
      */
-    function determinateProposalResult() internal {
+    function determinateProposalResult() external isClosableProposal {
+
+        currentProposal.closedDate = block.timestamp;
 
         if (currentProposal.approvedCount > currentProposal.refusedCount) {
             currentProposal.proposalResult == CardProposalResult.Approved;
@@ -182,11 +178,32 @@ contract GiftCardDAO is GiftCard {
             }
         }
 
-        emit PropositionClosed(currentProposal.id, uint(currentProposal.proposalResult));
-
         if (currentProposal.proposalResult == CardProposalResult.Approved || currentProposal.proposalResult == CardProposalResult.ApprovedWithCreatorWeight) {
             manageProposalAccepted();
         }
+
+        emit PropositionClosed(currentProposal.id, uint(currentProposal.proposalResult));
+    }
+
+    /**
+     * @notice Add a proposal
+     * @dev Internal function without access restriction
+     * @param _proposalType Proposal's type
+     * @param _description The description
+     */
+    function addProposal(CardProposalType _proposalType, string memory _description) internal {
+
+        uint8 cpt = 0;
+
+        while (cpt < lastProposals.length-1 && lastProposals[cpt].id > 0) {
+            lastProposals[cpt+1] = lastProposals[cpt];
+            cpt++;
+        }
+
+        lastProposals[0] = currentProposal;
+        currentProposal = Proposal(currentProposal.id++, msg.sender, block.timestamp, block.timestamp + 2 weeks, _proposalType, _description, CardProposalResult.Pending, 0, 0, 0);
+
+        emit PropositionOpened(currentProposal.id, msg.sender);
     }
 
     /**
