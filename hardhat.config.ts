@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import { HardhatNetworkAccountUserConfig } from "hardhat/types";
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-chai-matchers";
 import { ethers } from 'ethers';
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + '/.env'});

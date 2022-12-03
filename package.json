@@ -41,6 +41,7 @@
     "compile": "npx hardhat compile",
     "deploy-dev": "npx hardhat run scripts/deploy.ts --network localhost",
     "deploy-goerli": "npx hardhat run scripts/deploy.ts --network goerli",
+    "test-hardhat": "npx hardhat test",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
