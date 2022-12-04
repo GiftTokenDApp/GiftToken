@@ -22,8 +22,9 @@ contract GiftFactory is Ownable {
 
     /**
      * @notice Throws if the card exists
+     * @param _card Card's address
      */
-    modifier IsExistingCard(address _card) {
+    modifier isExistingCard(address _card) {
         require(cardsExists[_card], "Card not exists");
         _;
     }

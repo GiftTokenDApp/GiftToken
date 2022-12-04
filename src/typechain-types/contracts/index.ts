@@ -4,3 +4,4 @@
 export type { GiftCard } from "./GiftCard";
 export type { GiftCardDAO } from "./GiftCardDAO";
 export type { GiftFactory } from "./GiftFactory";
+export type { GiftNetwork } from "./GiftNetwork";

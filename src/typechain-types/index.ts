@@ -14,3 +14,5 @@ export type { GiftCardDAO } from "./contracts/GiftCardDAO";
 export { GiftCardDAO__factory } from "./factories/contracts/GiftCardDAO__factory";
 export type { GiftFactory } from "./contracts/GiftFactory";
 export { GiftFactory__factory } from "./factories/contracts/GiftFactory__factory";
+export type { GiftNetwork } from "./contracts/GiftNetwork";
+export { GiftNetwork__factory } from "./factories/contracts/GiftNetwork__factory";
