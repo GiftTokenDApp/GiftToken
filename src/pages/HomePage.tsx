@@ -6,15 +6,17 @@ import HomePageElt from '../components/homePage/HomePageElt';
 import { useModalContext } from '../contexts/ModalContext';
 import CreateCardModal from '../components/modal/CreateCardModal';
 import DisplayCardModal from '../components/modal/DisplayCardModal';
-// import DAppComponent from './DAppComponent';
+import { useDappContext } from '../contexts/DappContext';
 
 function HomePage() {
 
   const { modalContextState, resetModalDisplay } = useModalContext()
+  const { hideEventData } = useDappContext()
 
   const handleCloseModal = useCallback(()=>{
-    resetModalDisplay()
-  },[resetModalDisplay])
+    resetModalDisplay();
+    hideEventData()
+  },[hideEventData, resetModalDisplay])
 
   return (
     <div className="w-full h-full flexJIC flex-col font-poppinsRegular md:gap-6">
@@ -28,7 +30,6 @@ function HomePage() {
             <HomePageElt />
           </div>
       </div>
-      {/* <DAppComponent /> */}
       </div>
       <Footer />
       <AnimatePresence

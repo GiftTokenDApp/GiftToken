@@ -2,7 +2,7 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "./GiftDAO.sol";
+// import "./GiftDAO.sol";
 import "./enumerations/Role.sol";
 import "./enumerations/CardStatus.sol";
 import "./enumerations/CardProposalType.sol";
@@ -18,7 +18,7 @@ contract GiftCard is Ownable {
 
     address internal constant NULLADDRESS = address(0);
 
-    GiftDAO private giftDAO;
+    // GiftDAO private giftDAO;
 
     string public title;
 
@@ -101,13 +101,13 @@ contract GiftCard is Ownable {
         _;
     }
 
-    /**
-     * @notice Throws if the sender is the GiftCard's DAO contract
-     */
-    modifier isDAOContract() {
-        require(msg.sender == address(giftDAO), "Sender isn'nt the DAO contract");
-        _;
-    }
+    // /**
+    //  * @notice Throws if the sender is the GiftCard's DAO contract
+    //  */
+    // modifier isDAOContract() {
+    //     require(msg.sender == address(giftDAO), "Sender isn'nt the DAO contract");
+    //     _;
+    // }
 
     /**
      * @notice Emit if Received value.
@@ -159,7 +159,7 @@ contract GiftCard is Ownable {
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
 
-        giftDAO = new GiftDAO(payable(address(this)));
+        // giftDAO = new GiftDAO(payable(address(this)));
 
         emit ProperlyCreated();
     }
@@ -280,21 +280,21 @@ contract GiftCard is Ownable {
         transfer(_to, _value);
     }
 
-    /**
-     * @notice Set status by DAO
-     * @param _newStatus New status
-     */
-    function setStatusByDAO(CardStatus _newStatus) external isDAOContract isCardNotOpened {
-        changeStatus(_newStatus);
-    }
+    // /**
+    //  * @notice Set status by DAO
+    //  * @param _newStatus New status
+    //  */
+    // function setStatusByDAO(CardStatus _newStatus) external isDAOContract isCardNotOpened {
+    //     changeStatus(_newStatus);
+    // }
 
-    /**
-     * @notice Set beneficiary by DAO
-     * @param _newBeneficiary New beneficiary
-     */
-    function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
-        changeBeneficiary(_newBeneficiary);
-    }
+    // /**
+    //  * @notice Set beneficiary by DAO
+    //  * @param _newBeneficiary New beneficiary
+    //  */
+    // function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
+    //     changeBeneficiary(_newBeneficiary);
+    // }
 
     /**
      * @notice Get if address has role

@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useReducer, useEffect, useState } from "react"
 import DappContext from "./DappContext";
 import { IChildrenProps } from '../../helpers/interfacesHelpers';
-import { initialState, reducer, actions } from "./state";
+import { initialState, reducer } from "./state";
 import { IDappContextProps, StateTypes } from "./interfaces";
 import { ethers } from "ethers";
 import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
@@ -11,8 +11,6 @@ let FactoryAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
-  const [cardAddress, setCardAddress] = useState(null);
-  const [nb, setNb] = useState(0)
   const [error, setError] = useState('');
 
 //   async function getAddress() {
@@ -30,7 +28,6 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
 //     }
 //   }    
 
-  // async function createCard(_title: string, _description: string, _goalToBeReleased: number, _dateToBeReleased: number, _beneficiary: string, _amount: number) {
   async function createCard(newCard: INewCardProps) {
       if(typeof window.ethereum !== 'undefined') {
           try {
@@ -40,12 +37,16 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               }
               const transaction = await dappContextState.giftFactoryContract.connect(dappContextState.signer).createCard(newCard.title, newCard.description, newCard.goal, newCard.releaseDate, newCard.beneficiary, trx);               
               await transaction.wait();
-              console.log('Carté créée.');
-              setNb(nb => nb + 1);
           } catch (err) {
               err && setError(err.toString());
           }
       }
+  }
+
+  const hideEventData = () =>{
+    dappContextDispatch({
+      type: StateTypes.HIDEEVENT,
+    });
   }
 
   const init = useCallback(
@@ -78,6 +79,27 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     };
     tryInit();
   }, [init]);
+
+  useEffect(() => {
+    if (dappContextState.giftFactoryContract) {
+      try {
+        dappContextState.giftFactoryContract.on("CardCreated", (_address: string, _amount: number) => {
+          const lastEvent = {
+            name: "CardCreated",
+            address: _address,
+            amount: _amount / 10**18,
+          }
+          const displayEvent = true;
+          dappContextDispatch({
+            type: StateTypes.UPDATE,
+            payload: { ...dappContextState, lastEvent, displayEvent }
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }, [dappContextState])
 
   // useEffect(() => {
   //   const events = ["chainChanged", "accountsChanged"];
@@ -151,6 +173,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       dappContextState,
       dappContextDispatch,
       createCard,
+      hideEventData,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
