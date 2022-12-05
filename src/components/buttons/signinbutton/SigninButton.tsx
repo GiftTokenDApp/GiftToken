@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { motion } from "framer-motion"
 import ISigninButtonProps from './interface';
 import CircleLoader from '../../loader/CircleLoader';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -36,9 +37,9 @@ const SigninButton: FC<ISigninButtonProps> = ({ title, css }) => {
   }
 
   return (
-    <button type="button" className={btnCss} onClick={() => handleClick()} >
+    <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="button" className={btnCss} onClick={() => handleClick()} >
         { btnState.displayLoader ? <CircleLoader loaderCss={loaderCss} /> : btnState.btnTxt }
-    </button>
+    </motion.button>
   )
 }
 

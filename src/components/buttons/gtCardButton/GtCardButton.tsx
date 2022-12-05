@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import { motion } from "framer-motion"
 import CircleLoader from '../../loader/CircleLoader'
 import IGTCardButtonProps from './interface'
 
@@ -35,9 +36,9 @@ const GtCardButton: FC<IGTCardButtonProps> = ({ title, css, func }) => {
     }
 
   return (
-    <button type="button" className={btnCss} onClick={() => handleClick()} >
+    <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="button" className={btnCss} onClick={() => handleClick()} >
         { btnState.displayLoader ? <CircleLoader loaderCss={loaderCss} /> : btnState.btnTxt }
-    </button>
+    </motion.button>
   )
 }
 
