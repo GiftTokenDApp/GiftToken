@@ -65,6 +65,9 @@ module.exports = {
         'h3-md': ['20px', {
           lineHeight: '30px',
         }],
+      },
+      gridTemplateRows: {
+        '9': 'repeat(8, minmax(0, 1fr))',
       }
     },
   },

@@ -8,10 +8,12 @@ const actions = {
   reset: "RESET",
   update: "UPDATE",
   open: "OPEN",
+  add: "ADD",
 };
 
 const initialState = {
-  modalCardOpen : false,
+  addCardModalOpen : false,
+  displayCardModalOpen : false,
   cssModalCard : cssModalCard,
   cssModalCardDisplay : cssModalCardDisplay,
   cssModalCardHidden : cssModalCardHidden,
@@ -27,7 +29,9 @@ const reducer = (state: IModalContextStateProps, action: StateActions) => {
     case StateTypes.UPDATE:
       return { ...state, ...payload };
     case StateTypes.OPEN:
-      return {...state, modalCardOpen: true};
+      return {...state, displayCardModalOpen: true};
+    case StateTypes.ADD:
+      return {...state, addCardModalOpen: true};
     default:
       throw new Error("Undefined reducer action type");
   }

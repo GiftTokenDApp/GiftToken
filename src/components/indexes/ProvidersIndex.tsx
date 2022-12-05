@@ -2,13 +2,13 @@ import React from 'react';
 import { IChildrenProps as IProvidersIndexProps } from '../../helpers/interfacesHelpers'
 import MainContextProvider from "../../contexts/MainContext/MainContextProvider"
 import AuthContextProvider from '../../contexts/AuthContext';
-import EthContextProvider from '../../contexts/EthContext/EthContextProvider';
+import DappContextProvider from '../../contexts/DappContext/DappContextProvider';
 import ModalContextProvider from '../../contexts/ModalContext/ModalContextProvider';
 
 const ProvidersIndex: React.FC<IProvidersIndexProps> = ({ children }) => {
 
 return (
-    <EthContextProvider>
+    <DappContextProvider>
         <AuthContextProvider>
         <MainContextProvider>
             <ModalContextProvider>
@@ -16,7 +16,7 @@ return (
             </ModalContextProvider>
         </MainContextProvider>
         </AuthContextProvider>
-    </EthContextProvider>
+    </DappContextProvider>
     )
 }
 

@@ -6,7 +6,7 @@ import * as yup from "yup";
 import IGiftCardProps from "../giftCard/interface";
 
 const schema = yup.object({
-    amount: yup.number().min(0.1,"Vous devez donner au moins 0.1 ether").required("Vous ne pouvez pas ne rien donner"),
+    amount: yup.number().min(10 ** 15,"Vous devez donner au moins 0.001 ether").required("Vous ne pouvez pas ne rien donner"),
   }).required()
 
   type formProp = {
@@ -19,7 +19,7 @@ const schema = yup.object({
   };
   
 
-const UintForm: FC<formProp> = ({ func, currentCard }) => {
+const FundCardForm: FC<formProp> = ({ func, currentCard }) => {
 
     const { register, handleSubmit, setFocus, formState: { errors } } = useForm<UserSubmitForm>({
         resolver: yupResolver(schema)
@@ -77,8 +77,8 @@ const UintForm: FC<formProp> = ({ func, currentCard }) => {
     return (
         <div className="w-[25.5rem] h-44 p-2 flex justify-start items-center flex-col gap-6 mb-4">
             <form className="w-full flexJIC flex-col gap-2 mt-3" onSubmit={handleSubmit(onSubmit)}>
-                <input type="text" {...register("amount")}  role="presentation" autoComplete="off" id="amountInput" placeholder="Valeur" className="w-36 px-3 py-2 mb-3 text-lg rounded-3xl outline-none shadow-xl font-semibold text-neutral-600" />
-                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className='w-44 p-4 bg-slate-500 text-white rounded-full cursor-pointer'>Donner</motion.button>
+                <input type="text" {...register("amount")}  role="presentation" autoComplete="off" id="amountInput" placeholder="Valeur" className="cardInput" />
+                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className='btnForm'>Donner</motion.button>
             </form>
             {
                 errors.amount?.message && <>
@@ -91,4 +91,4 @@ const UintForm: FC<formProp> = ({ func, currentCard }) => {
     )
 }
 
-export default UintForm
+export default FundCardForm

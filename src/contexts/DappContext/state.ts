@@ -1,4 +1,4 @@
-import { IEthContextStateProps, StateActions, StateTypes } from "./interfaces";
+import { IDappContextStateProps, StateActions, StateTypes } from "./interfaces";
 
 const actions = {
   reset: "RESET",
@@ -6,14 +6,13 @@ const actions = {
 };
 
 const initialState = {
-  artifact: null,
-  // web3: null,
   accounts: null,
-  // networkID: null,
-  contract: null,
+  provider: null,
+  giftFactoryContract: null,
+  signer: null, 
 };
 
-const reducer = (state: IEthContextStateProps, action: StateActions) => {
+const reducer = (state: IDappContextStateProps, action: StateActions) => {
   const { type, payload } = action; 
   switch (type) {
     case StateTypes.RESET:

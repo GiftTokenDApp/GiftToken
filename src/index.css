@@ -24,16 +24,22 @@
 }
 
 .btnBase {
-    @apply w-72 flexJIC py-4 px-10 rounded-full text-center text-xl font-medium transition;
+    @apply w-72 flexJIC py-4 px-10 rounded-full text-center text-xl font-medium;
 }
 .btnBaseFull {
     @apply btnBase mt-5;
+}
+.btnForm {
+    @apply w-44 p-4 bg-slate-500 text-xl text-white rounded-full cursor-pointer;
+}
+.cardInput {
+    @apply w-full h-14 px-3 py-2 text-lg rounded-3xl outline-none shadow-xl font-semibold text-neutral-600;
 }
 .btnGray {
     @apply btnBaseFull bg-darkerGray text-lightTurquoise hover:bg-darkGray hover:text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey;
 }
 .btnHeaderGray {
-    @apply btnBase -mt-4 hover:scale-110 hover:bg-darkGray hover:text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey md:mr-6 md:mt-0;
+    @apply btnBase -mt-4 hover:bg-darkGray hover:text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey md:mr-6 md:mt-0;
 }
 .btnHeaderGray-clicked {
     @apply btnBase -mt-4 bg-darkGray text-lighterTurquoise disabled:bg-darkGrey disabled:text-lightGrey md:mr-6 md:mt-0;

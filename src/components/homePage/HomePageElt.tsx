@@ -5,6 +5,7 @@ import { GiftCard } from "../giftCard";
 import GtCardButton from "../buttons/gtCardButton/GtCardButton";
 import { determineClasses } from "./functions";
 import { useMainContext } from "../../contexts/MainContext";
+import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
 
 /*
  * Read the blog post here:
@@ -70,23 +71,27 @@ const CardCarousel = () => {
     }, [giftCardsData])
     
     const GiftCardsElementsList = giftCardsData.map((card, index) => {
-        const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
-            <GiftCard key={card.address} index={card.index} address={card.address} title={card.title} description={card.description} coinsAmount={card.coinsAmount} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} releaseDate={card.releaseDate} />
-        </li>
-        return newLi
+        // const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
+        //     <GiftCard key={card.address} index={card.index} address={card.address} title={card.title} description={card.description} coinsAmount={card.coinsAmount} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} releaseDate={card.releaseDate} />
+        // </li>
+        // return newLi
+        return null
     })
 
     return (
         <div className="w-full h-full flexJIC flex-col gap-6 relative">
-            <ul className="list-none p-0 flex items-center flex-col h-52 mx-24 pr-16 my-auto relative">
-            {
-                    GiftCardsElementsList
+            { GiftCardsElementsList[0] ? <>
+                <ul className="list-none p-0 flex items-center flex-col h-52 mx-24 pr-16 my-auto relative">
+                    {   
+                        GiftCardsElementsList
+                    }
+                </ul>
+                <div className="flexJIC gap-12">
+                    <GtCardButton title="Carte précédente" css="btnGray" func={switchCardToDisplay} />
+                    <GtCardButton title="Carte suivante" css="btnGray" func={switchCardToDisplay} />
+                </div>
+            </> : <GtAddCardButton />
             }
-            </ul>
-            <div className="flexJIC gap-12">
-                <GtCardButton title="Carte précédente" css="btnGray" func={switchCardToDisplay} />
-                <GtCardButton title="Carte suivante" css="btnGray" func={switchCardToDisplay} />
-            </div>
         </div>
     );
 };

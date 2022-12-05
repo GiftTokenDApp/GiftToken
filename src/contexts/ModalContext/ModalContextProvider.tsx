@@ -20,6 +20,11 @@ const ModalContextProvider: FC<IChildrenProps> = ({ children }) => {
       type: StateTypes.OPEN,
     });
   }
+  const addCardModal = () =>{
+    modalContextDispatch({
+      type: StateTypes.ADD,
+    });
+  }
 
   const contextValues: IModalContextProps = useMemo(
     () => ({
@@ -27,6 +32,7 @@ const ModalContextProvider: FC<IChildrenProps> = ({ children }) => {
       modalContextDispatch,
       resetModalDisplay,
       displayCardModal,
+      addCardModal,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
