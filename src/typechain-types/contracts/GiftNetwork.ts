@@ -155,12 +155,14 @@ export interface GiftNetworkInterface extends utils.Interface {
 
   events: {
     "AddedFriend(address,address)": EventFragment;
+    "Funding(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SendedMessage(address)": EventFragment;
     "SettedUser(address,string)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AddedFriend"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Funding"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SendedMessage"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SettedUser"): EventFragment;
@@ -176,6 +178,14 @@ export type AddedFriendEvent = TypedEvent<
 >;
 
 export type AddedFriendEventFilter = TypedEventFilter<AddedFriendEvent>;
+
+export interface FundingEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type FundingEvent = TypedEvent<[string, BigNumber], FundingEventObject>;
+
+export type FundingEventFilter = TypedEventFilter<FundingEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -382,6 +392,9 @@ export interface GiftNetwork extends BaseContract {
       arg1?: null
     ): AddedFriendEventFilter;
     AddedFriend(arg0?: null, arg1?: null): AddedFriendEventFilter;
+
+    "Funding(address,uint256)"(arg0?: null, arg1?: null): FundingEventFilter;
+    Funding(arg0?: null, arg1?: null): FundingEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,

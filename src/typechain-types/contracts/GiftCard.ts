@@ -47,6 +47,8 @@ export interface GiftCardInterface extends utils.Interface {
     "releaseAll(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requierementToBeReleased()": FunctionFragment;
+    "setBeneficiaryDAO(address)": FunctionFragment;
+    "setStatusByDAO(uint8)": FunctionFragment;
     "title()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -71,6 +73,8 @@ export interface GiftCardInterface extends utils.Interface {
       | "releaseAll"
       | "renounceOwnership"
       | "requierementToBeReleased"
+      | "setBeneficiaryDAO"
+      | "setStatusByDAO"
       | "title"
       | "transferOwnership"
   ): FunctionFragment;
@@ -138,6 +142,14 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "requierementToBeReleased",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "setBeneficiaryDAO",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStatusByDAO",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "title", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -201,6 +213,14 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "requierementToBeReleased",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBeneficiaryDAO",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStatusByDAO",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "title", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -209,6 +229,7 @@ export interface GiftCardInterface extends utils.Interface {
 
   events: {
     "AmountTransfered(address,uint256)": EventFragment;
+    "BeneficiaryChanged(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Participated(address,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
@@ -216,6 +237,7 @@ export interface GiftCardInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "AmountTransfered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BeneficiaryChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Participated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProperlyCreated"): EventFragment;
@@ -233,6 +255,18 @@ export type AmountTransferedEvent = TypedEvent<
 
 export type AmountTransferedEventFilter =
   TypedEventFilter<AmountTransferedEvent>;
+
+export interface BeneficiaryChangedEventObject {
+  arg0: string;
+  arg1: string;
+}
+export type BeneficiaryChangedEvent = TypedEvent<
+  [string, string],
+  BeneficiaryChangedEventObject
+>;
+
+export type BeneficiaryChangedEventFilter =
+  TypedEventFilter<BeneficiaryChangedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -361,6 +395,16 @@ export interface GiftCard extends BaseContract {
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    setBeneficiaryDAO(
+      _newBeneficiary: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setStatusByDAO(
+      _newStatus: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     title(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
@@ -430,6 +474,16 @@ export interface GiftCard extends BaseContract {
 
   requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
+  setBeneficiaryDAO(
+    _newBeneficiary: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setStatusByDAO(
+    _newStatus: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   title(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -497,6 +551,16 @@ export interface GiftCard extends BaseContract {
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setBeneficiaryDAO(
+      _newBeneficiary: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setStatusByDAO(
+      _newStatus: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     title(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
@@ -511,6 +575,12 @@ export interface GiftCard extends BaseContract {
       arg1?: null
     ): AmountTransferedEventFilter;
     AmountTransfered(arg0?: null, arg1?: null): AmountTransferedEventFilter;
+
+    "BeneficiaryChanged(address,address)"(
+      arg0?: null,
+      arg1?: null
+    ): BeneficiaryChangedEventFilter;
+    BeneficiaryChanged(arg0?: null, arg1?: null): BeneficiaryChangedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -599,6 +669,16 @@ export interface GiftCard extends BaseContract {
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setBeneficiaryDAO(
+      _newBeneficiary: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setStatusByDAO(
+      _newStatus: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     title(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -673,6 +753,16 @@ export interface GiftCard extends BaseContract {
 
     requierementToBeReleased(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setBeneficiaryDAO(
+      _newBeneficiary: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setStatusByDAO(
+      _newStatus: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     title(overrides?: CallOverrides): Promise<PopulatedTransaction>;

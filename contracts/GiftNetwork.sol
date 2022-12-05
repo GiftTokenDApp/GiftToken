@@ -18,6 +18,8 @@ contract GiftNetwork is Ownable {
 
     mapping(bytes32 => Message[]) private privateChats;
 
+    event Funding(address, uint);
+
     event SettedUser(address, string);
 
     event AddedFriend(address, address);
@@ -49,6 +51,20 @@ contract GiftNetwork is Ownable {
     modifier isExistingFriendUser(address _friend) {
         require(getUserExists(_friend), "Friend doesn't have an user account");
         _;
+    }
+
+    /**
+     * @notice Emit if Received value.
+     */
+    receive() external payable {
+        emit Funding(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Emit if Received value and data.
+     */
+    fallback() external payable {
+        emit Funding(msg.sender, msg.value);
     }
 
     /**

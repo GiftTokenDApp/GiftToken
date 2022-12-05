@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./GiftCard.sol";
+import "./GiftNetwork.sol";
 import "./enumerations/CardStatus.sol";
 
 /**
@@ -11,6 +12,8 @@ import "./enumerations/CardStatus.sol";
  * @notice You can use this contract for create a gift card factory plateform
  */
 contract GiftFactory is Ownable {
+
+    GiftNetwork private giftNetwork;
 
     mapping(address => bool) private cardsExists;
 
@@ -46,7 +49,9 @@ contract GiftFactory is Ownable {
     /**
      * @notice Construct a card factory
      */
-    constructor() { }
+    constructor() { 
+        giftNetwork = new GiftNetwork();
+    }
 
     /**
      * @notice Create a card

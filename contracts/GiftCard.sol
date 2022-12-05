@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "./GiftDAO.sol";
 import "./enumerations/Role.sol";
 import "./enumerations/CardStatus.sol";
 import "./enumerations/CardProposalType.sol";
@@ -16,6 +17,8 @@ import "./structures/Proposal.sol";
 contract GiftCard is Ownable {
 
     address internal constant NULLADDRESS = address(0);
+
+    GiftDAO private giftDAO;
 
     string public title;
 
@@ -42,6 +45,8 @@ contract GiftCard is Ownable {
     event ProperlyCreated();
     
     event StatusChanged(uint, uint);
+
+    event BeneficiaryChanged(address, address);
 
     event Participated(address, uint);
 
@@ -97,6 +102,14 @@ contract GiftCard is Ownable {
     }
 
     /**
+     * @notice Throws if the sender is the GiftCard's DAO contract
+     */
+    modifier isDAOContract() {
+        require(msg.sender == address(giftDAO), "Sender isn'nt the DAO contract");
+        _;
+    }
+
+    /**
      * @notice Emit if Received value.
      */
     receive() external payable {
@@ -145,6 +158,8 @@ contract GiftCard is Ownable {
 
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
+
+        giftDAO = new GiftDAO(payable(address(this)));
 
         emit ProperlyCreated();
     }
@@ -266,6 +281,22 @@ contract GiftCard is Ownable {
     }
 
     /**
+     * @notice Set status by DAO
+     * @param _newStatus New status
+     */
+    function setStatusByDAO(CardStatus _newStatus) external isDAOContract isCardNotOpened {
+        changeStatus(_newStatus);
+    }
+
+    /**
+     * @notice Set beneficiary by DAO
+     * @param _newBeneficiary New beneficiary
+     */
+    function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
+        changeBeneficiary(_newBeneficiary);
+    }
+
+    /**
      * @notice Get if address has role
      * @dev Internal function without access restriction
      * @param _address Role's address
@@ -290,6 +321,18 @@ contract GiftCard is Ownable {
         status = _newStatus;
 
         emit StatusChanged(uint(_newStatus)-1, uint(_newStatus));
+    }
+
+    /**
+     * @notice Change beneficiary of this card
+     * @param _newBeneficiary New beneficiary
+     */
+    function changeBeneficiary(address _newBeneficiary) internal {
+        require(_newBeneficiary == NULLADDRESS, "A beneficiary address is necessary");
+
+        address oldBeneficiary = beneficiary;
+        beneficiary = _newBeneficiary;
+        emit BeneficiaryChanged(oldBeneficiary, _newBeneficiary);
     }
 
     /**

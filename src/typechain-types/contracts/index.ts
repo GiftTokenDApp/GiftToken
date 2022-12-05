@@ -2,6 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { GiftCard } from "./GiftCard";
-export type { GiftCardDAO } from "./GiftCardDAO";
+export type { GiftDAO } from "./GiftDAO";
 export type { GiftFactory } from "./GiftFactory";
 export type { GiftNetwork } from "./GiftNetwork";

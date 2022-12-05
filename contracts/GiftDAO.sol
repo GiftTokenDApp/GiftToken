@@ -4,6 +4,7 @@ pragma solidity 0.8.17;
 import "./GiftCard.sol";
 import "./enumerations/CardProposalType.sol";
 import "./enumerations/CardProposalResult.sol";
+import "./enumerations/CardStatus.sol";
 import "./enumerations/VoteResult.sol";
 import "./structures/Proposal.sol";
 
@@ -12,7 +13,11 @@ import "./structures/Proposal.sol";
  * @author Fabien D. & Etienne B.
  * @notice You can use this contract for create a base gift card DAO
  */
-contract GiftCardDAO is GiftCard {
+contract GiftDAO {
+
+    address internal constant NULLADDRESS = address(0);
+
+    GiftCard private giftCard;
 
     Proposal public currentProposal;
 
@@ -21,6 +26,8 @@ contract GiftCardDAO is GiftCard {
     Proposal[10] public lastProposals;
 
     mapping(address => mapping(uint => VoteResult)) votes;
+
+    event Funding(address, uint);
 
     event BeneficiaryChanged(address, address);
 
@@ -57,29 +64,42 @@ contract GiftCardDAO is GiftCard {
     }
 
     /**
-     * @notice Construct a card
-     * @param _creator Card's creator address
-     * @param _title Card's title
-     * @param _description Card's title (optional)
-     * @param _requierementToBeReleased Card's requierement value to be released (optional)
-     * @param _dateToBeReleased Card's date value to be released (optional)
-     * @param _beneficiary Card's beneficiary address (optional)
+     * @notice Throws if the card is not opened
      */
-    constructor(
-        address _creator, 
-        string memory _title,
-        string memory _description,
-        uint _requierementToBeReleased,
-        uint _dateToBeReleased,
-        address _beneficiary
-    ) GiftCard(_creator, _title, _description, _requierementToBeReleased, _dateToBeReleased, _beneficiary) payable {}
+    modifier isCardNotOpened() {
+        require(giftCard.getStatus() < uint(CardStatus.PartiallyReleased), "Card is opened");
+        _;
+    }
+
+    /**
+     * @notice Emit if Received value.
+     */
+    receive() external payable {
+        emit Funding(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Emit if Received value and data.
+     */
+    fallback() external payable {
+        emit Funding(msg.sender, msg.value);
+    }
+
+    /**
+     * @notice Construct a gift DAO
+     * @param _giftCard GiftCard's address
+     */
+    constructor(address payable _giftCard) 
+    {
+        giftCard = GiftCard(_giftCard);
+    }
 
     /**
      * @notice Create a proposal to outpass requierements
      * @param _description Role's address
      */
     function createOutpassedRequierementsProposal(string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(status < CardStatus.FundingReached || dateToBeReleased > block.timestamp, "Card's requierements are already reached");
+        require(giftCard.getStatus() < uint(CardStatus.FundingReached) || giftCard.dateToBeReleased() > block.timestamp, "Card's requierements are already reached");
 
         proposalBeneficiary = NULLADDRESS;
         addProposal(CardProposalType.AskOutpassedRequierements, _description);
@@ -90,7 +110,8 @@ contract GiftCardDAO is GiftCard {
      * @param _description Role's address
      */
     function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(beneficiary == NULLADDRESS, "A beneficiary already exists");
+        require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
+        require(giftCard.beneficiary() == NULLADDRESS, "A beneficiary already exists");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.DeclaredBeneficiary, _description);
@@ -101,7 +122,8 @@ contract GiftCardDAO is GiftCard {
      * @param _description Role's address
      */
     function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(beneficiary != NULLADDRESS, "No beneficiary exists");
+        require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
+        require(giftCard.beneficiary() != NULLADDRESS, "No beneficiary exists");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.ChangedBeneficiary, _description);
@@ -165,7 +187,7 @@ contract GiftCardDAO is GiftCard {
             currentProposal.proposalResult == CardProposalResult.Refused;
         }
         else {
-            VoteResult creatorVote = VoteResult(getVote(creator));
+            VoteResult creatorVote = VoteResult(getVote(giftCard.creator()));
 
             if (creatorVote == VoteResult.Approved) {
                 currentProposal.proposalResult == CardProposalResult.ApprovedWithCreatorWeight;
@@ -214,11 +236,11 @@ contract GiftCardDAO is GiftCard {
             
         if (currentProposal.proposalType == CardProposalType.AskOutpassedRequierements) {
             emit RequirementsOutpassed();
-            status = CardStatus.RequirementsOutpassed;
+            // giftCard.status = CardStatus.RequirementsOutpassed;
         }
         else {
-            emit BeneficiaryChanged(beneficiary, proposalBeneficiary);
-            beneficiary = proposalBeneficiary;
+            emit BeneficiaryChanged(giftCard.beneficiary(), proposalBeneficiary);
+            //giftCard.beneficiary = proposalBeneficiary;
         }
     }
 }
