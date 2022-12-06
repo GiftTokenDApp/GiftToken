@@ -424,32 +424,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_newBeneficiary",
-        type: "address",
-      },
-    ],
-    name: "setBeneficiaryDAO",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "enum CardStatus",
-        name: "_newStatus",
-        type: "uint8",
-      },
-    ],
-    name: "setStatusByDAO",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "title",
     outputs: [

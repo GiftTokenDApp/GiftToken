@@ -20,6 +20,7 @@ const ModalContextProvider: FC<IChildrenProps> = ({ children }) => {
       type: StateTypes.OPEN,
     });
   }
+
   const addCardModal = () =>{
     modalContextDispatch({
       type: StateTypes.ADD,
