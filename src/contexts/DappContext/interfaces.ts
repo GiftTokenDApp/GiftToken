@@ -5,7 +5,8 @@ import { IChildrenProps } from "../../helpers/interfacesHelpers";
 export enum StateTypes {
     RESET = 'RESET',
     UPDATE = 'UPDATE',
-    HIDEEVENT = 'HIDEEVENT',
+    HIDE_EVENT = 'HIDE_EVENT',
+    SET_CARDS_LIST = 'SET_CARDS_LIST',
 };
 
 export type IDappContextStateProps = {
@@ -19,6 +20,7 @@ export type IDappContextStateProps = {
         amount: number | null,
     },
     displayEvent?: boolean,
+    cardsList?: string[],
 }
 
 export type StateActions = {
@@ -31,4 +33,5 @@ export interface IDappContextProps extends IChildrenProps {
     get dappContextDispatch(): Dispatch<StateActions>;
     createCard(newCard: INewCardProps): Promise<void>;
     hideEventData(): void;
+    getCardsAddressesList(): void;
 }

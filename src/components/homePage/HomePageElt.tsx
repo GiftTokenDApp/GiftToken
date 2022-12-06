@@ -6,6 +6,7 @@ import GtCardButton from "../buttons/gtCardButton/GtCardButton";
 import { determineClasses } from "./functions";
 import { useMainContext } from "../../contexts/MainContext";
 import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
+import { useDappContext } from "../../contexts/DappContext";
 
 /*
  * Read the blog post here:
@@ -15,6 +16,8 @@ import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
 const CardCarousel = () => {
 
     const { mainContextState , updateCurrentCard, loadCards } = useMainContext();
+    const { dappContextState } = useDappContext();
+    const [cardAddressesList, setCardAddressesList] = useState<string[]>([]);
 
     const [indexes, setIndexes] = useState({
         previousIndex: giftCardsData.length - 1,
@@ -70,26 +73,42 @@ const CardCarousel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [giftCardsData])
     
-    const GiftCardsElementsList = giftCardsData.map((card, index) => {
-        // const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
-        //     <GiftCard key={card.address} index={card.index} address={card.address} title={card.title} description={card.description} coinsAmount={card.coinsAmount} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} releaseDate={card.releaseDate} />
-        // </li>
-        // return newLi
-        return null
+    const GiftCardsElementsList = cardAddressesList?.map((card, index) => {
+        const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
+            <GiftCard key={card} index={giftCardsData[0].index} address={card} title={giftCardsData[0].title} description={giftCardsData[0].description} coinsAmount={giftCardsData[0].coinsAmount} creator={giftCardsData[0].creator} funders={giftCardsData[0].funders} beneficiary={giftCardsData[0].beneficiary} releaseDate={giftCardsData[0].releaseDate} />
+        </li>
+        return newLi
     })
+    // const GiftCardsElementsList = giftCardsData.map((card, index) => {
+    //     const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
+    //         <GiftCard key={card.address} index={card.index} address={card.address} title={card.title} description={card.description} coinsAmount={card.coinsAmount} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} releaseDate={card.releaseDate} />
+    //     </li>
+    //     return newLi
+    // })
+
+    useEffect(() => {
+        dappContextState.cardsList && setCardAddressesList(dappContextState.cardsList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dappContextState.cardsList])
+    
 
     return (
         <div className="w-full h-full flexJIC flex-col gap-6 relative">
-            { GiftCardsElementsList[0] ? <>
+            {/* {  
+                dappContextState.cardsList
+            } */}
+            { GiftCardsElementsList && GiftCardsElementsList[0] ? <>
                 <ul className="list-none p-0 flex items-center flex-col h-52 mx-24 pr-16 my-auto relative">
                     {   
                         GiftCardsElementsList
                     }
                 </ul>
-                <div className="flexJIC gap-12">
-                    <GtCardButton title="Carte précédente" css="btnGray" func={switchCardToDisplay} />
-                    <GtCardButton title="Carte suivante" css="btnGray" func={switchCardToDisplay} />
-                </div>
+                {
+                    GiftCardsElementsList && GiftCardsElementsList.length > 1 && <div className="flexJIC gap-12">
+                        <GtCardButton title="Carte précédente" css="btnGray" func={switchCardToDisplay} />
+                        <GtCardButton title="Carte suivante" css="btnGray" func={switchCardToDisplay} />
+                    </div>
+                }
             </> : <GtAddCardButton />
             }
         </div>

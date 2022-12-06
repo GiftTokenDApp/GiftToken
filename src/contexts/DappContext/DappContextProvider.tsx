@@ -13,20 +13,22 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState('');
 
-//   async function getAddress() {
-//     if(typeof window.ethereum !== 'undefined') {
-//       const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
-//       const provider = new ethers.providers.Web3Provider(window.ethereum);
-//       const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);        
-//       try {
-//           const value = await contract.links(accounts[0],nb);
-//           console.log(value.toString());
-//           setCardAddress(value);
-//       } catch (err) {
-//           err && setError(err.toString());
-//       }
-//     }
-//   }    
+  // const cardsList = await dappContextState.giftFactoryContract.getLinks(dappContextState.accounts[0]);     
+
+  async function getCardsAddressesList() {
+    if(typeof window.ethereum !== 'undefined') {      
+      try {  
+          const cardsList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.accounts[0]);           
+          dappContextDispatch({
+            type: StateTypes.SET_CARDS_LIST,
+            payload: {...dappContextState, cardsList: cardsList},
+          });
+          // setCardAddress(value);
+      } catch (err) {
+          err && setError(err.toString());
+      }
+    }
+  }    
 
   async function createCard(newCard: INewCardProps) {
       if(typeof window.ethereum !== 'undefined') {
@@ -45,7 +47,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
 
   const hideEventData = () =>{
     dappContextDispatch({
-      type: StateTypes.HIDEEVENT,
+      type: StateTypes.HIDE_EVENT,
     });
   }
 
@@ -94,6 +96,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             type: StateTypes.UPDATE,
             payload: { ...dappContextState, lastEvent, displayEvent }
           });
+          getCardsAddressesList()
         });
       } catch (err) {
         console.error(err);
@@ -174,6 +177,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       dappContextDispatch,
       createCard,
       hideEventData,
+      getCardsAddressesList,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

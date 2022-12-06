@@ -3,7 +3,8 @@ import { IDappContextStateProps, StateActions, StateTypes } from "./interfaces";
 const actions = {
   reset: "RESET",
   update: "UPDATE",
-  hideevent: "HIDEEVENT",
+  hide_event: "HIDE_EVENT",
+  set_cards_list: "SET_CARDS_LIST",
 };
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
     amount: null,
   },
   displayEvent: false,
+  cardsList: [],
 };
 
 const reducer = (state: IDappContextStateProps, action: StateActions) => {
@@ -26,8 +28,10 @@ const reducer = (state: IDappContextStateProps, action: StateActions) => {
       return { ...state, ...initialState };
     case StateTypes.UPDATE:
       return { ...state, ...payload };
-    case StateTypes.HIDEEVENT:
+    case StateTypes.HIDE_EVENT:
       return {...state, displayEvent: false};
+    case StateTypes.SET_CARDS_LIST:
+      return {...state, cardsList: payload?.cardsList};
     default:
       throw new Error("Undefined reducer action type");
   }
