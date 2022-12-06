@@ -57,7 +57,7 @@ interface IGiftNetwork {
     function sendMessage(address _to, string calldata _message) external;
 
     /**
-     * @notice Read a message
+     * @notice Read messages from an another user
      * @param _from Sender's address
      * @return Message[]
      */

@@ -147,7 +147,7 @@ contract GiftNetwork is Ownable, IGiftNetwork {
     }
 
     /**
-     * @notice Read a message
+     * @notice Read messages from an another user
      * @param _from Sender's address
      * @return Message[]
      */

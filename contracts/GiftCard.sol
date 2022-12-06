@@ -41,7 +41,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     address[] private participants;
 
-    Message[] private privateChats;
+    Message[] private communChat;
 
     mapping(address => bool[3]) roles;
 
@@ -82,6 +82,14 @@ contract GiftCard is Ownable, IGiftCard {
      */
     modifier isBeneficiary() {
         require(getIsBeneficiary(msg.sender), "You're not the beneficiary");
+        _;
+    }
+
+    /**
+     * @notice Throws if the sender has an network's user account
+     */
+    modifier isExistingSenderUser() {
+        require(giftNetwork.getUserExists(msg.sender), "Sender doesn't have an user account");
         _;
     }
 
@@ -253,7 +261,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     /**
      * @notice Get participants's list after a start index
-     * @param _startIndex The Start index
+     * @param _startIndex The start index
      * @return address[]
      */
     function getParticipants(uint _startIndex) external view returns(address[] memory) {
@@ -271,7 +279,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     /**
      * @notice Get participants's list with pagination
-     * @param _startIndex The Start index
+     * @param _startIndex The start index
      * @param _pageSize The page size
      * @return address[]
      */
@@ -320,6 +328,63 @@ contract GiftCard is Ownable, IGiftCard {
      */
     function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
         changeBeneficiary(_newBeneficiary);
+    }
+
+    /**
+     * @notice Send a message
+     * @param _message Message
+     */
+    function sendMessage(string calldata _message) isExistingSenderUser external {
+
+        Message memory message = Message(msg.sender, block.timestamp, _message);
+        communChat.push(message);
+
+        emit SendedMessage(msg.sender);
+    }
+
+    /**
+     * @notice Read messages from commun chat
+     * @return Message[]
+     */
+    function readMessage() external view returns(Message[] memory) {
+        return communChat;
+    }
+
+    /**
+     * @notice Read messages from commun chat after a start index
+     * @param _startIndex The start index
+     * @return Message[]
+     */
+    function readMessage(uint _startIndex) external view returns(Message[] memory) {
+
+        require(_startIndex <= communChat.length, "Read index out of bounds");
+
+        Message[] memory result = new Message[](participants.length-_startIndex);
+
+        for (uint cpt = _startIndex; cpt < participants.length; cpt++) {
+            result[cpt] = communChat[_startIndex + cpt];
+        }
+
+        return result;
+    }
+
+    /**
+     * @notice Read messages from commun chat with pagination
+     * @param _startIndex The start index
+     * @param _pageSize The page size
+     * @return Message[]
+     */
+    function readMessage(uint _startIndex, uint _pageSize) external view returns(Message[] memory) {
+        uint lastIndex = _startIndex + _pageSize;
+        require(lastIndex <= participants.length, "Read index out of bounds");
+
+        Message[] memory result = new Message[](_pageSize);
+
+        for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
+            result[cpt] = communChat[_startIndex + cpt];
+        }
+
+        return result;
     }
 
     /**

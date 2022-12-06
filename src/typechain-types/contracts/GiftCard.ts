@@ -27,6 +27,18 @@ import type {
   PromiseOrValue,
 } from "../common";
 
+export type MessageStruct = {
+  sender: PromiseOrValue<string>;
+  sendDate: PromiseOrValue<BigNumberish>;
+  message: PromiseOrValue<string>;
+};
+
+export type MessageStructOutput = [string, BigNumber, string] & {
+  sender: string;
+  sendDate: BigNumber;
+  message: string;
+};
+
 export interface GiftCardInterface extends utils.Interface {
   functions: {
     "creationDate()": FunctionFragment;
@@ -43,10 +55,14 @@ export interface GiftCardInterface extends utils.Interface {
     "getParticipantsCount()": FunctionFragment;
     "getStatus()": FunctionFragment;
     "owner()": FunctionFragment;
+    "readMessage()": FunctionFragment;
+    "readMessage(uint256,uint256)": FunctionFragment;
+    "readMessage(uint256)": FunctionFragment;
     "release(address,uint256)": FunctionFragment;
     "releaseAll(address)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requierementToBeReleased()": FunctionFragment;
+    "sendMessage(string)": FunctionFragment;
     "setBeneficiaryDAO(address)": FunctionFragment;
     "setStatusByDAO(uint8)": FunctionFragment;
     "title()": FunctionFragment;
@@ -69,10 +85,14 @@ export interface GiftCardInterface extends utils.Interface {
       | "getParticipantsCount"
       | "getStatus"
       | "owner"
+      | "readMessage()"
+      | "readMessage(uint256,uint256)"
+      | "readMessage(uint256)"
       | "release"
       | "releaseAll"
       | "renounceOwnership"
       | "requierementToBeReleased"
+      | "sendMessage"
       | "setBeneficiaryDAO"
       | "setStatusByDAO"
       | "title"
@@ -130,6 +150,18 @@ export interface GiftCardInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getStatus", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "readMessage()",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "readMessage(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "readMessage(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "release",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -144,6 +176,10 @@ export interface GiftCardInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "requierementToBeReleased",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sendMessage",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setBeneficiaryDAO",
@@ -206,6 +242,18 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "readMessage()",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "readMessage(uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "readMessage(uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "release", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "releaseAll", data: BytesLike): Result;
   decodeFunctionResult(
@@ -214,6 +262,10 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requierementToBeReleased",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sendMessage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -390,6 +442,21 @@ export interface GiftCard extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    "readMessage()"(
+      overrides?: CallOverrides
+    ): Promise<[MessageStructOutput[]]>;
+
+    "readMessage(uint256,uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[MessageStructOutput[]]>;
+
+    "readMessage(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[MessageStructOutput[]]>;
+
     release(
       _to: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -406,6 +473,11 @@ export interface GiftCard extends BaseContract {
     ): Promise<ContractTransaction>;
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    sendMessage(
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     setBeneficiaryDAO(
       _newBeneficiary: PromiseOrValue<string>,
@@ -469,6 +541,19 @@ export interface GiftCard extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  "readMessage()"(overrides?: CallOverrides): Promise<MessageStructOutput[]>;
+
+  "readMessage(uint256,uint256)"(
+    _startIndex: PromiseOrValue<BigNumberish>,
+    _pageSize: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<MessageStructOutput[]>;
+
+  "readMessage(uint256)"(
+    _startIndex: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<MessageStructOutput[]>;
+
   release(
     _to: PromiseOrValue<string>,
     _value: PromiseOrValue<BigNumberish>,
@@ -485,6 +570,11 @@ export interface GiftCard extends BaseContract {
   ): Promise<ContractTransaction>;
 
   requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+  sendMessage(
+    _message: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   setBeneficiaryDAO(
     _newBeneficiary: PromiseOrValue<string>,
@@ -548,6 +638,19 @@ export interface GiftCard extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    "readMessage()"(overrides?: CallOverrides): Promise<MessageStructOutput[]>;
+
+    "readMessage(uint256,uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<MessageStructOutput[]>;
+
+    "readMessage(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<MessageStructOutput[]>;
+
     release(
       _to: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -562,6 +665,11 @@ export interface GiftCard extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sendMessage(
+      _message: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setBeneficiaryDAO(
       _newBeneficiary: PromiseOrValue<string>,
@@ -667,6 +775,19 @@ export interface GiftCard extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    "readMessage()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "readMessage(uint256,uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "readMessage(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     release(
       _to: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -683,6 +804,11 @@ export interface GiftCard extends BaseContract {
     ): Promise<BigNumber>;
 
     requierementToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sendMessage(
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     setBeneficiaryDAO(
       _newBeneficiary: PromiseOrValue<string>,
@@ -753,6 +879,19 @@ export interface GiftCard extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    "readMessage()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "readMessage(uint256,uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      _pageSize: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "readMessage(uint256)"(
+      _startIndex: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     release(
       _to: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -770,6 +909,11 @@ export interface GiftCard extends BaseContract {
 
     requierementToBeReleased(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    sendMessage(
+      _message: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setBeneficiaryDAO(
