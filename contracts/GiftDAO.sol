@@ -1,23 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "./GiftCard.sol";
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./enumerations/CardProposalType.sol";
 import "./enumerations/CardProposalResult.sol";
-import "./enumerations/CardStatus.sol";
 import "./enumerations/VoteResult.sol";
-import "./structures/Proposal.sol";
+import "./interfaces/IGiftCard.sol";
+import "./interfaces/IGiftDAO.sol";
 
 /**
  * @title Contract for a Gift card with DAO
  * @author Fabien D. & Etienne B.
- * @notice You can use this contract for create a base gift card DAO
+ * @notice You can use this contract to create a base gift card DAO
  */
-contract GiftDAO {
+contract GiftDAO is Ownable, IGiftDAO {
 
     address internal constant NULLADDRESS = address(0);
 
-    GiftCard private giftCard;
+    IGiftCard private giftCard;
 
     Proposal public currentProposal;
 
@@ -91,7 +91,7 @@ contract GiftDAO {
      */
     constructor(address payable _giftCard) 
     {
-        giftCard = GiftCard(_giftCard);
+        giftCard = IGiftCard(_giftCard);
     }
 
     /**
@@ -99,7 +99,7 @@ contract GiftDAO {
      * @param _description Role's address
      */
     function createOutpassedRequierementsProposal(string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(giftCard.getStatus() < uint(CardStatus.FundingReached) || giftCard.dateToBeReleased() > block.timestamp, "Card's requierements are already reached");
+        require(giftCard.getStatus() < uint(CardStatus.FundingReached) || giftCard.getDateToBeReleased() > block.timestamp, "Card's requierements are already reached");
 
         proposalBeneficiary = NULLADDRESS;
         addProposal(CardProposalType.AskOutpassedRequierements, _description);
@@ -111,7 +111,7 @@ contract GiftDAO {
      */
     function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
         require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
-        require(giftCard.beneficiary() == NULLADDRESS, "A beneficiary already exists");
+        require(giftCard.getBeneficiary() == NULLADDRESS, "A beneficiary already exists");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.DeclaredBeneficiary, _description);
@@ -123,7 +123,7 @@ contract GiftDAO {
      */
     function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
         require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
-        require(giftCard.beneficiary() != NULLADDRESS, "No beneficiary exists");
+        require(giftCard.getBeneficiary() != NULLADDRESS, "No beneficiary exists");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.ChangedBeneficiary, _description);
@@ -187,7 +187,7 @@ contract GiftDAO {
             currentProposal.proposalResult == CardProposalResult.Refused;
         }
         else {
-            VoteResult creatorVote = VoteResult(getVote(giftCard.creator()));
+            VoteResult creatorVote = VoteResult(getVote(giftCard.getCreator()));
 
             if (creatorVote == VoteResult.Approved) {
                 currentProposal.proposalResult == CardProposalResult.ApprovedWithCreatorWeight;
@@ -239,7 +239,7 @@ contract GiftDAO {
             // giftCard.status = CardStatus.RequirementsOutpassed;
         }
         else {
-            emit BeneficiaryChanged(giftCard.beneficiary(), proposalBeneficiary);
+            emit BeneficiaryChanged(giftCard.getBeneficiary(), proposalBeneficiary);
             //giftCard.beneficiary = proposalBeneficiary;
         }
     }

@@ -32,6 +32,18 @@ declare module "hardhat/types/runtime" {
       name: "GiftNetwork",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GiftNetwork__factory>;
+    getContractFactory(
+      name: "IGiftCard",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGiftCard__factory>;
+    getContractFactory(
+      name: "IGiftDAO",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGiftDAO__factory>;
+    getContractFactory(
+      name: "IGiftNetwork",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IGiftNetwork__factory>;
 
     getContractAt(
       name: "Ownable",
@@ -58,6 +70,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.GiftNetwork>;
+    getContractAt(
+      name: "IGiftCard",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGiftCard>;
+    getContractAt(
+      name: "IGiftDAO",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGiftDAO>;
+    getContractAt(
+      name: "IGiftNetwork",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IGiftNetwork>;
 
     // default types
     getContractFactory(

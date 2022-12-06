@@ -2,23 +2,23 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "./GiftDAO.sol";
 import "./enumerations/Role.sol";
-import "./enumerations/CardStatus.sol";
 import "./enumerations/CardProposalType.sol";
 import "./enumerations/CardProposalResult.sol";
+import "./interfaces/IGiftCard.sol";
+import "./interfaces/IGiftDAO.sol";
 import "./structures/Proposal.sol";
 
 /**
  * @title Contract for Gift card
  * @author Fabien D. & Etienne B.
- * @notice You can use this contract for create a gift card 
+ * @notice You can use this contract to create a gift card 
  */
-contract GiftCard is Ownable {
+contract GiftCard is Ownable, IGiftCard {
 
     address internal constant NULLADDRESS = address(0);
 
-    GiftDAO private giftDAO;
+    IGiftDAO private giftDAO;
 
     string public title;
 
@@ -28,19 +28,19 @@ contract GiftCard is Ownable {
 
     uint256 public requierementToBeReleased;
 
-    uint256 public dateToBeReleased;
+    uint256 private dateToBeReleased;
 
-    address public creator;
+    address private creator;
 
-    address public beneficiary;
+    address private beneficiary;
 
-    address[] internal participants;
+    address[] private participants;
 
     mapping(address => bool[3]) roles;
 
     mapping(address => uint) holdings;
 
-    CardStatus internal status;
+    CardStatus private status;
 
     event ProperlyCreated();
     
@@ -159,17 +159,9 @@ contract GiftCard is Ownable {
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
 
-        giftDAO = new GiftDAO(payable(address(this)));
+        // addressDAO = address(new GiftDAO(payable(address(this))));
 
         emit ProperlyCreated();
-    }
-
-    /**
-     * @notice Get card status
-     * @return uint
-     */
-    function getStatus() public view returns(uint) {
-        return uint(status);
     }
 
     /**
@@ -200,13 +192,35 @@ contract GiftCard is Ownable {
     }
 
     /**
-     * @notice Add a role for an adress
-     * @dev Internal function without access restriction
-     * @param _address Role's address
-     * @param _role The role
+     * @notice Get card's status
+     * @return uint
      */
-    function addRole(address _address, Role _role) internal {
-        roles[_address][uint(_role)-1] = true;
+    function getStatus() public view returns(uint) {
+        return uint(status);
+    }
+
+    /**
+     * @notice Get card's date to be released
+     * @return uint
+     */
+    function getDateToBeReleased() external view returns(uint) {
+        return dateToBeReleased;
+    }
+
+    /**
+     * @notice Get card's creator
+     * @return address
+     */
+    function getCreator() external view returns(address) {
+        return creator;
+    }
+
+    /**
+     * @notice Get card's beneficiary
+     * @return address
+     */
+    function getBeneficiary() external view returns(address) {
+        return beneficiary;
     }
 
     /**
@@ -333,6 +347,16 @@ contract GiftCard is Ownable {
         address oldBeneficiary = beneficiary;
         beneficiary = _newBeneficiary;
         emit BeneficiaryChanged(oldBeneficiary, _newBeneficiary);
+    }
+
+    /**
+     * @notice Add a role for an adress
+     * @dev Internal function without access restriction
+     * @param _address Role's address
+     * @param _role The role
+     */
+    function addRole(address _address, Role _role) internal {
+        roles[_address][uint(_role)-1] = true;
     }
 
     /**

@@ -74,7 +74,10 @@ export interface GiftDAOInterface extends utils.Interface {
     "getProposals()": FunctionFragment;
     "getVote(address)": FunctionFragment;
     "lastProposals(uint256)": FunctionFragment;
+    "owner()": FunctionFragment;
     "proposalBeneficiary()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "vote(bool)": FunctionFragment;
   };
 
@@ -88,7 +91,10 @@ export interface GiftDAOInterface extends utils.Interface {
       | "getProposals"
       | "getVote"
       | "lastProposals"
+      | "owner"
       | "proposalBeneficiary"
+      | "renounceOwnership"
+      | "transferOwnership"
       | "vote"
   ): FunctionFragment;
 
@@ -124,9 +130,18 @@ export interface GiftDAOInterface extends utils.Interface {
     functionFragment: "lastProposals",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "proposalBeneficiary",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "vote",
@@ -162,8 +177,17 @@ export interface GiftDAOInterface extends utils.Interface {
     functionFragment: "lastProposals",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proposalBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "vote", data: BytesLike): Result;
@@ -171,6 +195,7 @@ export interface GiftDAOInterface extends utils.Interface {
   events: {
     "BeneficiaryChanged(address,address)": EventFragment;
     "Funding(address,uint256)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
     "ParticipantVoted(uint256,address,bool)": EventFragment;
     "PropositionClosed(uint256,uint256)": EventFragment;
     "PropositionOpened(uint256,address)": EventFragment;
@@ -179,6 +204,7 @@ export interface GiftDAOInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "BeneficiaryChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Funding"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParticipantVoted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PropositionClosed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PropositionOpened"): EventFragment;
@@ -204,6 +230,18 @@ export interface FundingEventObject {
 export type FundingEvent = TypedEvent<[string, BigNumber], FundingEventObject>;
 
 export type FundingEventFilter = TypedEventFilter<FundingEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface ParticipantVotedEventObject {
   arg0: BigNumber;
@@ -363,7 +401,18 @@ export interface GiftDAO extends BaseContract {
       }
     >;
 
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
     proposalBeneficiary(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     vote(
       _isApproved: PromiseOrValue<boolean>,
@@ -456,7 +505,18 @@ export interface GiftDAO extends BaseContract {
     }
   >;
 
+  owner(overrides?: CallOverrides): Promise<string>;
+
   proposalBeneficiary(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   vote(
     _isApproved: PromiseOrValue<boolean>,
@@ -547,7 +607,16 @@ export interface GiftDAO extends BaseContract {
       }
     >;
 
+    owner(overrides?: CallOverrides): Promise<string>;
+
     proposalBeneficiary(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     vote(
       _isApproved: PromiseOrValue<boolean>,
@@ -564,6 +633,15 @@ export interface GiftDAO extends BaseContract {
 
     "Funding(address,uint256)"(arg0?: null, arg1?: null): FundingEventFilter;
     Funding(arg0?: null, arg1?: null): FundingEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
 
     "ParticipantVoted(uint256,address,bool)"(
       arg0?: null,
@@ -628,7 +706,18 @@ export interface GiftDAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
     proposalBeneficiary(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     vote(
       _isApproved: PromiseOrValue<boolean>,
@@ -672,8 +761,19 @@ export interface GiftDAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     proposalBeneficiary(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     vote(

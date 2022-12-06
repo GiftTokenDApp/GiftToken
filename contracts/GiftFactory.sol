@@ -5,6 +5,8 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "./GiftCard.sol";
 import "./GiftNetwork.sol";
 import "./enumerations/CardStatus.sol";
+import "./interfaces/IGiftCard.sol";
+import "./interfaces/IGiftNetwork.sol";
 
 /**
  * @title Contract for GiftFactory
@@ -13,7 +15,7 @@ import "./enumerations/CardStatus.sol";
  */
 contract GiftFactory is Ownable {
 
-    GiftNetwork private giftNetwork;
+    IGiftNetwork private giftNetwork;
 
     mapping(address => bool) private cardsExists;
 

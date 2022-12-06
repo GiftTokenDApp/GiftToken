@@ -2,17 +2,14 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "./GiftCard.sol";
-import "./enumerations/CardStatus.sol";
-import "./structures/Message.sol";
-import "./structures/User.sol";
+import "./interfaces/IGiftNetwork.sol";
 
 /**
  * @title Contract for GiftNetwork
  * @author Fabien D. & Etienne B.
- * @notice You can use this contract for create a gift card social network
+ * @notice You can use this contract to create a gift card social network
  */
-contract GiftNetwork is Ownable {
+contract GiftNetwork is Ownable, IGiftNetwork {
 
     mapping(address => User) private users;
 
@@ -45,11 +42,11 @@ contract GiftNetwork is Ownable {
     }
 
     /**
-     * @notice Throws if the friend has an user account
-     * @param _friend Friend's address
+     * @notice Throws if the address has an user account
+     * @param _address Address
      */
-    modifier isExistingFriendUser(address _friend) {
-        require(getUserExists(_friend), "Friend doesn't have an user account");
+    modifier isExistingUser(address _address) {
+        require(getUserExists(_address), "Address doesn't have an user account");
         _;
     }
 
@@ -99,7 +96,7 @@ contract GiftNetwork is Ownable {
      * @notice Add a friend for sender
      * @param _friend Friend's address
      */
-    function addFriend(address _friend) external isExistingSenderUser isExistingFriendUser(_friend) {
+    function addFriend(address _friend) external isExistingSenderUser isExistingUser(_friend) {
         users[msg.sender].friends.push(_friend);
 
         emit AddedFriend(msg.sender, _friend);
@@ -135,34 +132,42 @@ contract GiftNetwork is Ownable {
         return results;
     }
 
-    // Sends a new message to a given friend
-    function sendMessage(address _friend, string calldata _message) isExistingSenderUser isExistingFriendUser(_friend) external {
+    /**
+     * @notice Send a message
+     * @param _to Destinataire's address
+     * @param _message Message
+     */
+    function sendMessage(address _to, string calldata _message) isExistingSenderUser isExistingUser(_to) external {
 
-        bytes32 chatCode = getChatCode(msg.sender, _friend);
+        bytes32 chatCode = getChatCode(msg.sender, _to);
         Message memory message = Message(msg.sender, block.timestamp, _message);
         privateChats[chatCode].push(message);
 
         emit SendedMessage(msg.sender);
     }
 
-    // Returns all the chat messages communicated in a channel
-    function readMessage(address _friend) external view returns(Message[] memory) {
-        bytes32 chatCode = getChatCode(msg.sender, _friend);
+    /**
+     * @notice Read a message
+     * @param _from Sender's address
+     * @return Message[]
+     */
+    function readMessage(address _from) external view returns(Message[] memory) {
+        bytes32 chatCode = getChatCode(msg.sender, _from);
         return privateChats[chatCode];
     }
 
      /**
-     * @notice Get chat code between two friends
+     * @notice Get chat code between two users
      * @dev Internal function without access restriction
-     * @param _friend1 First friend's address
-     * @param _friend2 Second friend's address
+     * @param _user1 First user's address
+     * @param _user2 Second user's address
      */
-    function getChatCode(address _friend1, address _friend2) internal pure returns(bytes32) {
+    function getChatCode(address _user1, address _user2) internal pure returns(bytes32) {
 
-        if(_friend1 < _friend2) {
-            return keccak256(abi.encodePacked(_friend1, _friend2));
+        if(_user1 < _user2) {
+            return keccak256(abi.encodePacked(_user1, _user2));
         }
 
-        return keccak256(abi.encodePacked(_friend2, _friend1));
+        return keccak256(abi.encodePacked(_user2, _user1));
     }
 }
