@@ -101,13 +101,13 @@ contract GiftCard is Ownable, IGiftCard {
         _;
     }
 
-    // /**
-    //  * @notice Throws if the sender is the GiftCard's DAO contract
-    //  */
-    // modifier isDAOContract() {
-    //     require(msg.sender == address(giftDAO), "Sender isn'nt the DAO contract");
-    //     _;
-    // }
+    /**
+     * @notice Throws if the sender is the GiftCard's DAO contract
+     */
+    modifier isDAOContract() {
+        require(msg.sender == address(giftDAO), "Sender isn'nt the DAO contract");
+        _;
+    }
 
     /**
      * @notice Emit if Received value.
@@ -294,21 +294,21 @@ contract GiftCard is Ownable, IGiftCard {
         transfer(_to, _value);
     }
 
-    // /**
-    //  * @notice Set status by DAO
-    //  * @param _newStatus New status
-    //  */
-    // function setStatusByDAO(CardStatus _newStatus) external isDAOContract isCardNotOpened {
-    //     changeStatus(_newStatus);
-    // }
+    /**
+     * @notice Set status by DAO
+     * @param _newStatus New status
+     */
+    function setStatusByDAO(CardStatus _newStatus) external isDAOContract isCardNotOpened {
+        changeStatus(_newStatus);
+    }
 
-    // /**
-    //  * @notice Set beneficiary by DAO
-    //  * @param _newBeneficiary New beneficiary
-    //  */
-    // function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
-    //     changeBeneficiary(_newBeneficiary);
-    // }
+    /**
+     * @notice Set beneficiary by DAO
+     * @param _newBeneficiary New beneficiary
+     */
+    function setBeneficiaryDAO(address _newBeneficiary) external isDAOContract isCardNotOpened {
+        changeBeneficiary(_newBeneficiary);
+    }
 
     /**
      * @notice Get if address has role
