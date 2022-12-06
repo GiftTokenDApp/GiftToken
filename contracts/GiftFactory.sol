@@ -2,11 +2,11 @@
 pragma solidity 0.8.17;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "./GiftCard.sol";
-import "./GiftNetwork.sol";
 import "./enumerations/CardStatus.sol";
 import "./interfaces/IGiftCard.sol";
 import "./interfaces/IGiftNetwork.sol";
+import "./GiftCard.sol";
+import "./GiftNetwork.sol";
 
 /**
  * @title Contract for GiftFactory
@@ -72,7 +72,7 @@ contract GiftFactory is Ownable {
     ) payable external {
         require(msg.value >= 10 ** 15, "Insufficient found");
 
-        GiftCard card = (new GiftCard){value: msg.value}(msg.sender, _title, _description, _fundingToBeReleased, _dateToBeReleased, _beneficiary);
+        GiftCard card = (new GiftCard){value: msg.value}(address(giftNetwork), msg.sender, _title, _description, _fundingToBeReleased, _dateToBeReleased, _beneficiary);
         address cardAddress = address(card);
         cardsExists[cardAddress] = true;
         links[msg.sender].push(cardAddress);

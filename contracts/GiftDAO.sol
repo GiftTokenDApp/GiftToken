@@ -89,7 +89,7 @@ contract GiftDAO is Ownable, IGiftDAO {
      * @notice Construct a gift DAO
      * @param _giftCard GiftCard's address
      */
-    constructor(address payable _giftCard) 
+    constructor(address _giftCard) 
     {
         giftCard = IGiftCard(_giftCard);
     }

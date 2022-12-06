@@ -7,7 +7,10 @@ import "./enumerations/CardProposalType.sol";
 import "./enumerations/CardProposalResult.sol";
 import "./interfaces/IGiftCard.sol";
 import "./interfaces/IGiftDAO.sol";
+import "./interfaces/IGiftNetwork.sol";
+import "./structures/Message.sol";
 import "./structures/Proposal.sol";
+import "./GiftDAO.sol";
 
 /**
  * @title Contract for Gift card
@@ -17,6 +20,8 @@ import "./structures/Proposal.sol";
 contract GiftCard is Ownable, IGiftCard {
 
     address internal constant NULLADDRESS = address(0);
+
+    IGiftNetwork private giftNetwork;
 
     IGiftDAO private giftDAO;
 
@@ -36,6 +41,8 @@ contract GiftCard is Ownable, IGiftCard {
 
     address[] private participants;
 
+    Message[] private privateChats;
+
     mapping(address => bool[3]) roles;
 
     mapping(address => uint) holdings;
@@ -51,6 +58,8 @@ contract GiftCard is Ownable, IGiftCard {
     event Participated(address, uint);
 
     event AmountTransfered(address, uint);
+
+    event SendedMessage(address);
 
     /**
      * @notice Throws if called by the creator account
@@ -125,6 +134,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     /**
      * @notice Construct a card
+     * @param _giftNetwork Gift's network
      * @param _creator Card's creator address
      * @param _title Card's title
      * @param _description Card's title (optional)
@@ -133,6 +143,7 @@ contract GiftCard is Ownable, IGiftCard {
      * @param _beneficiary Card's beneficiary address (optional)
      */
     constructor(
+        address _giftNetwork,
         address _creator, 
         string memory _title,
         string memory _description,
@@ -143,6 +154,7 @@ contract GiftCard is Ownable, IGiftCard {
         require(_creator != NULLADDRESS, "Creator's address is mandatory");
         require(bytes(_title).length > 0, "Title is mandatory");
 
+        giftNetwork = IGiftNetwork(_giftNetwork);
         status = CardStatus.FundingStarted;
         creationDate = block.timestamp;
         creator = _creator;
@@ -159,7 +171,7 @@ contract GiftCard is Ownable, IGiftCard {
         addRole(_creator, Role.Creator);
         participate(_creator, msg.value);
 
-        // addressDAO = address(new GiftDAO(payable(address(this))));
+        giftDAO = new GiftDAO(address(this));
 
         emit ProperlyCreated();
     }
