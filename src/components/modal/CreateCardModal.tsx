@@ -50,7 +50,7 @@ const CreateCardModal: React.FC<ModalProps> = ({ handleClose }) => {
                     <span className="text-white">{` ${dappContextState.lastEvent?.address}`}</span>
                   </div>
                   <div>Somme versée à la création : 
-                    <span className="text-white">{` ${dappContextState.lastEvent?.amount}`}</span>
+                    <span className="text-white">{` ${dappContextState.lastEvent?.amount} `}</span>
                     eth
                   </div>
                 </div>
