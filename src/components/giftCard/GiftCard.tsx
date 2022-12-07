@@ -6,6 +6,7 @@ import css from "./giftCard.module.css";
 import Logo from '../logo/Logo';
 import { imgScr1, imgSrc2 } from './data';
 import { useModalContext } from '../../contexts/ModalContext';
+import { zeroAddress } from '../../helpers/dataHelpers';
 
 const GiftCard: React.FC<IGiftCardProps> = (props) => {
 
@@ -16,6 +17,7 @@ const GiftCard: React.FC<IGiftCardProps> = (props) => {
   const cardGTLogo = `w-24 float-right mr-5 -mt-12 ${css.model}`;
 
   const shortenedCardAddress = formatETHAddress(props.address ?? "");
+  const shortenedBeneficiaryAddress = formatETHAddress(props.beneficiary ?? "");
 
   return (
     <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={cardCss} onClick={() => displayCardModal(props)}>
@@ -31,9 +33,9 @@ const GiftCard: React.FC<IGiftCardProps> = (props) => {
       <div className='ml-5 mt-5'>
         <div className="text-3xl">{shortenedCardAddress}</div>
         <div>
-            <span>Déblocable à partir du : {props.releaseDate ? props.releaseDate : "date non définie"}</span>
+            <span>Déblocable à partir du : {props.releaseDate && props.releaseDate.toString() === '0' ? "date non définie" : props.releaseDate?.toString() }</span>
         </div>
-        <div className="text-xl mt-5">©{props.beneficiary ? props.beneficiary : "BÉNÉFICIAIRE NON DÉFINI"}</div>
+        <div className="text-xl mt-5">©{props.beneficiary && props.beneficiary === zeroAddress ? "BÉNÉFICIAIRE NON DÉFINI" : shortenedBeneficiaryAddress }</div>
       </div>
       <div className={cardGTLogo}>
         <Logo css="" />

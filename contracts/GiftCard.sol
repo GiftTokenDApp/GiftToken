@@ -41,6 +41,8 @@ contract GiftCard is Ownable, IGiftCard {
 
     address[] private participants;
 
+    address private cardDAOAddress;
+
     Message[] private communChat;
 
     mapping(address => bool[3]) roles;
@@ -55,7 +57,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     event BeneficiaryChanged(address, address);
 
-    event Participated(address, uint);
+    event Participated(address, uint, uint);
 
     event AmountTransfered(address, uint);
 
@@ -180,6 +182,7 @@ contract GiftCard is Ownable, IGiftCard {
         participate(_creator, msg.value);
 
         giftDAO = new GiftDAO(address(this));
+        cardDAOAddress = address(giftDAO);
 
         emit ProperlyCreated();
     }
@@ -191,6 +194,14 @@ contract GiftCard is Ownable, IGiftCard {
      */
     function getIsCreator(address _address) public view returns(bool) {
         return hasRole(_address, Role.Creator);
+    }
+
+    /**
+     * @notice Get if address is the creator
+     * @return address
+     */
+    function getCardDAOAddress() public view returns(address) {
+        return cardDAOAddress;
     }
 
     /**
@@ -452,7 +463,7 @@ contract GiftCard is Ownable, IGiftCard {
         addRole(_participant, Role.Participant);
         participants.push(_participant);
 
-        emit Participated(_participant, _value);
+        emit Participated(_participant, _value, block.timestamp);
     }
 
     /**

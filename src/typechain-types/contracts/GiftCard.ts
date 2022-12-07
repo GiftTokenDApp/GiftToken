@@ -44,6 +44,7 @@ export interface GiftCardInterface extends utils.Interface {
     "creationDate()": FunctionFragment;
     "description()": FunctionFragment;
     "getBeneficiary()": FunctionFragment;
+    "getCardDAOAddress()": FunctionFragment;
     "getCreator()": FunctionFragment;
     "getDateToBeReleased()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
@@ -74,6 +75,7 @@ export interface GiftCardInterface extends utils.Interface {
       | "creationDate"
       | "description"
       | "getBeneficiary"
+      | "getCardDAOAddress"
       | "getCreator"
       | "getDateToBeReleased"
       | "getIsBeneficiary"
@@ -109,6 +111,10 @@ export interface GiftCardInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBeneficiary",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCardDAOAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -207,6 +213,10 @@ export interface GiftCardInterface extends utils.Interface {
     functionFragment: "getBeneficiary",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCardDAOAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getCreator", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getDateToBeReleased",
@@ -286,7 +296,7 @@ export interface GiftCardInterface extends utils.Interface {
     "AmountTransfered(address,uint256)": EventFragment;
     "BeneficiaryChanged(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Participated(address,uint256)": EventFragment;
+    "Participated(address,uint256,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
     "SendedMessage(address)": EventFragment;
     "StatusChanged(uint256,uint256)": EventFragment;
@@ -340,9 +350,10 @@ export type OwnershipTransferredEventFilter =
 export interface ParticipatedEventObject {
   arg0: string;
   arg1: BigNumber;
+  arg2: BigNumber;
 }
 export type ParticipatedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   ParticipatedEventObject
 >;
 
@@ -403,6 +414,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<[string]>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<[string]>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getCreator(overrides?: CallOverrides): Promise<[string]>;
 
@@ -503,6 +516,8 @@ export interface GiftCard extends BaseContract {
 
   getBeneficiary(overrides?: CallOverrides): Promise<string>;
 
+  getCardDAOAddress(overrides?: CallOverrides): Promise<string>;
+
   getCreator(overrides?: CallOverrides): Promise<string>;
 
   getDateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
@@ -599,6 +614,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<string>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<string>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<string>;
 
     getCreator(overrides?: CallOverrides): Promise<string>;
 
@@ -711,11 +728,16 @@ export interface GiftCard extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
-    "Participated(address,uint256)"(
+    "Participated(address,uint256,uint256)"(
       arg0?: null,
-      arg1?: null
+      arg1?: null,
+      arg2?: null
     ): ParticipatedEventFilter;
-    Participated(arg0?: null, arg1?: null): ParticipatedEventFilter;
+    Participated(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
+    ): ParticipatedEventFilter;
 
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
@@ -736,6 +758,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCreator(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -834,6 +858,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCreator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

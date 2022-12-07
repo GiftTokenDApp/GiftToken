@@ -1,14 +1,13 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Backdrop from "./ModalBackdrop";
 import css from "../giftCard/giftCard.module.css";
-import { useMainContext } from "../../contexts/MainContext";
 import { formatETHAddress } from "../../helpers/functionsHelpers";
 import Logo from "../logo/Logo";
 import cssLogo from "../giftCard/giftCard.module.css";
 import FundCardForm from "../forms/FundCardForm";
-import IGiftCardProps from "../giftCard/interface";
 import { flip } from "./data";
+import { useDappContext } from "../../contexts/DappContext";
 
 type ModalProps = {
   handleClose : () => void,
@@ -16,24 +15,28 @@ type ModalProps = {
 
 const Modal: FC<ModalProps> = ({ handleClose }) => {
 
-    const { mainContextState, updateCurrentCard } = useMainContext()
+    const { dappContextState, giveToCard } = useDappContext();
     const [cardMode, setCardMode] = useState(0)    
 
     //width: clamp(50%, 700px, 90%)
-    const cardCss = `w-[800px] h-[500px] flex items-center justify-between flex-col relative ${css.card} m-auto px-0 py-8 rounded-3xl text-gtCardLightBLue`
+    const cardCss = `w-[800px] h-[600px] flex items-center justify-between flex-col gap-6 relative ${css.card} m-auto px-0 py-8 rounded-3xl text-gtCardLightBLue`
     const cardGTLogo = `w-24 absolute right-4 bottom-8 ${cssLogo.model}`;
 
-    const shortenedCardAddress = formatETHAddress(mainContextState?.currentCard?.address ?? "");
-    const shortenedCreatorAddress = formatETHAddress(mainContextState?.currentCard?.creator ?? "");
-    const shortenedFoundersAddresses = mainContextState?.currentCard?.funders?.map((addr, index) => index === 0 ? formatETHAddress(addr) : ` ${formatETHAddress(addr)}`);
-    const shortenedBeneficiaryAddress = formatETHAddress(mainContextState?.currentCard?.beneficiary ?? "") ? `Elle est pour ${formatETHAddress(mainContextState?.currentCard?.beneficiary ?? "")}` : "Pas de bénéficiaire désigné";
+    const shortenedCardAddress = formatETHAddress(dappContextState?.currentCard?.address ?? "");
+    const shortenedCreatorAddress = formatETHAddress(dappContextState?.currentCard?.creator ?? "");
+    const shortenedFoundersAddresses = dappContextState?.currentCard?.funders?.map((addr, index) => index === 0 ? formatETHAddress(addr) : ` ${formatETHAddress(addr)}`);
+    const shortenedBeneficiaryAddress = formatETHAddress(dappContextState?.currentCard?.beneficiary ?? "") ? `Elle est pour ${formatETHAddress(dappContextState?.currentCard?.beneficiary ?? "")}` : "Pas de bénéficiaire désigné";
 
-    const currentCoinsAmount = mainContextState?.currentCard?.coinsAmount && mainContextState?.currentCard?.coinsAmount <= 0 ? "Elle ne contient pas de fonds" : mainContextState?.currentCard?.coinsAmount && mainContextState?.currentCard?.coinsAmount < 2 ? `Elle contient ${mainContextState?.currentCard?.coinsAmount} ether` : `Elle contient ${mainContextState?.currentCard?.coinsAmount} ethers`;
+    const currentCoinsAmount = dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount <= 0 ? "Elle ne contient pas de fonds" : dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount < 2 ? `Elle contient ${dappContextState?.currentCard?.coinsAmount} ether` : `Elle contient ${dappContextState?.currentCard?.coinsAmount} ethers`;
 
-    const fund = (newCardData: IGiftCardProps) => {
-      updateCurrentCard(newCardData);      
-      setCardMode(0)
+    const fund = (amountToSend: number) => {
+      giveToCard(amountToSend);      
     }
+    
+    useEffect(() => {
+      dappContextState && console.log(dappContextState.cardDAOData);
+    }, [dappContextState])
+    
 
     return (
       <Backdrop onClick={handleClose}>
@@ -46,29 +49,47 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
             exit="exit"
           >
            <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='absolute w-12 p-3 bg-slate-500 top-5 right-5 text-white rounded-full cursor-pointer' onClick={handleClose}>X</motion.button>
+           <div className="flexJIC flex-col gap-6">
+              <h2 className='text-3xl'>{ dappContextState?.currentCard?.title }</h2>
+              <h3 className='text-2xl'>{ shortenedCardAddress }</h3>
+              <p className='text-2xl'>{ dappContextState?.currentCard?.description }</p>
+           </div>
             {
-              cardMode === 0 && <>
-                <h2 className='text-3xl'>{ mainContextState?.currentCard?.title }</h2>
-                <h3 className='text-2xl'>{ shortenedCardAddress }</h3>
-                <p className='text-2xl'>{ mainContextState?.currentCard?.description }</p>
-                <div className='flex justify-center items-start flex-col gap-6 text-xl'>
+              !dappContextState.displayEvent && cardMode === 0 && <>
+                <div className='flex justify-center items-start flex-col gap-6 text-xl px-12'>
                   <span>{`Cette carte a été créée par ${ shortenedCreatorAddress }`}</span>
                   <span>{`Elle a été financée par ${ shortenedFoundersAddresses }`}</span>
                   <span>{ shortenedBeneficiaryAddress }</span>
                   <span>{ currentCoinsAmount }</span>
                 </div>
-                <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-44 p-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>Participer</motion.button>
+                <div className="w-full flexJIC gap-16 mb-4">
+                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>{"Voir les DAO"}</motion.button>
+                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(2)}>Participer à la carte</motion.button>
+                </div>
               </>
             }
             {
-              cardMode === 1 && <>
-                <h2 className='text-3xl'>{ mainContextState?.currentCard?.title }</h2>
-                <h3 className='text-2xl'>{ shortenedCardAddress }</h3>
-                <p className='text-2xl'>{ mainContextState?.currentCard?.description }</p>
+              !dappContextState.displayEvent && cardMode === 1 && <>
+                <div className='h-full flex justify-center items-start flex-col mb-20 gap-6 text-xl'>
+                  <span>Voici les DAO sur cette carte :</span>
+                </div>
+              </>
+            }
+            {
+              !dappContextState.displayEvent && cardMode === 2 && <>
                 <div className='flex justify-center items-start flex-col gap-6 text-xl'>
                   <span>{`Combien voulez-vous donner ?`}</span>
                 </div>
-                <FundCardForm func={fund} currentCard={mainContextState.currentCard} />
+                {
+                  dappContextState.currentCard && <FundCardForm func={fund} />
+                }
+              </>
+            }
+            {
+              dappContextState.displayEvent && <>
+                <div className='flexJIC flex-col mb-52 gap-12 text-3xl text-center'>
+                  <h3>La carte a bien été créditée de <span className="text-white">{ dappContextState.lastEvent?.amount }</span> eth</h3>
+                </div>
               </>
             }
            <div className={cardGTLogo}>

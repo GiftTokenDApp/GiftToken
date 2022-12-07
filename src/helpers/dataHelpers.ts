@@ -6,4 +6,6 @@ export const accounts = {
     account2: {privateKey:'0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a', balance:defaultEthBalance},
     account3: {privateKey:'0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6', balance:defaultEthBalance},
     account4: {privateKey:'0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a', balance:defaultEthBalance},
-} 
+}; 
+
+export const zeroAddress = '0x0000000000000000000000000000000000000000';
