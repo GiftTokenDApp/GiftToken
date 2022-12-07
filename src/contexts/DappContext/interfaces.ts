@@ -12,6 +12,7 @@ export enum StateTypes {
     UPDATE_CARDS_DATA_LIST = 'UPDATE_CARDS_DATA_LIST',
     SET_CURRENT_CARD = 'SET_CURRENT_CARD',
     UPDATE_CARDS = 'UPDATE_CARDS',
+    UPDATE_CARD_DAO_DATA = 'UPDATE_CARD_DAO_DATA',
 };
 
 export type IDappContextStateProps = {
@@ -29,6 +30,7 @@ export type IDappContextStateProps = {
     cardsAddressesList?: Address[],
     cardsDataList?: IGiftCardProps[],
     currentCard?: IGiftCardProps | null,
+    cardDAOData?: any,
 }
 
 export type StateActions = {

@@ -4,9 +4,9 @@ import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer } from "./state";
 import { IDappContextProps, StateTypes } from "./interfaces";
 import { ethers } from "ethers";
-
 import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
 import GiftCard from '../../artifacts/contracts/GiftCard.sol/GiftCard.json'
+import GiftDAO from '../../artifacts/contracts/GiftDAO.sol/GiftDAO.json'
 import { INewCardProps } from "../../components/forms/interface";
 import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
@@ -66,7 +66,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             const cardStatus = await giftCardContract.getStatus();          
             const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
             const cardCoinsAmount = await giftCardContract.provider.getBalance(cardsAddressesList[i]);
-            const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;       
+            const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;
+            const cardDAOAddress = await giftCardContract.getCardDAOAddress();         
             const newCardData = {
               address: cardsAddressesList[i],
               contract: giftCardContract,
@@ -80,6 +81,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               status: cardStatus,
               releaseDate: cardReleaseDate,
               coinsAmount: parsedEth,
+              cardDAOAddress: cardDAOAddress,
             }    
             cardsDataList.push(newCardData);
           }        
@@ -164,7 +166,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
           const newCardsDataList = dappContextState.cardsDataList;
           const cardCoinsAmount = await giftCardContract.provider.getBalance(cardAddress);
-          const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;         
+          const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;  
+          const cardDAOAddress = await giftCardContract.getCardDAOAddress();          
           const newCardData = {
             address: cardAddress,
             contract: giftCardContract,
@@ -178,6 +181,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             status: cardStatus,
             releaseDate: cardReleaseDate,
             coinsAmount: parsedEth,
+            cardDAOAddress: cardDAOAddress,
           }     
           newCardsDataList?.push(newCardData)
           return newCardsDataList;
@@ -187,6 +191,31 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
     }
   }
+
+  async function getCardDAOData() {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
+      try {   
+          // const cardDAODataList: any[] = [];
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);            
+          const currentProposal = await cardDAOContract.currentProposal();          
+          const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
+          const lastProposals = await cardDAOContract.getProposals();           
+          const newCardDAOData = {
+            currentProposal: currentProposal,
+            proposalBeneficiary: proposalBeneficiary,
+            lastProposals: lastProposals,
+          }    
+          // cardDAODataList.push(newCardDAOData);     
+          dappContextDispatch({
+            type: StateTypes.UPDATE_CARD_DAO_DATA,
+            payload: {...dappContextState, cardDAOData: newCardDAOData},
+          });
+      } catch (err) {
+          console.log(err);
+          err && setError(err.toString());
+      }
+    }
+  }  
 
   const init = useCallback(
     async () => {
@@ -261,6 +290,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dappContextState])
+
+  useEffect(() => {
+    dappContextState.currentCard && getCardDAOData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dappContextState.currentCard])
+  
 
   // useEffect(() => {
   //   const events = ["chainChanged", "accountsChanged"];

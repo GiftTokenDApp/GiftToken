@@ -14,4 +14,5 @@ export default interface IGiftCardProps {
     status: number,
     releaseDate: number,
     coinsAmount: number,
+    cardDAOAddress: Address,
 };

@@ -55,7 +55,7 @@ const CardCarousel = () => {
         if (dappContextState.cardsDataList && dappContextState.cardsDataList?.length > 0) {
             const newGiftCardsElementsList = dappContextState.cardsDataList?.map((card, index) => {
                 const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
-                    <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} />
+                    <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} cardDAOAddress={card.cardDAOAddress} />
                 </li>
                 return newLi
             })  

@@ -8,6 +8,7 @@ const actions = {
   update_cards_data_list: "UPDATE_CARDS_DATA_LIST",
   set_current_card: "SET_CURRENT_CARD",
   update_cards: "UPDATE_CARDS",
+  update_cards_dao_data: "UPDATE_CARD_DAO_DATA"
 };
 
 const initialState = {
@@ -25,6 +26,7 @@ const initialState = {
   cardsAddressesList: [],
   cardsDataList: [],
   currentCard: null,
+  cardDAOData: [],
 };
 
 const reducer = (state: IDappContextStateProps, action: StateActions) => {
@@ -42,6 +44,8 @@ const reducer = (state: IDappContextStateProps, action: StateActions) => {
       return {...state, cardsDataList: payload?.cardsDataList};
     case StateTypes.UPDATE_CARDS:
       return {...state, cardsAddressesList: payload?.cardsAddressesList, cardsDataList: payload?.cardsDataList};
+    case StateTypes.UPDATE_CARD_DAO_DATA:
+      return {...state, cardDAOData: payload?.cardDAOData};
     case StateTypes.SET_CURRENT_CARD:
       return {...state, currentCard: payload?.currentCard};
     default:

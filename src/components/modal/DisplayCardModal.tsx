@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Backdrop from "./ModalBackdrop";
 import css from "../giftCard/giftCard.module.css";
@@ -33,6 +33,10 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       giveToCard(amountToSend);      
     }
     
+    useEffect(() => {
+      dappContextState && console.log(dappContextState.cardDAOData);
+    }, [dappContextState])
+    
 
     return (
       <Backdrop onClick={handleClose}>
@@ -58,11 +62,21 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                   <span>{ shortenedBeneficiaryAddress }</span>
                   <span>{ currentCoinsAmount }</span>
                 </div>
-                <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-44 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>Participer</motion.button>
+                <div className="w-full flexJIC gap-16 mb-4">
+                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>{"Voir les DAO"}</motion.button>
+                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(2)}>Participer à la carte</motion.button>
+                </div>
               </>
             }
             {
               !dappContextState.displayEvent && cardMode === 1 && <>
+                <div className='h-full flex justify-center items-start flex-col mb-20 gap-6 text-xl'>
+                  <span>Voici les DAO sur cette carte :</span>
+                </div>
+              </>
+            }
+            {
+              !dappContextState.displayEvent && cardMode === 2 && <>
                 <div className='flex justify-center items-start flex-col gap-6 text-xl'>
                   <span>{`Combien voulez-vous donner ?`}</span>
                 </div>

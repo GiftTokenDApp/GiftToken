@@ -44,6 +44,7 @@ export interface GiftCardInterface extends utils.Interface {
     "creationDate()": FunctionFragment;
     "description()": FunctionFragment;
     "getBeneficiary()": FunctionFragment;
+    "getCardDAOAddress()": FunctionFragment;
     "getCreator()": FunctionFragment;
     "getDateToBeReleased()": FunctionFragment;
     "getIsBeneficiary(address)": FunctionFragment;
@@ -74,6 +75,7 @@ export interface GiftCardInterface extends utils.Interface {
       | "creationDate"
       | "description"
       | "getBeneficiary"
+      | "getCardDAOAddress"
       | "getCreator"
       | "getDateToBeReleased"
       | "getIsBeneficiary"
@@ -109,6 +111,10 @@ export interface GiftCardInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBeneficiary",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCardDAOAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -205,6 +211,10 @@ export interface GiftCardInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCardDAOAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getCreator", data: BytesLike): Result;
@@ -405,6 +415,8 @@ export interface GiftCard extends BaseContract {
 
     getBeneficiary(overrides?: CallOverrides): Promise<[string]>;
 
+    getCardDAOAddress(overrides?: CallOverrides): Promise<[string]>;
+
     getCreator(overrides?: CallOverrides): Promise<[string]>;
 
     getDateToBeReleased(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -504,6 +516,8 @@ export interface GiftCard extends BaseContract {
 
   getBeneficiary(overrides?: CallOverrides): Promise<string>;
 
+  getCardDAOAddress(overrides?: CallOverrides): Promise<string>;
+
   getCreator(overrides?: CallOverrides): Promise<string>;
 
   getDateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
@@ -600,6 +614,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<string>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<string>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<string>;
 
     getCreator(overrides?: CallOverrides): Promise<string>;
 
@@ -743,6 +759,8 @@ export interface GiftCard extends BaseContract {
 
     getBeneficiary(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getCardDAOAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     getCreator(overrides?: CallOverrides): Promise<BigNumber>;
 
     getDateToBeReleased(overrides?: CallOverrides): Promise<BigNumber>;
@@ -840,6 +858,8 @@ export interface GiftCard extends BaseContract {
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBeneficiary(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCardDAOAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCreator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
