@@ -6,7 +6,6 @@ import { formatETHAddress } from "../../helpers/functionsHelpers";
 import Logo from "../logo/Logo";
 import cssLogo from "../giftCard/giftCard.module.css";
 import FundCardForm from "../forms/FundCardForm";
-import IGiftCardProps from "../giftCard/interface";
 import { flip } from "./data";
 import { useDappContext } from "../../contexts/DappContext";
 
@@ -16,7 +15,7 @@ type ModalProps = {
 
 const Modal: FC<ModalProps> = ({ handleClose }) => {
 
-    const { dappContextState, setCurrentCardFromData } = useDappContext();
+    const { dappContextState, giveToCard } = useDappContext();
     const [cardMode, setCardMode] = useState(0)    
 
     //width: clamp(50%, 700px, 90%)
@@ -30,8 +29,8 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
 
     const currentCoinsAmount = dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount <= 0 ? "Elle ne contient pas de fonds" : dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount < 2 ? `Elle contient ${dappContextState?.currentCard?.coinsAmount} ether` : `Elle contient ${dappContextState?.currentCard?.coinsAmount} ethers`;
 
-    const fund = (newCardData: IGiftCardProps) => {
-      setCurrentCardFromData(newCardData);      
+    const fund = (amountToSend: number) => {
+      giveToCard(amountToSend);      
       setCardMode(0)
     }
 

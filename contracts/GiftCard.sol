@@ -55,7 +55,7 @@ contract GiftCard is Ownable, IGiftCard {
 
     event BeneficiaryChanged(address, address);
 
-    event Participated(address, uint);
+    event Participated(address, uint, uint);
 
     event AmountTransfered(address, uint);
 
@@ -452,7 +452,7 @@ contract GiftCard is Ownable, IGiftCard {
         addRole(_participant, Role.Participant);
         participants.push(_participant);
 
-        emit Participated(_participant, _value);
+        emit Participated(_participant, _value, block.timestamp);
     }
 
     /**

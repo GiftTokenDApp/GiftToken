@@ -10,8 +10,15 @@ export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
 export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
 export type { GiftCard } from "./contracts/GiftCard";
 export { GiftCard__factory } from "./factories/contracts/GiftCard__factory";
+<<<<<<< Updated upstream
 export type { GiftDAO } from "./contracts/GiftDAO";
 export { GiftDAO__factory } from "./factories/contracts/GiftDAO__factory";
+=======
+export type { GiftCardDAO } from "./contracts/GiftCardDAO";
+export { GiftCardDAO__factory } from "./factories/contracts/GiftCardDAO__factory";
+// export type { GiftDAO } from "./contracts/GiftDAO";
+// export { GiftDAO__factory } from "./factories/contracts/GiftDAO__factory";
+>>>>>>> Stashed changes
 export type { GiftFactory } from "./contracts/GiftFactory";
 export { GiftFactory__factory } from "./factories/contracts/GiftFactory__factory";
 export type { GiftNetwork } from "./contracts/GiftNetwork";

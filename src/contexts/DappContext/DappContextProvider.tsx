@@ -97,6 +97,24 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
   }
 
+  async function giveToCard(amount: number) {
+      if(typeof window.ethereum !== 'undefined') {
+          try {
+              const trx = {
+                  from: dappContextState.accounts[0],
+                  to: dappContextState.currentCard?.address,
+                  value: ethers.utils.parseEther(`${amount}`),
+              }
+              const transaction = await dappContextState.signer.sendTransaction(trx);               
+              await transaction.wait();
+              getCardsAddressesList();
+          } catch (err) {
+            console.log(err);
+              err && setError(err.toString());
+          }
+      }
+  }
+
   const hideEventData = () =>{
     dappContextDispatch({
       type: StateTypes.HIDE_EVENT,
@@ -192,7 +210,23 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
             getCardsAddressesList();
-            setCurrentCardFromIndex(0); 
+            !dappContextState.currentCard && setCurrentCardFromIndex(0); 
+          }
+        });
+        dappContextState.currentCard?.contract.on("Participated", (_address: string, _amount: number, _timestamp: number) => {
+          const lastEvent = {
+            name: "Participated",
+            address: _address,
+            amount: _amount / 10**18,
+            timestamp: _timestamp,
+          }
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
           }
         });
       } catch (err) {
@@ -277,6 +311,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       hideEventData,
       getCardsAddressesList,
       getCardData,
+      giveToCard,
       setCurrentCardFromIndex,
       setCurrentCardFromData,
     }),

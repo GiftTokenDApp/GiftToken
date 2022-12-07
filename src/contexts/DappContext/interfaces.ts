@@ -22,6 +22,7 @@ export type IDappContextStateProps = {
         name: string | null,
         address: string | null,
         amount: number | null,
+        timestamp?: number | null,
     },
     displayEvent?: boolean,
     cardsAddressesList?: Address[],
@@ -43,4 +44,5 @@ export interface IDappContextProps extends IChildrenProps {
     getCardData(cardAddress: Address): Promise<void>;
     setCurrentCardFromIndex(currentCardIndex: number): void;
     setCurrentCardFromData(currentCardData: IGiftCardProps): void;
+    giveToCard(amountToSend: number): void,
 }

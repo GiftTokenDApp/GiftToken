@@ -4,6 +4,11 @@
 import type * as interfaces from "./interfaces";
 export type { interfaces };
 export type { GiftCard } from "./GiftCard";
+<<<<<<< Updated upstream
 export type { GiftDAO } from "./GiftDAO";
+=======
+export type { GiftCardDAO } from "./GiftCardDAO";
+// export type { GiftDAO } from "./GiftDAO";
+>>>>>>> Stashed changes
 export type { GiftFactory } from "./GiftFactory";
 export type { GiftNetwork } from "./GiftNetwork";

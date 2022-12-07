@@ -18,6 +18,7 @@ const initialState = {
     name: null,
     address: null,
     amount: null,
+    timestamp: null,
   },
   displayEvent: false,
   cardsAddressesList: [],

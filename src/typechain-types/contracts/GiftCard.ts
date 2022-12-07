@@ -286,7 +286,7 @@ export interface GiftCardInterface extends utils.Interface {
     "AmountTransfered(address,uint256)": EventFragment;
     "BeneficiaryChanged(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Participated(address,uint256)": EventFragment;
+    "Participated(address,uint256,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
     "SendedMessage(address)": EventFragment;
     "StatusChanged(uint256,uint256)": EventFragment;
@@ -340,9 +340,10 @@ export type OwnershipTransferredEventFilter =
 export interface ParticipatedEventObject {
   arg0: string;
   arg1: BigNumber;
+  arg2: BigNumber;
 }
 export type ParticipatedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   ParticipatedEventObject
 >;
 
@@ -711,11 +712,16 @@ export interface GiftCard extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
-    "Participated(address,uint256)"(
+    "Participated(address,uint256,uint256)"(
       arg0?: null,
-      arg1?: null
+      arg1?: null,
+      arg2?: null
     ): ParticipatedEventFilter;
-    Participated(arg0?: null, arg1?: null): ParticipatedEventFilter;
+    Participated(
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
+    ): ParticipatedEventFilter;
 
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
