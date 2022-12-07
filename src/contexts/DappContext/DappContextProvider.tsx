@@ -3,7 +3,7 @@ import DappContext from "./DappContext";
 import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer } from "./state";
 import { IDappContextProps, StateTypes } from "./interfaces";
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
 
 import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
 import GiftCard from '../../artifacts/contracts/GiftCard.sol/GiftCard.json'
@@ -185,13 +185,15 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             address: _address,
             amount: _amount / 10**18,
           }
-          const displayEvent = true;
-          dappContextDispatch({
-            type: StateTypes.UPDATE,
-            payload: { ...dappContextState, lastEvent, displayEvent }
-          });
-          getCardsAddressesList();
-          setCurrentCardFromIndex(0);
+          if (lastEvent.address !== dappContextState.lastEvent?.address) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
+            setCurrentCardFromIndex(0); 
+          }
         });
       } catch (err) {
         console.error(err);

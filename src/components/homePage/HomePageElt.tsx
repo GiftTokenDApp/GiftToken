@@ -105,23 +105,6 @@ const CardCarousel = () => {
                  </div>
             }
         </>
-        // <div className="w-full h-full flexJIC flex-col gap-6 relative">
-        //     { GiftCardsElementsList && GiftCardsElementsList[0] ? <>
-        //         <ul className="list-none p-0 flex items-center flex-col h-52 mx-24 pr-16 my-auto relative">
-        //             {   
-        //                 GiftCardsElementsList
-        //             }
-        //         </ul>
-        //         {
-        //             GiftCardsElementsList && GiftCardsElementsList.length > 1 && <div className="flexJIC gap-12">
-        //                 <GtCardButton title="Carte précédente" css="btnGray" func={switchCardToDisplay} />
-        //                 <GtAddCardButton />
-        //                 <GtCardButton title="Carte suivante" css="btnGray" func={switchCardToDisplay} />
-        //             </div>
-        //         }
-        //     </> : <GtAddCardButton />
-        //     }
-        // </div>
     );
 };
 
