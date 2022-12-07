@@ -25,6 +25,8 @@ contract GiftFactory is Ownable {
 
     event CardCreated(address, uint);
 
+    event NetworkCreated(address);
+
     /**
      * @notice Throws if the card exists
      * @param _card Card's address
@@ -53,6 +55,8 @@ contract GiftFactory is Ownable {
      */
     constructor() { 
         giftNetwork = new GiftNetwork();
+
+        emit NetworkCreated(address(giftNetwork));
     }
 
     /**
@@ -131,5 +135,13 @@ contract GiftFactory is Ownable {
         }
 
         return result;
+    }
+
+    /**
+     * @notice Get the address's of GiftNetwork
+     * @return address[]
+     */
+    function getGiftNetwork() external view returns(address) {
+        return address(giftNetwork);
     }
 }

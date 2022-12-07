@@ -31,6 +31,7 @@ import type {
 export interface GiftFactoryInterface extends utils.Interface {
   functions: {
     "createCard(string,string,uint256,uint256,address)": FunctionFragment;
+    "getGiftNetwork()": FunctionFragment;
     "getLinks(address)": FunctionFragment;
     "getLinks(address,uint256,uint256)": FunctionFragment;
     "getLinks(address,uint256)": FunctionFragment;
@@ -43,6 +44,7 @@ export interface GiftFactoryInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "createCard"
+      | "getGiftNetwork"
       | "getLinks(address)"
       | "getLinks(address,uint256,uint256)"
       | "getLinks(address,uint256)"
@@ -61,6 +63,10 @@ export interface GiftFactoryInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getGiftNetwork",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getLinks(address)",
@@ -94,6 +100,10 @@ export interface GiftFactoryInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "createCard", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getGiftNetwork",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getLinks(address)",
     data: BytesLike
   ): Result;
@@ -122,11 +132,13 @@ export interface GiftFactoryInterface extends utils.Interface {
   events: {
     "CardCreated(address,uint256)": EventFragment;
     "Funding(address,uint256)": EventFragment;
+    "NetworkCreated(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "CardCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Funding"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NetworkCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -148,6 +160,16 @@ export interface FundingEventObject {
 export type FundingEvent = TypedEvent<[string, BigNumber], FundingEventObject>;
 
 export type FundingEventFilter = TypedEventFilter<FundingEvent>;
+
+export interface NetworkCreatedEventObject {
+  arg0: string;
+}
+export type NetworkCreatedEvent = TypedEvent<
+  [string],
+  NetworkCreatedEventObject
+>;
+
+export type NetworkCreatedEventFilter = TypedEventFilter<NetworkCreatedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -197,6 +219,8 @@ export interface GiftFactory extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getGiftNetwork(overrides?: CallOverrides): Promise<[string]>;
+
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -240,6 +264,8 @@ export interface GiftFactory extends BaseContract {
     _beneficiary: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  getGiftNetwork(overrides?: CallOverrides): Promise<string>;
 
   "getLinks(address)"(
     _visitor: PromiseOrValue<string>,
@@ -285,6 +311,8 @@ export interface GiftFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    getGiftNetwork(overrides?: CallOverrides): Promise<string>;
+
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -328,6 +356,9 @@ export interface GiftFactory extends BaseContract {
     "Funding(address,uint256)"(arg0?: null, arg1?: null): FundingEventFilter;
     Funding(arg0?: null, arg1?: null): FundingEventFilter;
 
+    "NetworkCreated(address)"(arg0?: null): NetworkCreatedEventFilter;
+    NetworkCreated(arg0?: null): NetworkCreatedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -347,6 +378,8 @@ export interface GiftFactory extends BaseContract {
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    getGiftNetwork(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,
@@ -392,6 +425,8 @@ export interface GiftFactory extends BaseContract {
       _beneficiary: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getGiftNetwork(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getLinks(address)"(
       _visitor: PromiseOrValue<string>,

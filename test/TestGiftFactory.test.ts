@@ -2,7 +2,9 @@ const { BN, expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
 import { expect } from 'chai';
-import { GiftFactory as GiftFactoryContract} from '../src/typechain-types/contracts/GiftFactory';
+import { GiftFactory as GiftFactoryContract, GiftFactoryInterface, NetworkCreatedEvent, NetworkCreatedEventFilter} from '../src/typechain-types/contracts/GiftFactory';
+
+const NULLADDRESS: string = '0x0000000000000000000000000000000000000000';
 
 let giftFactory: GiftFactoryContract;
 let ownerAddress: string;
@@ -24,12 +26,32 @@ async function reinitAll(): Promise<void> {
 describe("Test GiftFactory contract", async () => {
 
     describe("... test constructor", () => {
+
         beforeEach(reinitAll);
 
         it("Should have 0 link", async () => {
             const linksCount = await giftFactory.getLinksCount(ownerAddress);
-            console.log(linksCount);
             expect(linksCount).to.be.equal(BigNumber.from(0));
         });
+
+        it("Should GiftNetwork has an address", async () => {
+            const address: string = await giftFactory.getGiftNetwork();
+            console.log(address)
+            expect(address).to.be.not.equal(NULLADDRESS);
+        });
+        
+        it("Should emit NetworkCreated", async () => {
+            const eventFilter: NetworkCreatedEventFilter = giftFactory.filters.NetworkCreated();
+            const events: NetworkCreatedEvent[] = await giftFactory.queryFilter(eventFilter);
+            const event: NetworkCreatedEvent | null = events.length ? events[0] : null;
+            const arg = event?.args?.length ? event.args[0] : null;
+            
+            expect(arg).to.be.not.null;
+            expect(arg).to.be.not.equal(NULLADDRESS);
+        });
+    });
+
+    describe("... test createCard", () => {
+
     });
 });
