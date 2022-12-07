@@ -33,6 +33,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       giveToCard(amountToSend);      
       setCardMode(0)
     }
+    
 
     return (
       <Backdrop onClick={handleClose}>

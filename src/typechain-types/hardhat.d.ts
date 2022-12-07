@@ -25,10 +25,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GiftDAO__factory>;
     getContractFactory(
-      name: "GiftDAO",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GiftDAO__factory>;
-    getContractFactory(
       name: "GiftFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GiftFactory__factory>;
@@ -59,11 +55,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.GiftCard>;
-    getContractAt(
-      name: "GiftDAO",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.GiftDAO>;
     getContractAt(
       name: "GiftDAO",
       address: string,

@@ -53,12 +53,39 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     if(typeof window.ethereum !== 'undefined') {      
       try {  
           const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.accounts[0]); 
+          const cardsDataList: IGiftCardProps[] = [];
           for (let i = 0; i < cardsAddressesList.length; i++) {
-            getCardData(cardsAddressesList[i]);
+            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCard.abi, dappContextState.provider);            
+            const cardTitle = await giftCardContract.title();          
+            const cardDescription = await giftCardContract.description();          
+            const cardCreationDate = await giftCardContract.creationDate();          
+            const cardGoal = await giftCardContract.requierementToBeReleased();          
+            const cardCreator = await giftCardContract.getCreator();          
+            const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
+            const cardBeneficiary = await giftCardContract.getBeneficiary();          
+            const cardStatus = await giftCardContract.getStatus();          
+            const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
+            const cardCoinsAmount = await giftCardContract.provider.getBalance(cardsAddressesList[i]);
+            const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;       
+            const newCardData = {
+              address: cardsAddressesList[i],
+              contract: giftCardContract,
+              title: cardTitle,
+              description: cardDescription,
+              creationDate: cardCreationDate,
+              goal: cardGoal,
+              creator: cardCreator,
+              funders: cardFunders,
+              beneficiary: cardBeneficiary,
+              status: cardStatus,
+              releaseDate: cardReleaseDate,
+              coinsAmount: parsedEth,
+            }    
+            cardsDataList.push(newCardData);
           }        
           dappContextDispatch({
-            type: StateTypes.SET_CARDS_LIST,
-            payload: {...dappContextState, cardsAddressesList: cardsAddressesList},
+            type: StateTypes.UPDATE_CARDS,
+            payload: {...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList},
           });
       } catch (err) {
           err && setError(err.toString());
@@ -91,6 +118,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               }
               const transaction = await dappContextState.giftFactoryContract.connect(dappContextState.signer).createCard(newCard.title, newCard.description, newCard.goal, newCard.releaseDate, newCard.beneficiary, trx);               
               await transaction.wait();
+              getCardsAddressesList();
           } catch (err) {
               err && setError(err.toString());
           }
@@ -152,10 +180,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             coinsAmount: parsedEth,
           }     
           newCardsDataList?.push(newCardData)
-          dappContextDispatch({
-            type: StateTypes.UPDATE_CARDS_DATA_LIST,
-            payload: {...dappContextState, cardsDataList: newCardsDataList},
-          });
+          return newCardsDataList;
       } catch (err) {
         console.log("erreur", err);
           err && setError(err.toString());
@@ -197,13 +222,14 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   useEffect(() => {
     if (dappContextState.giftFactoryContract) {
       try {
-        dappContextState.giftFactoryContract.on("CardCreated", (_address: string, _amount: number) => {
+        dappContextState.giftFactoryContract.on("CardCreated", (_address: string, _amount: number, _timestamp: number) => {
           const lastEvent = {
             name: "CardCreated",
             address: _address,
             amount: _amount / 10**18,
+            timestamp: _timestamp,
           }
-          if (lastEvent.address !== dappContextState.lastEvent?.address) {
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
             const displayEvent = true;
             dappContextDispatch({
               type: StateTypes.UPDATE,

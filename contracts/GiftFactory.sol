@@ -23,7 +23,7 @@ contract GiftFactory is Ownable {
 
     event Funding(address, uint);
 
-    event CardCreated(address, uint);
+    event CardCreated(address, uint, uint);
 
     /**
      * @notice Throws if the card exists
@@ -77,7 +77,7 @@ contract GiftFactory is Ownable {
         cardsExists[cardAddress] = true;
         links[msg.sender].push(cardAddress);
 
-        emit CardCreated(cardAddress, msg.value);
+        emit CardCreated(cardAddress, msg.value, block.timestamp);
     }
 
     /**

@@ -5,7 +5,6 @@ import GtCardButton from "../buttons/gtCardButton/GtCardButton";
 import { determineClasses } from "./functions";
 import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
 import { useDappContext } from "../../contexts/DappContext";
-import IGiftCardProps from "../giftCard/interface";
 
 /*
  * Read the blog post here:
@@ -14,7 +13,7 @@ import IGiftCardProps from "../giftCard/interface";
 
 const CardCarousel = () => {
 
-    const { dappContextState, setCurrentCardFromData } = useDappContext();
+    const { dappContextState, setCurrentCardFromData, getCardsAddressesList } = useDappContext();
 
     const [indexes, setIndexes] = useState({
         previousIndex: dappContextState.cardsDataList ? dappContextState.cardsDataList.length - 1 : 1,
@@ -22,7 +21,7 @@ const CardCarousel = () => {
         nextIndex: 1
     });
     const [trigger, setTrigger] = useState(true)
-    const [cardsList, setCardsList] = useState<IGiftCardProps[] | null>(null)
+    const [cardsList, setCardsList] = useState<JSX.Element[] | null>([])
 
     const switchCardToDisplay = (dir: string) => {
         let newIndexes= {...indexes};
@@ -57,8 +56,27 @@ const CardCarousel = () => {
     //         <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} />
     //     </li>
     //     return newLi
-    // })   
+    // })  
+    
+    useEffect(() => {
+        if (dappContextState.cardsDataList && dappContextState.cardsDataList?.length > 0) {
+            const newGiftCardsElementsList = dappContextState.cardsDataList?.map((card, index) => {
+                const newLi = <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
+                    <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} />
+                </li>
+                return newLi
+            })  
+            newGiftCardsElementsList && setCardsList(newGiftCardsElementsList);   
+            newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[0]);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dappContextState.cardsDataList, indexes])
 
+    useEffect(() => {
+        getCardsAddressesList();        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    
     useEffect(() => {
         if (trigger) {
             dappContextState.cardsDataList?.map((card, index) => {
@@ -75,27 +93,16 @@ const CardCarousel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [indexes])    
 
-    useEffect(() => {
-      console.log(dappContextState.cardsDataList);
-      dappContextState.cardsDataList && dappContextState.cardsDataList?.length > 0 && setCardsList(dappContextState.cardsDataList)
-    }, [dappContextState])
-
     return (
         <>
             {
-                cardsList && cardsList.length === 0 &&<GtAddCardButton />
+                cardsList && cardsList.length === 0 && <GtAddCardButton />
             }
             {
                 cardsList && cardsList.length === 1 && <div className="w-full h-full flexJIC flex-col gap-6 relative">
                     <ul className="list-none flex items-center flex-col h-52 mx-24 pr-16 mb-56 my-auto relative">
-                        {/* {   
-                            GiftCardsElementsList
-                        } */}
                         {   
-                            cardsList?.map((card, index) => <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
-                                    <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} />
-                                </li>
-                            )
+                            cardsList
                         }
                     </ul>
                     <div className="absolute top-96">
@@ -106,14 +113,8 @@ const CardCarousel = () => {
             {
                 cardsList && cardsList.length > 1 && <div className="w-full h-full flexJIC flex-col gap-6 relative">
                     <ul className="list-none p-0 flex items-center flex-col h-52 mx-24 pr-16 mt-10 my-auto relative">
-                        {/* {   
-                            GiftCardsElementsList
-                        } */}
                         {   
-                            cardsList?.map((card, index) => <li key={index} className={`${css.card} ${determineClasses(indexes, index)}`} >
-                                    <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} />
-                                </li>
-                            )
+                            cardsList
                         }
                     </ul>
                     <div className="flexJIC gap-12 absolute top-[21rem]">

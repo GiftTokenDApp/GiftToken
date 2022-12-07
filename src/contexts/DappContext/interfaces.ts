@@ -11,6 +11,7 @@ export enum StateTypes {
     SET_CARDS_LIST = 'SET_CARDS_LIST',
     UPDATE_CARDS_DATA_LIST = 'UPDATE_CARDS_DATA_LIST',
     SET_CURRENT_CARD = 'SET_CURRENT_CARD',
+    UPDATE_CARDS = 'UPDATE_CARDS',
 };
 
 export type IDappContextStateProps = {
@@ -41,7 +42,7 @@ export interface IDappContextProps extends IChildrenProps {
     createCard(newCard: INewCardProps): Promise<void>;
     hideEventData(): void;
     getCardsAddressesList(): void;
-    getCardData(cardAddress: Address): Promise<void>;
+    getCardData(cardAddress: Address): any;
     setCurrentCardFromIndex(currentCardIndex: number): void;
     setCurrentCardFromData(currentCardData: IGiftCardProps): void;
     giveToCard(amountToSend: number): void,
