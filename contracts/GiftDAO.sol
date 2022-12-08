@@ -236,11 +236,11 @@ contract GiftDAO is Ownable, IGiftDAO {
             
         if (currentProposal.proposalType == CardProposalType.AskOutpassedRequierements) {
             emit RequirementsOutpassed();
-            // giftCard.status = CardStatus.RequirementsOutpassed;
+            giftCard.setStatusByDAO(CardStatus.RequirementsOutpassed);
         }
         else {
             emit BeneficiaryChanged(giftCard.getBeneficiary(), proposalBeneficiary);
-            //giftCard.beneficiary = proposalBeneficiary;
+            giftCard.setBeneficiaryDAO(proposalBeneficiary);
         }
     }
 }
