@@ -120,38 +120,38 @@ describe("GiftFactory testing", () => {
             expect(linksCount).to.be.equal(BigNumber.from(3));
         });
 
-        // it("Should create 5 cards and return the 2 last ones addresses as a list", async () => {
-        //     const trx = {
-        //         value: BigNumber.from(DEFAULT_FINNEY),
-        //     };
-        //     for (let i = 0; i < 5; i++) {    
-        //         await giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx);      
-        //     }
-        //     cardCreatedEvent = await getLastOrDefaultEvent(giftFactory.filters.CardCreated()) as CardCreatedEvent;
-
-        //     const linksCount = await giftFactory.getLinksCount(ownerAddress);
-        //     if (linksCount != DEFAULT_BIGNUMBER) {
-        //         const links: string[] = await giftFactory["getLinks(address,uint256)"](ownerAddress,BigNumber.from(1));               
-        //         cardCreatedAddress = links.length ? links[0] : null;
-        //     }
-        //     expect(linksCount).to.be.equal(BigNumber.from(2));
-        // });
-
-        it("Should emit a CardCreated event", async () => {
-
-            let address: string | null = null;
-            let value: BigNumber | null = null;
-
-            if (cardCreatedEvent?.args?.length) {
-                address = cardCreatedEvent.args[0];
-                value = cardCreatedEvent.args[1];
+        it("Should create 5 cards and return the 2 last ones addresses as a list", async () => {
+            const trx = {
+                value: BigNumber.from(DEFAULT_FINNEY),
+            };
+            for (let i = 0; i < 5; i++) {    
+                await giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx);      
             }
-            
-            cardCreatedAddress = '0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E';
-            expect(address).to.be.not.null;
-            expect(address).to.be.equal(cardCreatedAddress);
-            expect(value).to.be.not.null;
-            expect(value).to.be.equal(DEFAULT_FINNEY);
+            cardCreatedEvent = await getLastOrDefaultEvent(giftFactory.filters.CardCreated()) as CardCreatedEvent;
+
+            const linksCount = await giftFactory.getLinksCount(ownerAddress);
+            if (linksCount != DEFAULT_BIGNUMBER) {
+                const links: string[] = await giftFactory["getLinks(address,uint256)"](ownerAddress,6);               
+                cardCreatedAddress = links.length ? links[0] : null;
+            }
+            expect(linksCount).to.be.equal(BigNumber.from(2));
         });
+
+        // it("Should emit a CardCreated event", async () => {
+
+        //     let address: string | null = null;
+        //     let value: BigNumber | null = null;
+
+        //     if (cardCreatedEvent?.args?.length) {
+        //         address = cardCreatedEvent.args[0];
+        //         value = cardCreatedEvent.args[1];
+        //     }
+            
+        //     cardCreatedAddress = '0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E';
+        //     expect(address).to.be.not.null;
+        //     expect(address).to.be.equal(cardCreatedAddress);
+        //     expect(value).to.be.not.null;
+        //     expect(value).to.be.equal(DEFAULT_FINNEY);
+        // });
     });
 });

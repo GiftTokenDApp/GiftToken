@@ -112,7 +112,7 @@ contract GiftFactory is Ownable {
         address[] memory result = new address[](links[_visitor].length-_startIndex);
 
         for (uint cpt = _startIndex; cpt < links[_visitor].length; cpt++) {
-            result[cpt] = links[_visitor][_startIndex + cpt];
+            result[cpt - _startIndex] = links[_visitor][cpt];
         }
 
         return result;
@@ -131,7 +131,7 @@ contract GiftFactory is Ownable {
         address[] memory result = new address[](_pageSize);
 
         for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
-            result[cpt] = links[_visitor][_startIndex + cpt];
+            result[cpt - _startIndex] = links[_visitor][cpt];
         }
 
         return result;
