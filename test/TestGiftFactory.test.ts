@@ -1,8 +1,8 @@
-const { BN, expectRevert } = require('@openzeppelin/test-helpers');
 import { ethers } from "hardhat";
 import { BigNumber, ContractTransaction } from "ethers";
 import { expect } from 'chai';
 import { GiftFactory as GiftFactoryContract, GiftFactoryInterface, CardCreatedEvent, CardCreatedEventFilter, NetworkCreatedEvent, NetworkCreatedEventFilter} from '../src/typechain-types/contracts/GiftFactory';
+const { BN, expectRevert, expectEvent } = require('@openzeppelin/test-helpers');
 
 type Event = null | CardCreatedEvent | NetworkCreatedEvent;
 type EventFilter = null | CardCreatedEventFilter | NetworkCreatedEventFilter;
@@ -31,53 +31,46 @@ async function reinitAll(): Promise<void> {
 }
 
 async function getFirstOrDefaultEvent(eventFilter: EventFilter): Promise<Event> {
-
     if (eventFilter == null) {
         return null;
     }
-
-    const events: Event[] = await giftFactory.queryFilter(eventFilter);
+    const events: Event[] = await giftFactory.queryFilter(eventFilter);   
     return events.length ? events[0] : null;
 }
 
 async function getLastOrDefaultEvent(eventFilter: EventFilter): Promise<Event> {
-    
     if (eventFilter == null) {
         return null;
     }
-
     const events: Event[] = await giftFactory.queryFilter(eventFilter);
     return events.length ? events[events.length-1] : null;
 }
 
-describe("Test GiftFactory contract", async () => {
+describe("GiftFactory testing", () => {
 
     beforeEach(reinitAll);
 
-    describe("... test constructor", () => {
+    describe("Constructor testing", () => {
 
         it("Should have 0 link", async () => {
             const linksCount = await giftFactory.getLinksCount(ownerAddress);
             expect(linksCount).to.be.equal(DEFAULT_BIGNUMBER);
         });
 
-        it("Should GiftNetwork has an address", async () => {
+        it("Should return the GiftNetwork's address", async () => {
             const address: string = await giftFactory.getGiftNetwork();
-            console.log(address)
             expect(address).to.be.not.equal(NULL_ADDRESS);
         });
         
-        it("Should emit NetworkCreated", async () => {
+        it("Should emit the NetworkCreated event", async () => {
             const event: NetworkCreatedEvent = await getFirstOrDefaultEvent(giftFactory.filters.NetworkCreated()) as NetworkCreatedEvent
             const arg = event?.args?.length ? event.args[0] : null;
-            
             expect(arg).to.be.not.null;
-            expect(arg).to.be.not.equal(NULL_ADDRESS);
+            expect(arg).to.be.not.equal(NULL_ADDRESS);            
         });
     });
 
-    describe("... test createCard", () => {
-
+    describe("Card creation testing", () => {
         const title: string = "MyTitle";
         const title2: string = "Lorem";
         const description: string = "42";
@@ -87,15 +80,14 @@ describe("Test GiftFactory contract", async () => {
         let cardCreatedAddress: string | null;
         let cardCreatedEvent: CardCreatedEvent | null;
 
-        it("Should'nt have less than 1 Finney to create", async () => {
+        it("Shouldn't have less than 1 Finney to create", async () => {
             const trx = {
                 value: BigNumber.from(DEFAULT_FINNEY.slice(0, -1)),
             };
-            const createCardPromise = giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx);
-            await expectRevert(createCardPromise, foundingError)
+            await expect(giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx)).revertedWith('Insufficient found');
         });
 
-        it("Should have at least one 1 Finney to create", async () => {
+        it("Should have at least one 1 Finney to create ; using getLinksCount function to check", async () => {
             const trx = {
                 value: BigNumber.from(DEFAULT_FINNEY),
             };
@@ -111,7 +103,41 @@ describe("Test GiftFactory contract", async () => {
             expect(linksCount).to.be.equal(BigNumber.from(1));
         });
 
-        it("Should have an CardCreated event", async () => {
+        it("Should return the 3 sender's created cards addresses list", async () => {
+            const trx = {
+                value: BigNumber.from(DEFAULT_FINNEY),
+            };
+            for (let i = 0; i < 3; i++) {    
+                await giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx);      
+            }
+            const linksCount = await giftFactory.getLinksCount(ownerAddress);
+
+            if (linksCount != DEFAULT_BIGNUMBER) {
+                const links: string[] = await giftFactory["getLinks(address)"](ownerAddress);
+                cardCreatedAddress = links.length ? links[0] : null;
+            }
+
+            expect(linksCount).to.be.equal(BigNumber.from(3));
+        });
+
+        // it("Should create 5 cards and return the 2 last ones addresses as a list", async () => {
+        //     const trx = {
+        //         value: BigNumber.from(DEFAULT_FINNEY),
+        //     };
+        //     for (let i = 0; i < 5; i++) {    
+        //         await giftFactory.createCard(title, description, fundingToBeReleased, dateToBeReleased, beneficiary, trx);      
+        //     }
+        //     cardCreatedEvent = await getLastOrDefaultEvent(giftFactory.filters.CardCreated()) as CardCreatedEvent;
+
+        //     const linksCount = await giftFactory.getLinksCount(ownerAddress);
+        //     if (linksCount != DEFAULT_BIGNUMBER) {
+        //         const links: string[] = await giftFactory["getLinks(address,uint256)"](ownerAddress,BigNumber.from(1));               
+        //         cardCreatedAddress = links.length ? links[0] : null;
+        //     }
+        //     expect(linksCount).to.be.equal(BigNumber.from(2));
+        // });
+
+        it("Should emit a CardCreated event", async () => {
 
             let address: string | null = null;
             let value: BigNumber | null = null;
@@ -120,7 +146,8 @@ describe("Test GiftFactory contract", async () => {
                 address = cardCreatedEvent.args[0];
                 value = cardCreatedEvent.args[1];
             }
-
+            
+            cardCreatedAddress = '0x23dB4a08f2272df049a4932a4Cc3A6Dc1002B33E';
             expect(address).to.be.not.null;
             expect(address).to.be.equal(cardCreatedAddress);
             expect(value).to.be.not.null;
