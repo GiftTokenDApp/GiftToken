@@ -282,7 +282,7 @@ contract GiftCard is Ownable, IGiftCard {
         address[] memory result = new address[](participants.length-_startIndex);
 
         for (uint cpt = _startIndex; cpt < participants.length; cpt++) {
-            result[cpt] = participants[_startIndex + cpt];
+            result[cpt - _startIndex] = participants[_startIndex];
         }
 
         return result;
@@ -301,7 +301,7 @@ contract GiftCard is Ownable, IGiftCard {
         address[] memory result = new address[](_pageSize);
 
         for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
-            result[cpt] = participants[_startIndex + cpt];
+            result[cpt - _startIndex] = participants[_startIndex];
         }
 
         return result;
@@ -373,7 +373,7 @@ contract GiftCard is Ownable, IGiftCard {
         Message[] memory result = new Message[](participants.length-_startIndex);
 
         for (uint cpt = _startIndex; cpt < participants.length; cpt++) {
-            result[cpt] = communChat[_startIndex + cpt];
+            result[cpt - _startIndex] = communChat[cpt];
         }
 
         return result;
@@ -392,7 +392,7 @@ contract GiftCard is Ownable, IGiftCard {
         Message[] memory result = new Message[](_pageSize);
 
         for (uint cpt = _startIndex; cpt < lastIndex; cpt++) {
-            result[cpt] = communChat[_startIndex + cpt];
+            result[cpt - _startIndex] = communChat[cpt];
         }
 
         return result;
