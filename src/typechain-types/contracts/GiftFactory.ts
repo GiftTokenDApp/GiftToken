@@ -130,7 +130,7 @@ export interface GiftFactoryInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "CardCreated(address,uint256)": EventFragment;
+    "CardCreated(address,uint256,uint256)": EventFragment;
     "Funding(address,uint256)": EventFragment;
     "NetworkCreated(address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -145,9 +145,10 @@ export interface GiftFactoryInterface extends utils.Interface {
 export interface CardCreatedEventObject {
   arg0: string;
   arg1: BigNumber;
+  arg2: BigNumber;
 }
 export type CardCreatedEvent = TypedEvent<
-  [string, BigNumber],
+  [string, BigNumber, BigNumber],
   CardCreatedEventObject
 >;
 
@@ -347,11 +348,12 @@ export interface GiftFactory extends BaseContract {
   };
 
   filters: {
-    "CardCreated(address,uint256)"(
+    "CardCreated(address,uint256,uint256)"(
       arg0?: null,
-      arg1?: null
+      arg1?: null,
+      arg2?: null
     ): CardCreatedEventFilter;
-    CardCreated(arg0?: null, arg1?: null): CardCreatedEventFilter;
+    CardCreated(arg0?: null, arg1?: null, arg2?: null): CardCreatedEventFilter;
 
     "Funding(address,uint256)"(arg0?: null, arg1?: null): FundingEventFilter;
     Funding(arg0?: null, arg1?: null): FundingEventFilter;
