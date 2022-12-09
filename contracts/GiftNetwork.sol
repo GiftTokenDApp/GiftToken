@@ -86,7 +86,7 @@ contract GiftNetwork is Ownable, IGiftNetwork {
      * @param _pseudo Pseudo
      * @param _ipfsLink IPFS Link
      */
-    function setUser(string calldata _pseudo, string calldata _ipfsLink) external isStringOK(_pseudo) isStringOK(_ipfsLink) {
+    function setUser(string calldata _pseudo, string calldata _ipfsLink) external isStringOK(_pseudo) {
         users[msg.sender] = User(_pseudo, _ipfsLink, users[msg.sender].friends);
 
         emit SettedUser(msg.sender, _pseudo);

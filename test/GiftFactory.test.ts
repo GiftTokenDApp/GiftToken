@@ -109,7 +109,6 @@ describe("GiftFactory testing", () => {
     describe("Card creation testing", () => {
 
         const title: string = "MyTitle";
-        const title2: string = "Lorem";
         const description: string = "42";
         const fundingToBeReleased: BigNumber = DEFAULT_BIGNUMBER;
         const dateToBeReleased: BigNumber = DEFAULT_BIGNUMBER;
