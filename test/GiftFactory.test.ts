@@ -1,10 +1,10 @@
 import { ethers } from "hardhat";
 import { BigNumber } from "ethers";
 import { expect } from 'chai';
-import { GiftFactory as GiftFactoryContract, CardCreatedEvent, CardCreatedEventFilter, NetworkCreatedEvent, NetworkCreatedEventFilter} from '../src/typechain-types/contracts/GiftFactory';
+import { GiftFactory as GiftFactoryContract, FundingEvent, FundingEventFilter, CardCreatedEvent, CardCreatedEventFilter, NetworkCreatedEvent, NetworkCreatedEventFilter} from '../src/typechain-types/contracts/GiftFactory';
 
-type Event = null | CardCreatedEvent | NetworkCreatedEvent;
-type EventFilter = null | CardCreatedEventFilter | NetworkCreatedEventFilter;
+type Event = null | FundingEvent| CardCreatedEvent | NetworkCreatedEvent;
+type EventFilter = null | FundingEventFilter | CardCreatedEventFilter | NetworkCreatedEventFilter;
 
 const NULL_ADDRESS: string = '0x0000000000000000000000000000000000000000';
 const DEFAULT_BIGNUMBER: BigNumber = BigNumber.from(0);
@@ -60,6 +60,47 @@ describe("GiftFactory testing", () => {
         it("Should emit the NetworkCreated event", async () => {
             const event: NetworkCreatedEvent = await getFirstOrDefaultEvent(giftFactory.filters.NetworkCreated()) as NetworkCreatedEvent
             const arg = event?.args?.length ? event.args[0] : null;
+            expect(arg).to.be.not.null;
+            expect(arg).to.be.not.equal(NULL_ADDRESS);            
+        });
+
+        it("Should get the Funding event from the receive function", async () => {
+            const [ownerAccount] = await ethers.getSigners();
+            // let userBalance = await provider.getBalance(otherAccount1.address);
+            // let factoryBalance = await provider.getBalance(giftFactory.address);
+            // console.log(userBalance, factoryBalance);
+            await ownerAccount.sendTransaction({
+                to: giftFactory.address,
+                value: 100,
+            })
+            // userBalance = await provider.getBalance(otherAccount1.address);
+            // factoryBalance = await provider.getBalance(giftFactory.address);
+            // console.log(userBalance, factoryBalance);
+
+            const event: FundingEvent = await getFirstOrDefaultEvent(giftFactory.filters.Funding()) as FundingEvent
+            const arg = event?.args?.length ? event.args[0] : null;
+            
+            expect(arg).to.be.not.null;
+            expect(arg).to.be.not.equal(NULL_ADDRESS);            
+        });
+        
+        it("Should get the Funding event from the fallback function", async () => {
+            const [ownerAccount] = await ethers.getSigners();
+            // let userBalance = await provider.getBalance(otherAccount1.address);
+            // let factoryBalance = await provider.getBalance(giftFactory.address);
+            // console.log(userBalance, factoryBalance);
+            await ownerAccount.sendTransaction({
+                data: '0x123456',
+                to: giftFactory.address,
+                value: 100,
+            })
+            // userBalance = await provider.getBalance(otherAccount1.address);
+            // factoryBalance = await provider.getBalance(giftFactory.address);
+            // console.log(userBalance, factoryBalance);
+
+            const event: FundingEvent = await getFirstOrDefaultEvent(giftFactory.filters.Funding()) as FundingEvent
+            const arg = event?.args?.length ? event.args[0] : null;
+            
             expect(arg).to.be.not.null;
             expect(arg).to.be.not.equal(NULL_ADDRESS);            
         });
@@ -146,9 +187,9 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address)"](ownerAddress);            
             const expectedLinksList= [
-                '0xB267C5f8279A939062A20d29CA9b185b61380f10',
-                '0x08AB489C878Cc3F12E52953FFde61A298359D998',
-                '0x121C11ca1b262E7A6EC03243a3CCaF826c3EcF62'
+                '0xe3ADd897e69010709498738e5116C06B4D81e672',
+                '0x08957fd2346e89192C452c47a5f6631c63c91Eac',
+                '0xDA0783B7eb9c9d3cD179B1c425908a21086117E6'
             ]
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -175,9 +216,9 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address,uint256)"](ownerAddress, BigNumber.from(2));
             const expectedLinksList= [
-                '0xf9b42E09Fd787d6864D6b2Cd8E1350fc93E6683D',
-                '0xd468bF477c0c99095D508c3B0A60f39348d91ac0',
-                '0xe481c73B6236153D1dc22E510c51b312CD8E5e3f'
+                '0x874305DB059EF37C48536F32Dd109b4C7aB60a6d',
+                '0x9F99f4f06Fc3B3FB9170b48c00207431982D7f3f',
+                '0x157C59446c677ff70B32bEF30324A8B6e7238F53'
             ]
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -213,8 +254,8 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address,uint256,uint256)"](ownerAddress, BigNumber.from(0), BigNumber.from(2));
             const expectedLinksList= [
-                '0x4fBd2B1681897666FCc9E953839f3F49cA16bf20',
-                '0x36d4475f3bacDA9f3A2cE98c0c025B16ab1faFd9'
+                '0x0a26c41eB1D42981aD15d7D593789cC455B7Ae71',
+                '0x3056A5f9c067A69622fc301a0b8A279eFa73C24b'
             ]            
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -251,7 +292,7 @@ describe("GiftFactory testing", () => {
                 value = cardCreatedEvent.args[1];
             }
             
-            cardCreatedAddress = '0xF953091ceC3F278c76D574bFa505cdC329c36766';
+            cardCreatedAddress = '0x815b1008f769e9CDD38e4A3fe2236FD56aD508D8';
             expect(address).to.be.not.null;
             expect(address).to.be.equal(cardCreatedAddress);
             expect(value).to.be.not.null;
