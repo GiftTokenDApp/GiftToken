@@ -10,9 +10,10 @@ import { GiftDAO__factory as GiftDAOContractFactory} from '../../typechain-types
 import { GiftNetwork__factory as GiftNetworkContractFactory} from '../../typechain-types/factories/contracts/GiftNetwork__factory';
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
 import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
-import { INewCardProps } from "../../components/forms/interface";
+import { INewCardProps } from "../../components/forms/INewCardProps";
 import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
+import { IUserProps } from "../../components/forms/IUserProps";
 
 let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 
@@ -223,6 +224,48 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     }
   }  
 
+  async function getUserExists(address: Address): Promise<boolean> {
+
+    if (dappContextState.giftNetworkContract == null) {
+        return false;
+    }
+
+    return await dappContextState.giftNetworkContract.getUserExists(address);
+  } 
+
+  async function getCurrentUserExists(): Promise<boolean> {
+    return await getUserExists(dappContextState.accounts[0]);
+  } 
+
+  async function getUser(address: Address): Promise<IUserProps> {
+
+    if (dappContextState.giftNetworkContract == null) {
+        return {
+          pseudo: "",
+          ipfsLink: ""
+        };
+    }
+
+    return await dappContextState.giftNetworkContract.getUser(address);
+  } 
+
+  async function getCurrentUser(): Promise<IUserProps> {
+    return await getUser(dappContextState.accounts[0]);
+  } 
+
+  async function setCurrentUser(pseudo: string, ipfsLink: string): Promise<void> {
+
+    if (dappContextState.giftNetworkContract == null) {
+      return;
+    }
+
+    const trx = {
+      from: dappContextState.accounts[0],
+    };
+    const transaction = await dappContextState.giftNetworkContract.connect(dappContextState.signer).setUser(pseudo, ipfsLink, trx);              
+    await transaction.wait();
+  }
+
   const init = useCallback(
     async () => {
       let accounts;
@@ -384,6 +427,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       giveToCard,
       setCurrentCardFromIndex,
       setCurrentCardFromData,
+      getCurrentUserExists,
+      getUserExists,
+      getCurrentUser,
+      getUser,
+      setCurrentUser,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

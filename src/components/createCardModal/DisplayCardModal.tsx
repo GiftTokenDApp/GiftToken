@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Backdrop from "./ModalBackdrop";
+import Backdrop from "../backdropModal/ModalBackdrop";
 import css from "../giftCard/giftCard.module.css";
 import { formatETHAddress } from "../../helpers/functionsHelpers";
 import Logo from "../logo/Logo";

@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import ErrorSpan from "./errorSpan/ErrorSpan";
 import CircleLoader from "../loader/CircleLoader";
-import { INewCardProps } from "./interface";
+import { INewCardProps } from "./INewCardProps";
 import { zeroAddress } from "../../helpers/dataHelpers";
 
 const re = new RegExp(/0x[a-fA-F0-9]{40}/);

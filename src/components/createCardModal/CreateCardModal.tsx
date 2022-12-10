@@ -1,13 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
-import Backdrop from "./ModalBackdrop";
+import Backdrop from "../backdropModal/ModalBackdrop";
 import css from "../giftCard/giftCard.module.css";
 import Logo from "../logo/Logo";
 import cssLogo from "../giftCard/giftCard.module.css";
 import CreateCardForm from "../forms/CreateCardForm";
 import { flip } from "./data";
 import { useDappContext } from "../../contexts/DappContext";
-import { INewCardProps } from "../forms/interface";
+import { INewCardProps } from "../forms/INewCardProps";
 
 type ModalProps = {
   handleClose : () => void,

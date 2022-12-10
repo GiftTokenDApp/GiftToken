@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import css from "./BurgerMenu.module.css";
-import { useModalContext } from '../../contexts/ModalContext';
+import { useDappContext } from "../../contexts/DappContext";
+import AccountModal from '../accountModal/AccountModal';
 
 // const BurgerMenu = ({setHiddenMenuOpened}) => {
 const BurgerMenu = () => {
@@ -10,9 +11,20 @@ const BurgerMenu = () => {
     const burgerMenuCss = "w-12 h-0.5 border-0";
     const burgerMenuCssColor = 'bg-black';
     const cssHr = `${burgerMenuCss} ${burgerMenuCssColor} ${css.burgerMenuAnimation}`;
+    const { dappContextState, getCurrentUserExists } = useDappContext();
 
     const [hiddenMenuOpened, setHiddenMenuOpened] = useState(false);
+    const [displayAccountModal, setDisplayAccountModal] = useState(false);
     const [accountExists, setAccountExists] = useState(false);
+
+    useEffect(() => {
+        init();
+    }, []);
+
+    const init = async() => {
+        const userExists = await getCurrentUserExists();
+        setAccountExists(userExists);
+    };
 
     const handleBurgerClick = () => {      
         const refClass1 = burgerMenuRef1?.current?.className ?? null;
@@ -31,9 +43,17 @@ const BurgerMenu = () => {
         }
     }
 
-    const handleMyMenuClick = (event: any) => {
+    const handleMyAccountClick = (event: any) => {
         event.stopPropagation();
-        // useModalContext();
+        setDisplayAccountModal(true);
+    };
+
+    const handleUpdateMyAccountClick = async (): Promise<void> => {
+        await init();
+    };
+
+    const handleCloseMyAccountClick = (): void => {
+        setDisplayAccountModal(false);
     };
 
     const handleChatClick = (event: any) => {
@@ -50,18 +70,19 @@ const BurgerMenu = () => {
             {hiddenMenuOpened && 
             <div className="hidden md:flex md:justify-center md:items-center">
                 <div className="items-center text-center px-3 py-2 bg-gtCamel text-bg-DarkBLue text-sm font-extrabold">
-                    <button type="button" className="px-6 py-2 bg-slate-400 text-white rounded-full cursor-pointer"
-                        onClick={handleMyMenuClick}>
+                    <button type="button" className="px-10 py-2 bg-slate-400 text-white rounded-full cursor-pointer"
+                        onClick={handleMyAccountClick}>
                         {myAccountLib()}
                     </button>
                     <br /><br />
                     {accountExists && 
-                    <button type="button" className="px-14 py-1 bg-slate-400 text-white rounded-full cursor-pointer"
+                    <button type="button" className="px-14 py-2 bg-slate-400 text-white rounded-full cursor-pointer"
                         onClick={handleChatClick}>
                         Discuter
                     </button>}
                 </div>
             </div>}
+            {displayAccountModal && <AccountModal handleUpdate={handleUpdateMyAccountClick} handleClose={handleCloseMyAccountClick} />}
         </div>
     )
 }

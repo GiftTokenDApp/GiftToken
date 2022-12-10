@@ -1,5 +1,6 @@
 import { Dispatch } from "react";
-import { INewCardProps } from "../../components/forms/interface";
+import { INewCardProps } from "../../components/forms/INewCardProps";
+import { IUserProps } from "../../components/forms/IUserProps";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 import { Address } from "../../helpers/typesHelpers";
@@ -55,4 +56,9 @@ export interface IDappContextProps extends IChildrenProps {
     setCurrentCardFromIndex(currentCardIndex: number): void;
     setCurrentCardFromData(currentCardData: IGiftCardProps): void;
     giveToCard(amountToSend: number): void,
+    getCurrentUserExists(): Promise<boolean>,
+    getUserExists(address: Address): Promise<boolean>,
+    getCurrentUser(): Promise<IUserProps>,
+    getUser(address: Address): Promise<IUserProps>,
+    setCurrentUser(pseudo: string, ipfsLink: string) : Promise<void>,
 }
