@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from "ethers";
-import GiftFactory from '../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
+import { GiftNetwork__factory as GiftNetworkContractFactory} from '../typechain-types/factories/contracts/GiftNetwork__factory';
 
 let FactoryAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
@@ -14,7 +14,7 @@ const DAppComponent = () => {
       if(typeof window.ethereum !== 'undefined') {
         const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);        
+        const contract = new ethers.Contract(FactoryAddress, GiftNetworkContractFactory.abi, provider);        
         try {
             const value = await contract.links(accounts[0],nb);
             console.log(value.toString());
@@ -29,7 +29,7 @@ const DAppComponent = () => {
         if(typeof window.ethereum !== 'undefined') {
             const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
             const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const contract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);   
+            const contract = new ethers.Contract(FactoryAddress, GiftNetworkContractFactory.abi, provider);   
             const signer = provider.getSigner();
             try {
                 const trx = {

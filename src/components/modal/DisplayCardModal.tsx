@@ -37,10 +37,6 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       dappContextState && console.log(dappContextState.cardDAOData);
     }, [dappContextState])
 
-    console.log(dappContextState.network);
-    
-    
-
     return (
       <Backdrop onClick={handleClose}>
           <motion.div

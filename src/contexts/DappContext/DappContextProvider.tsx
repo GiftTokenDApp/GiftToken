@@ -4,15 +4,17 @@ import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer } from "./state";
 import { IDappContextProps, StateTypes } from "./interfaces";
 import { ethers } from "ethers";
-import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
-import GiftCard from '../../artifacts/contracts/GiftCard.sol/GiftCard.json'
-import GiftDAO from '../../artifacts/contracts/GiftDAO.sol/GiftDAO.json'
-import GiftNetwork from '../../artifacts/contracts/GiftNetwork.sol/GiftNetwork.json'
+import { GiftFactory__factory as GiftFactoryContractFactory} from '../../typechain-types/factories/contracts/GiftFactory__factory';
+import { GiftCard__factory as GiftCardContractFactory} from '../../typechain-types/factories/contracts/GiftCard__factory';
+import { GiftDAO__factory as GiftDAOContractFactory} from '../../typechain-types/factories/contracts/GiftDAO__factory';
+import { GiftNetwork__factory as GiftNetworkContractFactory} from '../../typechain-types/factories/contracts/GiftNetwork__factory';
+import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
+import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
 import { INewCardProps } from "../../components/forms/interface";
 import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
 
-let FactoryAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
@@ -51,12 +53,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   // }  
 
   async function getCardsAddressesList() {
-    if(typeof window.ethereum !== 'undefined') {      
+    if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null) {      
       try {  
           const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.accounts[0]); 
           const cardsDataList: IGiftCardProps[] = [];
           for (let i = 0; i < cardsAddressesList.length; i++) {
-            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCard.abi, dappContextState.provider);            
+            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);            
             const cardTitle = await giftCardContract.title();          
             const cardDescription = await giftCardContract.description();          
             const cardCreationDate = await giftCardContract.creationDate();          
@@ -113,7 +115,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   }
 
   async function createCard(newCard: INewCardProps) {
-      if(typeof window.ethereum !== 'undefined') {
+      if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null) {
           try {
               const trx = {
                   from: dappContextState.accounts[0],
@@ -155,7 +157,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   async function getCardData(cardAddress: Address) {
     if(typeof window.ethereum !== 'undefined') {
       try {
-          const giftCardContract = new ethers.Contract(cardAddress, GiftCard.abi, dappContextState.provider);            
+          const giftCardContract = new ethers.Contract(cardAddress, GiftCardContractFactory.abi, dappContextState.provider);            
           const cardTitle = await giftCardContract.title();          
           const cardDescription = await giftCardContract.description();          
           const cardCreationDate = await giftCardContract.creationDate();          
@@ -197,7 +199,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
       try {   
           // const cardDAODataList: any[] = [];
-          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);            
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);            
           const currentProposal = await cardDAOContract.currentProposal();          
           const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
           const lastProposals = await cardDAOContract.getProposals();   
@@ -225,22 +227,22 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     async () => {
       let accounts;
       let provider;
-      let giftFactoryContract;
+      let giftFactoryContract: GiftFactoryContract | null = null;
       let signer;   
-      let network;
+      let giftNetworkContract: GiftNetworkContract | null = null;
       try {
         accounts = await window.ethereum.request({method:'eth_requestAccounts'});
         provider = new ethers.providers.Web3Provider(window.ethereum);
-        giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);    
+        giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
         signer = provider.getSigner();   
         const networkAddress = await giftFactoryContract.getGiftNetwork();
-        network = new ethers.Contract(networkAddress, GiftNetwork.abi, provider);    
+        giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
       } catch (err) {
         console.log(err);
       }
       dappContextDispatch({
         type: StateTypes.UPDATE,
-        payload: { accounts, provider, giftFactoryContract, signer, network }
+        payload: { accounts, provider, giftFactoryContract, signer, giftNetworkContract }
       });
     }, []);
   

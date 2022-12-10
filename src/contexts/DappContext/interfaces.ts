@@ -3,6 +3,8 @@ import { INewCardProps } from "../../components/forms/interface";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 import { Address } from "../../helpers/typesHelpers";
+import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
+import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
 
 export enum StateTypes {
     RESET = 'RESET',
@@ -18,9 +20,9 @@ export enum StateTypes {
 export type IDappContextStateProps = {
     accounts: any,
     provider: any,
-    giftFactoryContract: any,
+    giftFactoryContract: GiftFactoryContract | null,
     signer: any, 
-    network: any,
+    giftNetworkContract: GiftNetworkContract | null,
     lastEvent?: {
         name: string | null,
         address: string | null,

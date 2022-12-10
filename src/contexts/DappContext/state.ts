@@ -16,7 +16,7 @@ const initialState = {
   provider: null,
   giftFactoryContract: null,
   signer: null, 
-  network: null,
+  giftNetworkContract: null,
   lastEvent: {
     name: null,
     address: null,
