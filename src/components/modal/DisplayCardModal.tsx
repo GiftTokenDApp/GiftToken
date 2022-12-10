@@ -36,6 +36,9 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
     useEffect(() => {
       dappContextState && console.log(dappContextState.cardDAOData);
     }, [dappContextState])
+
+    console.log(dappContextState.network);
+    
     
 
     return (
@@ -63,7 +66,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                   <span>{ currentCoinsAmount }</span>
                 </div>
                 <div className="w-full flexJIC gap-16 mb-4">
-                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>{"Voir les DAO"}</motion.button>
+                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(1)}>DAO</motion.button>
                   <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='w-60 p-4 mb-4 bg-slate-500 text-white text-xl rounded-full cursor-pointer' onClick={() => setCardMode(2)}>Participer à la carte</motion.button>
                 </div>
               </>
@@ -72,6 +75,9 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
               !dappContextState.displayEvent && cardMode === 1 && <>
                 <div className='h-full flex justify-center items-start flex-col mb-20 gap-6 text-xl'>
                   <span>Voici les DAO sur cette carte :</span>
+                  {
+                    dappContextState.cardDAOData?.currentProposal[4] === 0 ? <span>Pas de DAO en cours</span> : <span>Une DAO en cours</span>
+                  }
                 </div>
               </>
             }

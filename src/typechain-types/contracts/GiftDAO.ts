@@ -73,7 +73,6 @@ export interface GiftDAOInterface extends utils.Interface {
     "determinateProposalResult()": FunctionFragment;
     "getProposals()": FunctionFragment;
     "getVote(address)": FunctionFragment;
-    "lastProposals(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "proposalBeneficiary()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -90,7 +89,6 @@ export interface GiftDAOInterface extends utils.Interface {
       | "determinateProposalResult"
       | "getProposals"
       | "getVote"
-      | "lastProposals"
       | "owner"
       | "proposalBeneficiary"
       | "renounceOwnership"
@@ -125,10 +123,6 @@ export interface GiftDAOInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getVote",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lastProposals",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -173,10 +167,6 @@ export interface GiftDAOInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVote", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "lastProposals",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proposalBeneficiary",
@@ -372,35 +362,6 @@ export interface GiftDAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    lastProposals(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        number,
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        id: BigNumber;
-        initiator: string;
-        creationDate: BigNumber;
-        closureDate: BigNumber;
-        proposalType: number;
-        description: string;
-        proposalResult: number;
-        approvedCount: BigNumber;
-        refusedCount: BigNumber;
-        closedDate: BigNumber;
-      }
-    >;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     proposalBeneficiary(overrides?: CallOverrides): Promise<[string]>;
@@ -476,35 +437,6 @@ export interface GiftDAO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  lastProposals(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      string,
-      BigNumber,
-      BigNumber,
-      number,
-      string,
-      number,
-      BigNumber,
-      BigNumber,
-      BigNumber
-    ] & {
-      id: BigNumber;
-      initiator: string;
-      creationDate: BigNumber;
-      closureDate: BigNumber;
-      proposalType: number;
-      description: string;
-      proposalResult: number;
-      approvedCount: BigNumber;
-      refusedCount: BigNumber;
-      closedDate: BigNumber;
-    }
-  >;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   proposalBeneficiary(overrides?: CallOverrides): Promise<string>;
@@ -577,35 +509,6 @@ export interface GiftDAO extends BaseContract {
       _voter: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    lastProposals(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        number,
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
-        id: BigNumber;
-        initiator: string;
-        creationDate: BigNumber;
-        closureDate: BigNumber;
-        proposalType: number;
-        description: string;
-        proposalResult: number;
-        approvedCount: BigNumber;
-        refusedCount: BigNumber;
-        closedDate: BigNumber;
-      }
-    >;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -701,11 +604,6 @@ export interface GiftDAO extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lastProposals(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     proposalBeneficiary(overrides?: CallOverrides): Promise<BigNumber>;
@@ -753,11 +651,6 @@ export interface GiftDAO extends BaseContract {
 
     getVote(
       _voter: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    lastProposals(
-      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -23,7 +23,7 @@ contract GiftDAO is Ownable, IGiftDAO {
 
     address public proposalBeneficiary;
 
-    Proposal[10] public lastProposals;
+    Proposal[10] private lastProposals;
 
     mapping(address => mapping(uint => VoteResult)) votes;
 
@@ -139,7 +139,7 @@ contract GiftDAO is Ownable, IGiftDAO {
         uint8 cpt = 0;
 
         while (cpt < lastProposals.length-1 && lastProposals[cpt].id > 0) {
-            Proposal storage proposal = lastProposals[cpt];
+            Proposal memory proposal = lastProposals[cpt];
             results[cpt] = proposal;
             cpt++;
         }

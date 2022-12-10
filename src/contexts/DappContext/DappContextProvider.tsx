@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
 import GiftCard from '../../artifacts/contracts/GiftCard.sol/GiftCard.json'
 import GiftDAO from '../../artifacts/contracts/GiftDAO.sol/GiftDAO.json'
+import GiftNetwork from '../../artifacts/contracts/GiftNetwork.sol/GiftNetwork.json'
 import { INewCardProps } from "../../components/forms/interface";
 import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
@@ -199,7 +200,10 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);            
           const currentProposal = await cardDAOContract.currentProposal();          
           const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
-          const lastProposals = await cardDAOContract.getProposals();           
+          const lastProposals = await cardDAOContract.getProposals();   
+          console.log(1,currentProposal);
+          // console.log(2,proposalBeneficiary);
+          // console.log(3,lastProposals);
           const newCardDAOData = {
             currentProposal: currentProposal,
             proposalBeneficiary: proposalBeneficiary,
@@ -223,17 +227,20 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       let provider;
       let giftFactoryContract;
       let signer;   
+      let network;
       try {
         accounts = await window.ethereum.request({method:'eth_requestAccounts'});
         provider = new ethers.providers.Web3Provider(window.ethereum);
-        giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);  
+        giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactory.abi, provider);    
         signer = provider.getSigner();   
+        const networkAddress = await giftFactoryContract.getGiftNetwork();
+        network = new ethers.Contract(networkAddress, GiftNetwork.abi, provider);    
       } catch (err) {
         console.log(err);
       }
       dappContextDispatch({
         type: StateTypes.UPDATE,
-        payload: { accounts, provider, giftFactoryContract, signer }
+        payload: { accounts, provider, giftFactoryContract, signer, network }
       });
     }, []);
   

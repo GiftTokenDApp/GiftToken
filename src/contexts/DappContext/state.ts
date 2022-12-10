@@ -16,6 +16,7 @@ const initialState = {
   provider: null,
   giftFactoryContract: null,
   signer: null, 
+  network: null,
   lastEvent: {
     name: null,
     address: null,
@@ -26,7 +27,11 @@ const initialState = {
   cardsAddressesList: [],
   cardsDataList: [],
   currentCard: null,
-  cardDAOData: [],
+  cardDAOData: {
+    currentProposal: null,
+    proposalBeneficiary: null,
+    lastProposals: null,
+  },
 };
 
 const reducer = (state: IDappContextStateProps, action: StateActions) => {

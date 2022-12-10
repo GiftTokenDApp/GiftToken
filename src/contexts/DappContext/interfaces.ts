@@ -20,6 +20,7 @@ export type IDappContextStateProps = {
     provider: any,
     giftFactoryContract: any,
     signer: any, 
+    network: any,
     lastEvent?: {
         name: string | null,
         address: string | null,
@@ -30,7 +31,11 @@ export type IDappContextStateProps = {
     cardsAddressesList?: Address[],
     cardsDataList?: IGiftCardProps[],
     currentCard?: IGiftCardProps | null,
-    cardDAOData?: any,
+    cardDAOData?: {
+        currentProposal?: any | null,
+        proposalBeneficiary?: any | null,
+        lastProposals?: any | null,
+    },
 }
 
 export type StateActions = {
