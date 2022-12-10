@@ -299,3 +299,5 @@ describe("GiftFactory testing", () => {
         });
     });
 });
+
+// export const cc = ""

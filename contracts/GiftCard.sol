@@ -416,7 +416,7 @@ contract GiftCard is Ownable, IGiftCard {
      */
     function changeStatus(CardStatus _newStatus) internal {
 
-        if (status != _newStatus) {
+        if (status == _newStatus) {
             return;
         }
 

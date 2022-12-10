@@ -124,3 +124,5 @@ describe("GiftNetworktesting", () => {
         });
     });
 });
+
+// export const cc = ""
