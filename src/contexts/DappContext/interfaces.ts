@@ -18,6 +18,12 @@ export enum StateTypes {
     UPDATE_CARD_DAO_DATA = 'UPDATE_CARD_DAO_DATA',
 };
 
+export enum DAOTypes {
+    UNLOCK = 'UNLOCK',
+    DECLARE_BENEFICIARY = 'DECLARE_BENEFICIARY',
+    CHANGE_BENEFICIARY = 'CHANGE_BENEFICIARY',
+}
+
 export type IDappContextStateProps = {
     accounts: any,
     provider: any,
@@ -61,4 +67,6 @@ export interface IDappContextProps extends IChildrenProps {
     getCurrentUser(): Promise<IUserProps>,
     getUser(address: Address): Promise<IUserProps>,
     setCurrentUser(pseudo: string, ipfsLink: string) : Promise<void>,
+    setNewDAOProposal(daoType: DAOTypes, beneficiary: Address | null, description: string): void,
+    setDAOVote(vote: boolean): void,
 }

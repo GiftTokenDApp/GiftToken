@@ -48,6 +48,14 @@ contract GiftDAO is Ownable, IGiftDAO {
     }
 
     /**
+     * @notice Throws if a given address param is address zero
+     */
+    modifier isAddressParamAddress(address _beneficiary) {
+        require(_beneficiary != NULLADDRESS, "A beneficiary address is necessary");
+        _;
+    }
+
+    /**
      * @notice Throws if voting isn't opened
      */
     modifier isVoteOpenedProposal() {
@@ -109,9 +117,8 @@ contract GiftDAO is Ownable, IGiftDAO {
      * @notice Create a proposal to declare a beneficiary
      * @param _description Role's address
      */
-    function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
-        require(giftCard.getBeneficiary() == NULLADDRESS, "A beneficiary already exists");
+    function createDeclaredBeneficiaryProposal(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() isAddressParamAddress(_beneficiary) {
+        require(giftCard.getBeneficiary() == NULLADDRESS, "This fonction can only be called when no beneficiary is choosen");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.DeclaredBeneficiary, _description);
@@ -121,9 +128,8 @@ contract GiftDAO is Ownable, IGiftDAO {
      * @notice Create a proposal to change a beneficiary
      * @param _description Role's address
      */
-    function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() {
-        require(_beneficiary == NULLADDRESS, "A beneficiary address is necessary");
-        require(giftCard.getBeneficiary() != NULLADDRESS, "No beneficiary exists");
+    function changeBeneficiary(address _beneficiary, string memory _description) external isCardNotOpened() isOpenableProposal() isAddressParamAddress(_beneficiary) {
+        require(giftCard.getBeneficiary() != NULLADDRESS, "Need a previous choosen beneficiary to call this fonction");
 
         proposalBeneficiary = _beneficiary;
         addProposal(CardProposalType.ChangedBeneficiary, _description);

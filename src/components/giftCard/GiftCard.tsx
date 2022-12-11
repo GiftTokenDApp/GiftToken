@@ -6,7 +6,7 @@ import css from "./giftCard.module.css";
 import Logo from '../logo/Logo';
 import { imgScr1, imgSrc2 } from './data';
 import { useModalContext } from '../../contexts/ModalContext';
-import { zeroAddress } from '../../helpers/dataHelpers';
+import { addressZero } from '../../helpers/dataHelpers';
 
 const GiftCard: React.FC<IGiftCardProps> = (props) => {
 
@@ -35,7 +35,7 @@ const GiftCard: React.FC<IGiftCardProps> = (props) => {
         <div>
             <span>Déblocable à partir du : {props.releaseDate && props.releaseDate.toString() === '0' ? "date non définie" : props.releaseDate?.toString() }</span>
         </div>
-        <div className="text-xl mt-5">©{props.beneficiary && props.beneficiary === zeroAddress ? "BÉNÉFICIAIRE NON DÉFINI" : shortenedBeneficiaryAddress }</div>
+        <div className="text-xl mt-5">©{props.beneficiary && props.beneficiary === addressZero ? "BÉNÉFICIAIRE NON DÉFINI" : shortenedBeneficiaryAddress }</div>
       </div>
       <div className={cardGTLogo}>
         <Logo css="" />
