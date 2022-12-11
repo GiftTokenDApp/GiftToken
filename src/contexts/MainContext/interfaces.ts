@@ -1,8 +1,5 @@
 import { Dispatch } from "react";
-// import { ethers } from "ethers";
-// import IGiftCardProps from "../../components/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
-// import { Address } from "../../helpers/typesHelpers";
 
 export enum StateTypes {
     RESET = 'RESET',
@@ -12,21 +9,6 @@ export enum StateTypes {
 
 export type IMainContextStateProps = {
     get isContractAvailable() : boolean
-    // get currentCard(): IGiftCardProps
-    // get currentCard(): {
-    //     address: Address,
-    //     contract: ethers.Contract,
-    //     title: string,
-    //     description: string,
-    //     creationDate: number,
-    //     goal: number,
-    //     creator: Address,
-    //     funders: Address[],
-    //     beneficiary: Address,
-    //     status: number,
-    //     releaseDate: number,
-    //     get coinsAmount(): number,
-    // }
 };
 
 export type StateActions = {
@@ -37,5 +19,4 @@ export type StateActions = {
 export interface IMainContextProps extends IChildrenProps {
     get mainContextState(): IMainContextStateProps;
     get mainContextDispatch(): Dispatch<StateActions>;
-    // get updateCurrentCard(): (cardProps: IGiftCardProps) => void;
 };
