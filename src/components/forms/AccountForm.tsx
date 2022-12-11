@@ -39,7 +39,6 @@ const AccountForm: FC<formProp> = ({ user, func }) => {
     const handleFormSubmission = async (data: IUserProps): Promise<void> => {
         if(!btnState.hasSubmitted){
             func && func(data);
-            await init();
         }        
     }
 

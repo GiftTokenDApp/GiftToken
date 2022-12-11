@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useContext, useMemo, useCall
 import { IChildrenProps } from '../helpers/interfacesHelpers'
 import { Address } from "../helpers/typesHelpers";
 import { accounts } from "../helpers/dataHelpers";
+import { useDappContext } from "./DappContext";
 
 interface ICurrentUserProps {
   address: Address | null,
@@ -19,12 +20,15 @@ interface IAuthContextProps extends IChildrenProps {
 const AuthContext = createContext<IAuthContextProps | null>(null)
 
 const AuthContextProvider: FC<IChildrenProps> = ({ children }) => {
+
+  const { dappContextState } = useDappContext();
+
   const [currentUser, setCurrentUser] = useState<ICurrentUserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    (accounts.account0.privateKey && loggedIn ) ? authCheck(accounts.account0.privateKey) : authCheck(null);
+    (dappContextState.currentAccount != null && loggedIn ) ? authCheck(dappContextState.currentAccount) : authCheck(null);
 
     return () => {
       authCheck(null)
