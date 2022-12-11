@@ -430,7 +430,7 @@ contract GiftCard is Ownable, IGiftCard {
      * @param _newBeneficiary New beneficiary
      */
     function changeBeneficiary(address _newBeneficiary) internal {
-        require(_newBeneficiary == NULLADDRESS, "A beneficiary address is necessary");
+        require(_newBeneficiary != NULLADDRESS, "A beneficiary address is necessary");
 
         address oldBeneficiary = beneficiary;
         beneficiary = _newBeneficiary;
