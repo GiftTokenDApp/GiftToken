@@ -56,10 +56,6 @@ const BurgerMenu = () => {
         setDisplayAccountModal(false);
     };
 
-    const handleChatClick = (event: any) => {
-        event.stopPropagation();
-    };
-
     const myAccountLib = () => accountExists ? "Mon compte" : "Créer un compte";
 
     return(

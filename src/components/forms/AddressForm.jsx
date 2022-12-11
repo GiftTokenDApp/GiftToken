@@ -28,10 +28,8 @@ const AddressForm = ({ elt }) => {
         let returnValue;
         try {
             if(elt.func.mode === "send"){
-                // !errors.addressInput?.message && await contract.methods[elt.func.name](trimmedData).send({ from: accounts[0] });
                 returnValue = !errors.addressInput?.message && await contract.methods[elt.func.name](trimmedData ?? trimmedData).send({ from: accounts[0] });
             } else {
-                // await contract.methods[elt.func.name](trimmedData ?? trimmedData).call({ from: accounts[0] });   
                 returnValue = !errors.addressInput?.message && await contract.methods[elt.func.name](trimmedData ?? trimmedData).call({ from: accounts[0] });   
                 switch (elt.func.name) {
                     case solidityFunctionsList.voter.getVoter:
@@ -44,7 +42,6 @@ const AddressForm = ({ elt }) => {
                         break;
                 }
             }
-            // returnValue && console.log(returnValue);   
         } catch (error) {
             switch (elt.func.name) {
                 case solidityFunctionsList.voter.getVoter:

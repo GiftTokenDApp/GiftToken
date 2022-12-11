@@ -17,9 +17,6 @@ const AppRoutes: React.FC = () => {
     const RestrictedAccessPages = (
         <>
             <Route path="accueil" element={<Homepage />} />
-            {/* <Route path="maths" element={<MathsPage />} >
-                <Route path=":competence" element={<MathsPage />} />
-            </Route>*/}
         </>
     )
 

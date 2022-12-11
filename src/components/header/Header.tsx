@@ -13,10 +13,8 @@ const Header: FC<HeaderProps> = ({ headerType }) => {
 
   const { currentUser } = useAuth()
 
-  // const cssHeader = "flexJIC flex-col w-full h-40 pt-12 pb-12 gap-3 z-50 md:flex-row md:justify-between md:h-36 md:pt-0 md:pb-0 md:gap-4";
   const cssHeader = "w-full py-12 gap-3 z-50 md:flex-row md:justify-between md:h-36 md:py-0 md:gap-4";
   const headerCSS = headerType ==="homePage" ? `${cssHeader} h-28 flexJIC bg-gtYellow` : `${cssHeader} h-40 flexJIC flex-col md:justify-between` 
-  // const currentUserAddress = currentUser?.address ?? "";
   const ShortenedCurrentUserAddress = formatETHAddress(currentUser?.address ?? "");
 
   return (

@@ -27,15 +27,6 @@ contract GiftFactory is Ownable {
 
     event NetworkCreated(address);
 
-    // /**
-    //  * @notice Throws if the card exists
-    //  * @param _card Card's address
-    //  */
-    // modifier isExistingCard(address _card) {
-    //     require(cardsExists[_card], "Card not exists");
-    //     _;
-    // }
-
     /**
      * @notice Emit if Received value.
      */

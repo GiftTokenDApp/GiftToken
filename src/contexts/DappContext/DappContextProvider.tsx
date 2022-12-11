@@ -17,7 +17,7 @@ import { IUserProps } from "../../components/forms/IUserProps";
 import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
 
 // let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
-let FactoryAddress: Address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+let FactoryAddress: Address = '0xAb880578723d58d0A7115b95751Eae7d39789850';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
@@ -169,23 +169,18 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   async function getCardDAOData() {
     if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
       try {   
-          // const cardDAODataList: any[] = [];
           const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);            
           const currentProposal = await cardDAOContract.currentProposal();          
           const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
           const lastProposals = await cardDAOContract.getProposals();   
           const userVote = await cardDAOContract.getVote(dappContextState.currentAccount);
-          // console.log(1,currentProposal);
-          // console.log(2,proposalBeneficiary);
-          // console.log(3,lastProposals);
-          // console.log(4,userVote);
           const newCardDAOData = {
             currentProposal: currentProposal,
             proposalBeneficiary: proposalBeneficiary,
             lastProposals: lastProposals,
             currentProposalUserVote: userVote.toString(), 
           }    
-          // cardDAODataList.push(newCardDAOData);     
+ 
           dappContextDispatch({
             type: StateTypes.UPDATE_CARD_DAO_DATA,
             payload: {...dappContextState, cardDAOData: newCardDAOData},
@@ -457,74 +452,6 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dappContextState.currentCard])
   
-
-  // useEffect(() => {
-  //   const events = ["chainChanged", "accountsChanged"];
-  //   const handleChange = () => {
-  //     init(mainContextState.artifacts);
-  //   };
-  //   console.log(mainContextState);
-  //   events.forEach(e => window.ethereum.on(e, handleChange));
-  //   return () => {
-  //     events.forEach(e => window.ethereum.removeListener(e, handleChange));
-  //   };
-  // }, [init, mainContextState.artifacts]);
-
-  // const init = useCallback(
-  //   async artifact => {
-  //     if (artifact) {
-  //       // const web3 = new ethers.providers.Web3Provider(window.ethereum);
-  //       // const accounts = await web3.eth.requestAccounts();
-  //       // const networkID = await web3.eth.net.getId();
-  //       // const { abi } = artifact;
-  //       const accounts = await window.ethereum.request({method:'eth_requestAccounts'});
-  //       const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //       // let address, contract;
-  //       const contractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
-  //       let contract;
-  //       const { abi } = artifact;
-  //       try {
-  //         contract = new ethers.Contract(contractAddress, abi, provider);
-  //         // address = artifact.networks[networkID].address;
-  //       } catch (err) {
-  //         // console.error(err?.data.data);
-  //         console.log(err);
-  //       }
-  //       mainContextDispatch({
-  //         type: StateTypes.UPDATE,
-  //         payload: { artifact, accounts, contract }
-  //         // data: { artifact, web3, accounts, networkID, contract }
-  //       });
-  //     }
-  //   }, []);
-
-  // useEffect(() => {
-  //   const tryInit = async () => {
-  //     try {
-  //       const artifact = require("../../artifacts/contracts/GiftFactory.sol");
-  //       init(artifact);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   tryInit();
-  // }, [init]);
-
-  // useEffect(() => {
-  //   const events = ["chainChanged", "accountsChanged"];
-  //   const handleChange = () => {
-  //     init(mainContextState.artifact);
-  //   };
-
-  //   console.log(mainContextState);
-
-  //   events.forEach(e => window.ethereum.on(e, handleChange));
-  //   return () => {
-  //     events.forEach(e => window.ethereum.removeListener(e, handleChange));
-  //   };
-  // }, [init, mainContextState.artifact]);
-
   const contextValues: IDappContextProps = useMemo(
     () => ({
       dappContextState,

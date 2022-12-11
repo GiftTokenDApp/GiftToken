@@ -66,16 +66,10 @@ describe("GiftFactory testing", () => {
 
         it("Should get the Funding event from the receive function", async () => {
             const [ownerAccount] = await ethers.getSigners();
-            // let userBalance = await provider.getBalance(otherAccount1.address);
-            // let factoryBalance = await provider.getBalance(giftFactory.address);
-            // console.log(userBalance, factoryBalance);
             await ownerAccount.sendTransaction({
                 to: giftFactory.address,
                 value: 100,
             })
-            // userBalance = await provider.getBalance(otherAccount1.address);
-            // factoryBalance = await provider.getBalance(giftFactory.address);
-            // console.log(userBalance, factoryBalance);
 
             const event: FundingEvent = await getFirstOrDefaultEvent(giftFactory.filters.Funding()) as FundingEvent
             const arg = event?.args?.length ? event.args[0] : null;
@@ -86,17 +80,12 @@ describe("GiftFactory testing", () => {
         
         it("Should get the Funding event from the fallback function", async () => {
             const [ownerAccount] = await ethers.getSigners();
-            // let userBalance = await provider.getBalance(otherAccount1.address);
-            // let factoryBalance = await provider.getBalance(giftFactory.address);
-            // console.log(userBalance, factoryBalance);
+
             await ownerAccount.sendTransaction({
                 data: '0x123456',
                 to: giftFactory.address,
                 value: 100,
             })
-            // userBalance = await provider.getBalance(otherAccount1.address);
-            // factoryBalance = await provider.getBalance(giftFactory.address);
-            // console.log(userBalance, factoryBalance);
 
             const event: FundingEvent = await getFirstOrDefaultEvent(giftFactory.filters.Funding()) as FundingEvent
             const arg = event?.args?.length ? event.args[0] : null;
@@ -299,5 +288,3 @@ describe("GiftFactory testing", () => {
         });
     });
 });
-
-// export const cc = ""

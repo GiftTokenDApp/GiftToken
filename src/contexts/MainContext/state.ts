@@ -8,21 +8,6 @@ const actions = {
 
 const initialState = {
   isContractAvailable: false,
-  // cards: [],
-  // currentCard: {
-  //   address: null,
-  //   contract: null,
-  //   title: null,
-  //   description: null,
-  //   creationDate: null,
-  //   goal: null,
-  //   creator: null,
-  //   funders: [],
-  //   beneficiary: null,
-  //   status: null,
-  //   releaseDate: null,
-  //   coinsAmount: null,
-  // }
 };
 
 const reducer = (state: IMainContextStateProps, action: StateActions) => {
@@ -32,8 +17,6 @@ const reducer = (state: IMainContextStateProps, action: StateActions) => {
       return { ...state, ...initialState };
       case StateTypes.UPDATE:
       return { ...state, ...payload };
-      // case StateTypes.FUND:
-      // return {...state, coinsAmount: payload};
     default:
       throw new Error("Undefined reducer action type");
   }
