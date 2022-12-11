@@ -5,47 +5,45 @@ import css from "../giftCard/giftCard.module.css";
 import { flip } from "./data";
 import { useDappContext } from "../../contexts/DappContext";
 import { IUserProps } from "../forms/IUserProps";
-import AccountForm from "../forms/AccountForm";
+import ChatForm from "../forms/ChatForm";
 
 type ModalProps = {
-  handleUpdate : () => Promise<void>,
   handleClose : () => void,
 }
 
-const AccountModal: React.FC<ModalProps> = ({ handleUpdate, handleClose }) => {
+const ChatModal: React.FC<ModalProps> = ({ handleClose }) => {
 
     //width: clamp(50%, 700px, 90%)
     const cardCss = `w-[700px] h-[425px] flex justify-start items-center flex-col gap-4 relative ${css.card} m-auto px-0 py-8 rounded-3xl text-gtCardLightBLue`;
 
-    const { dappContextState, getCurrentUserExists, getCurrentUser, setCurrentUser } = useDappContext();
+    const { dappContextState, getCurrentUserExists, getCurrentUser } = useDappContext();
 
     const [accountExists, setAccountExists] = useState(false);
     const [titleLib, setTitleLib] = useState("");
     const [user, setUser] = useState<IUserProps | null>(null);
  
-    const handleFormSubmission = async (data: IUserProps) => {
-      await setCurrentUser(data.pseudo, data.ipfsLink ?? "");
-      await handleUpdate();
-      await handleClose();
-    }
-
     useEffect(() => {
       init();
     }, []);
     
     const init = async() => {
+      let title: string = "Chat";
       const userExists: boolean = await getCurrentUserExists();
       setAccountExists(userExists);
 
       if (userExists) {
-        setTitleLib("Mettre à jour mon compte");
         const user: IUserProps | null = await getCurrentUser();
         setUser(user);
+        
+        if (user != null) {
+          title = `${title} de ${user.pseudo}`;
+        }
       }
       else {
-        setTitleLib("Créer mon compte");
         setUser(null);
       }
+
+      setTitleLib(title);
     };
 
     return (
@@ -61,11 +59,12 @@ const AccountModal: React.FC<ModalProps> = ({ handleUpdate, handleClose }) => {
            <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className='absolute w-12 p-3 bg-slate-500 top-5 right-5 text-white rounded-full cursor-pointer' onClick={handleClose}>X</motion.button>
            <h2 className='text-3xl'>{titleLib}</h2>
             {
-              <AccountForm user={user} func={handleFormSubmission}/>
+              <ChatForm user={user}/>
             }
             {
               dappContextState.displayEvent && <>
                 <div className='h-full flexJIC flex-col gap-12 text-3xl text-center'>
+
                 </div>
               </>
             }
@@ -74,4 +73,4 @@ const AccountModal: React.FC<ModalProps> = ({ handleUpdate, handleClose }) => {
     );
   };
   
-  export default AccountModal;
+  export default ChatModal;
