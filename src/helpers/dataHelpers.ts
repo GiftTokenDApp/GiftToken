@@ -8,4 +8,6 @@ export const accounts = {
     account4: {privateKey:'0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a', balance:defaultEthBalance},
 }; 
 
-export const zeroAddress = '0x0000000000000000000000000000000000000000';
+export const addressZero = '0x0000000000000000000000000000000000000000';
+
+export const re = new RegExp(/0x[a-fA-F0-9]{40}/);

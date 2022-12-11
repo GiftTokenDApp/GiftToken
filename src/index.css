@@ -30,7 +30,7 @@
     @apply btnBase mt-5;
 }
 .btnForm {
-    @apply w-44 p-4 bg-slate-500 text-xl text-white rounded-full cursor-pointer;
+    @apply w-64 px-6 py-4 bg-slate-500 text-xl text-white rounded-full cursor-pointer;
 }
 .cardInput {
     @apply w-full h-14 px-3 py-2 text-lg rounded-3xl outline-none shadow-xl font-semibold text-neutral-600;

@@ -6,9 +6,7 @@ import * as yup from "yup";
 import ErrorSpan from "./errorSpan/ErrorSpan";
 import CircleLoader from "../loader/CircleLoader";
 import { INewCardProps } from "./interface";
-import { zeroAddress } from "../../helpers/dataHelpers";
-
-const re = new RegExp(/0x[a-fA-F0-9]{40}/);
+import { addressZero, re } from "../../helpers/dataHelpers";
 
 const schema = yup.object({
     title: yup.string().min(5,"Le titre doit faire au moins 5 caractères").max(30,"Le titre ne peut pas faire plus de 30 caractères").trim().ensure().required("Un titre est obligatoire"),
@@ -125,7 +123,7 @@ const AddCardForm: FC<formProp> = ({ func }) => {
                 }
                 <input type="text" {...register("beneficiary")}  role="presentation" autoComplete="off" id="beneficiaryInput" placeholder="Bénéficiaire" className="cardInput" />
                 {
-                    touchedFields.beneficiary && dirtyFields.beneficiary && errors.beneficiary?.message ? <ErrorSpan errorMsg={errors.beneficiary?.message} /> : <div className="w-full flexJIC"><motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className={btnState.optionsBtnCss} onClick={() => setValue("beneficiary", zeroAddress)}>Bénéficiaire non défini</motion.button></div>
+                    touchedFields.beneficiary && dirtyFields.beneficiary && errors.beneficiary?.message ? <ErrorSpan errorMsg={errors.beneficiary?.message} /> : <div className="w-full flexJIC"><motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className={btnState.optionsBtnCss} onClick={() => setValue("beneficiary", addressZero)}>Bénéficiaire non défini</motion.button></div>
                 }
                 <input type="text" {...register("amount")}  role="presentation" autoComplete="off" id="amountInput" placeholder="Valeur" className="cardInput" />
                 {

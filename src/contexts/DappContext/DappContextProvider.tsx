@@ -2,8 +2,8 @@ import React, { FC, useCallback, useMemo, useReducer, useEffect, useState } from
 import DappContext from "./DappContext";
 import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer } from "./state";
-import { IDappContextProps, StateTypes } from "./interfaces";
-import { ethers } from "ethers";
+import { DAOTypes, IDappContextProps, StateTypes } from "./interfaces";
+import { ethers, BigNumber } from "ethers";
 import GiftFactory from '../../artifacts/contracts/GiftFactory.sol/GiftFactory.json'
 import GiftCard from '../../artifacts/contracts/GiftCard.sol/GiftCard.json'
 import GiftDAO from '../../artifacts/contracts/GiftDAO.sol/GiftDAO.json'
@@ -201,7 +201,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const currentProposal = await cardDAOContract.currentProposal();          
           const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
           const lastProposals = await cardDAOContract.getProposals();   
-          console.log(1,currentProposal);
+          // console.log(1,currentProposal);
           // console.log(2,proposalBeneficiary);
           // console.log(3,lastProposals);
           const newCardDAOData = {
@@ -214,6 +214,42 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             type: StateTypes.UPDATE_CARD_DAO_DATA,
             payload: {...dappContextState, cardDAOData: newCardDAOData},
           });
+      } catch (err) {
+          console.log(err);
+          err && setError(err.toString());
+      }
+    }
+  }  
+
+  async function setNewDAOProposal(daoType: DAOTypes, beneficiary: Address, description: string) {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
+      try {   
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);       
+          switch (daoType) {
+            case DAOTypes.UNLOCK:
+              await cardDAOContract.connect(dappContextState.signer).createOutpassedRequierementsProposal(description);     
+              break;
+            case DAOTypes.DECLARE_BENEFICIARY:                 
+              await cardDAOContract.connect(dappContextState.signer).createDeclaredBeneficiaryProposal(beneficiary, description);       
+              break;
+            case DAOTypes.CHANGE_BENEFICIARY:    
+              await cardDAOContract.connect(dappContextState.signer).changeBeneficiary(beneficiary, description);     
+              break;
+            default:
+              return;
+          }               
+      } catch (err) {
+          console.log(err);
+          err && setError(err.toString());
+      }
+    }
+  }  
+
+  async function setDAOVote(vote: boolean) {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
+      try {   
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);       
+          await cardDAOContract.connect(dappContextState.signer).vote(vote);                  
       } catch (err) {
           console.log(err);
           err && setError(err.toString());
@@ -278,6 +314,39 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
         dappContextState.currentCard?.contract.on("Participated", (_address: string, _amount: number, _timestamp: number) => {
           const lastEvent = {
             name: "Participated",
+            address: _address,
+            amount: _amount / 10**18,
+            timestamp: _timestamp,
+          }
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
+          }
+        });
+        const cardDAOContract = dappContextState.currentCard?.cardDAOAddress ? new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider) : null;  
+        cardDAOContract?.on("PropositionOpened", (_address: string, _amount: number, _timestamp: number) => {
+          const lastEvent = {
+            name: "PropositionOpened",
+            address: _address,
+            amount: _amount / 10**18,
+            timestamp: _timestamp,
+          }
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
+          }
+        }); 
+        cardDAOContract?.on("ParticipantVoted", (_address: string, _amount: number, _timestamp: number) => {
+          const lastEvent = {
+            name: "ParticipantVoted",
             address: _address,
             amount: _amount / 10**18,
             timestamp: _timestamp,
@@ -382,6 +451,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       giveToCard,
       setCurrentCardFromIndex,
       setCurrentCardFromData,
+      setNewDAOProposal,
+      setDAOVote,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
