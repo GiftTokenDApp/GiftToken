@@ -4,14 +4,16 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import CircleLoader from "../loader/CircleLoader";
-import { IUserProps } from "./IUserProps";
+import { useDappContext } from "../../contexts/DappContext";
+import { Address } from "../../helpers/typesHelpers";
+import { IChatContactProps } from "./IChatContactProps";
 
 const schema = yup.object({
     address: yup.string().min(42,"L'adresse doit faire caractères").max(42,"L'adresse doit faire caractères").trim().ensure().required("L'adresse est obligatoire"),
 }).required()
 
 type formProp = {
-    user: IUserProps | null
+    contact: IChatContactProps
 }
 
 interface IButtonState {
@@ -26,12 +28,14 @@ interface IChatSendForm {
     message: string
 }
 
-const ChatSendForm: FC<formProp> = ({ user }) => {
+const ChatSendForm: FC<formProp> = ({ contact }) => {
 
     const [btnState, setBtnState] = useState<IButtonState>({} as IButtonState);
 
     const cssLoader = "animate-spin h-7 w-7";
     const loaderCss = `${cssLoader} text-white`;
+
+    const { dappContextState, sendMessage } = useDappContext();
 
     const { register, handleSubmit, setValue, formState: { errors, touchedFields, dirtyFields } } = useForm<IChatSendForm>({
         resolver: yupResolver(schema)
@@ -39,14 +43,15 @@ const ChatSendForm: FC<formProp> = ({ user }) => {
     const onSubmit = (data: IChatSendForm) => handleFormSubmission(data);
 
     const handleFormSubmission = async (data: IChatSendForm): Promise<void> => {
-        if(!btnState.hasSubmitted){
-
+        console.log(data);
+        if(!btnState.hasSubmitted && data.message != null && data.message !== ''){
+            sendMessage(contact.address, data.message);
         }        
     }
 
     useEffect(() => {
         init();
-    }, [user]);
+    }, []);
       
     const init = async() => {
         const submitBtnCss:string = "btnForm w-48 mr-10";
