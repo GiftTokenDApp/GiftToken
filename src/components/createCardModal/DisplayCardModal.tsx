@@ -13,6 +13,7 @@ import UnlockCardForm from "../forms/UnlockCardForm";
 import ChangeCardBeneficiaryForm from "../forms/ChangeCardBeneficiaryForm";
 import { Address } from "../../helpers/typesHelpers";
 import DisplayCardModalButton from "../buttons/displayCardModalButton/DisplayCardModalButton";
+import CloseDAOButton from "../buttons/displayCardModalButton/CloseDAOButton";
 
 type ModalProps = {
   handleClose : () => void,
@@ -20,7 +21,7 @@ type ModalProps = {
 
 const Modal: FC<ModalProps> = ({ handleClose }) => {
 
-    const { dappContextState, giveToCard, hideEventData, setNewDAOProposal, setDAOVote, releaseAllToCurrent } = useDappContext();
+    const { dappContextState, giveToCard, hideEventData, setNewDAOProposal, setDAOVote, releaseAllToCurrent, endDAO } = useDappContext();
     const [cardMode, setCardMode] = useState(0);
     const [daoType, setDaoType] = useState<DAOTypes | null>(null);    
     const [hasSubmittedVote, setHasSubmittedVote] = useState(false);
@@ -51,6 +52,11 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       setDAOVote(vote);   
     }
 
+    const closeDAO = () => {
+      setHasSubmittedVote(true);
+      endDAO();   
+    }
+
     const showChangeBeneficiaryMenu = (daoType: DAOTypes) => {
       setCardMode(4)
       setDaoType(daoType)
@@ -70,7 +76,8 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       //   setUserVote(vote);
       // }
       // dappContextState && console.log(dappContextState.cardDAOData);
-      // dappContextState && console.log(dappContextState.lastEvent);
+      dappContextState && console.log(dappContextState.lastEvent);
+      dappContextState && console.log(dappContextState.cardDAOData?.currentProposal);
       // console.log(dappContextState.displayEvent);
       // console.log(cardMode);
       // console.log("vote", getDAOVote());
@@ -162,8 +169,12 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                         dappContextState.cardDAOData?.currentProposalUserVote === '0' ? <div className="w-full flexJIC gap-12">
                           <DisplayCardModalButton title="Voter contre" css="bg-red-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
                           <DisplayCardModalButton title="Voter pour" css="bg-emerald-400" vote={true} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
-                        </div> : <div className="w-full flexJIC mt-4 text-3xl">
+                        </div> : 
+                        dappContextState.cardDAOData?.currentProposal.proposalResult === 1 && dappContextState?.lastEvent?.name !== "PropositionClosed" ? <div className="w-full flexJIC gap-8 mt-4 text-3xl">
                           <span>Vous avez voté {dappContextState.cardDAOData?.currentProposalUserVote === '1' ? <span className="text-emerald-400">POUR</span>:<span className="text-red-400">CONTRE</span>}</span>
+                          <CloseDAOButton title="Clôturer la DAO" css="bg-slate-500" closeDAO={closeDAO} hasSubmitted={hasSubmittedVote} />
+                        </div> : <div className="w-full flexJIC gap-8 mt-4 text-3xl">
+                          <span>La proposition a été {dappContextState.cardDAOData?.currentProposal[6] <= 3 ? <span className="text-emerald-400">ACCEPTÉE</span>:<span className="text-red-400">REJETÉE</span>}</span>
                         </div>
                       }
                     </div>
@@ -173,9 +184,17 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
             }
             {
               dappContextState.displayEvent && cardMode === 1 && <>
-                <div className='h-full flexJIC mb-24 px-12 text-3xl text-center'>
-                    <h3>Votre choix a bien été enregistré</h3>
-                </div>
+                {
+                  dappContextState?.lastEvent?.name === "PropositionClosed" ? <>
+                    <div className="w-full h-full flexJIC mb-24 px-12 text-3xl text-center">
+                      <span>La proposition a été {dappContextState.cardDAOData?.currentProposal[6] <= 3 ? <span className="text-emerald-400">ACCEPTÉE</span>:<span className="text-red-400">REJETÉE</span>}</span>
+                    </div>
+                  </> : <>
+                    <div className='h-full flexJIC mb-24 px-12 text-3xl text-center'>
+                        <h3>Votre choix a bien été enregistré</h3>
+                    </div>
+                  </>
+                }
               </>
             }
             {
