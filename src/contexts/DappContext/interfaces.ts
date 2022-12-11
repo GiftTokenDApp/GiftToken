@@ -72,4 +72,5 @@ export interface IDappContextProps extends IChildrenProps {
     setNewDAOProposal(daoType: DAOTypes, beneficiary: Address | null, description: string): void,
     setDAOVote(vote: boolean): void,
     // getDAOVote(): Promise<number>,
+    endDAO(): void,
 }

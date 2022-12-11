@@ -316,6 +316,18 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     }
   }  
 
+  async function endDAO() {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
+      try {   
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);       
+          await cardDAOContract.connect(dappContextState.signer).determinateProposalResult();                  
+      } catch (err) {
+          console.log(err);
+          err && setError(err.toString());
+      }
+    }
+  }  
+
   // async function getDAOVote() {
   //   if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard && dappContextState.currentAccount) {    
   //     try {   
@@ -451,6 +463,22 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             getCardsAddressesList();
           }
         });
+        cardDAOContract?.on("PropositionClosed", (_address: string, _amount: number, _timestamp: number) => {
+          const lastEvent = {
+            name: "PropositionClosed",
+            address: _address,
+            amount: _amount / 10**18,
+            timestamp: _timestamp,
+          }
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
+          }
+        });
       } catch (err) {
         console.error(err);
       }
@@ -550,6 +578,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       setNewDAOProposal,
       setDAOVote,
       // getDAOVote,
+      endDAO,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
