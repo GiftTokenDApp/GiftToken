@@ -58,6 +58,7 @@ export interface IDappContextProps extends IChildrenProps {
     get dappContextState(): IDappContextStateProps;
     get dappContextDispatch(): Dispatch<StateActions>;
     createCard(newCard: INewCardProps): Promise<void>;
+    releaseAllToCurrent(): Promise<void>;
     hideEventData(): void;
     getCardsAddressesList(): void;
     getCardData(cardAddress: Address): any;

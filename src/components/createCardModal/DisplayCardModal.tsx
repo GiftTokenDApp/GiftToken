@@ -20,7 +20,7 @@ type ModalProps = {
 
 const Modal: FC<ModalProps> = ({ handleClose }) => {
 
-    const { dappContextState, giveToCard, hideEventData, setNewDAOProposal, setDAOVote } = useDappContext();
+    const { dappContextState, giveToCard, hideEventData, setNewDAOProposal, setDAOVote, releaseAllToCurrent } = useDappContext();
     const [cardMode, setCardMode] = useState(0);
     const [daoType, setDaoType] = useState<DAOTypes | null>(null);    
     const [hasSubmittedVote, setHasSubmittedVote] = useState(false);
@@ -34,6 +34,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
     const shortenedCreatorAddress = formatETHAddress(dappContextState?.currentCard?.creator ?? "");
     const shortenedFoundersAddresses = dappContextState?.currentCard?.funders?.map((addr, index) => index === 0 ? formatETHAddress(addr) : ` ${formatETHAddress(addr)}`);
     const shortenedBeneficiaryAddress = formatETHAddress(dappContextState?.currentCard?.beneficiary ?? "") ? `Elle est pour ${formatETHAddress(dappContextState?.currentCard?.beneficiary ?? "")}` : "Pas de bénéficiaire désigné";  
+    const isBeneficiary = dappContextState?.currentCard?.beneficiary?.toLowerCase() === dappContextState.currentAccount;
 
     const currentCoinsAmount = dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount <= 0 ? "Elle ne contient pas de fonds" : dappContextState?.currentCard?.coinsAmount && dappContextState?.currentCard?.coinsAmount < 2 ? `Elle contient ${dappContextState?.currentCard?.coinsAmount} ether` : `Elle contient ${dappContextState?.currentCard?.coinsAmount} ethers`;
 
@@ -55,6 +56,14 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       setDaoType(daoType)
     }
     
+    const withdraw = async () => {
+
+      if (dappContextState?.currentCard?.address != null) {
+        await releaseAllToCurrent();
+        handleClose();
+      }
+    }
+
     useEffect(() => {
       // const getVote = async() => {
       //   const vote = await getDAOVote();
@@ -111,6 +120,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                 <div className="w-full flexJIC gap-16 mb-12">
                   <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(1)}>DAO</motion.button>
                   <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(2)}>Participer à la carte</motion.button>
+                  {isBeneficiary && <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => withdraw()}>Retirer mes fonds</motion.button>}
                 </div>
               </>
             }

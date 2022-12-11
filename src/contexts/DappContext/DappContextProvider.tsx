@@ -101,6 +101,23 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
   }
 
+  async function releaseAllToCurrent(): Promise<void> {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard != null && dappContextState.currentAccount != null) {
+        try {
+            const trx = {
+                from: dappContextState.currentAccount,
+            }
+            const giftCardContract = new ethers.Contract(dappContextState.currentCard.address, GiftCardContractFactory.abi, dappContextState.provider);  
+            const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentAccount, trx);               
+            await transaction.wait();
+            getCardsAddressesList();
+        } catch (err) {
+            err && setError(err.toString());
+            console.log(err);
+        }
+    }
+  }
+
   async function giveToCard(amount: number) {
       if(typeof window.ethereum !== 'undefined') {
           try {
@@ -457,6 +474,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       dappContextState,
       dappContextDispatch,
       createCard,
+      releaseAllToCurrent,
       hideEventData,
       getCardsAddressesList,
       getCardData,
