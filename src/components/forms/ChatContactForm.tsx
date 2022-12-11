@@ -6,13 +6,14 @@ import * as yup from "yup";
 import CircleLoader from "../loader/CircleLoader";
 import { IUserProps } from "./IUserProps";
 import { useDappContext } from "../../contexts/DappContext";
+import { IChatContactProps } from "./IChatContactProps";
 
 const schema = yup.object({
     address: yup.string().min(42,"L'adresse doit faire caractères").max(42,"L'adresse doit faire caractères").trim().ensure().required("L'adresse est obligatoire"),
 }).required()
 
 type formProp = {
-    func?: (contactName: string) => void,
+    func?: (chatContact: IChatContactProps | null) => void,
 }
 
 interface IButtonState {
@@ -23,11 +24,7 @@ interface IButtonState {
     submitBtnCss: string,
 }
 
-interface IContactForm {
-    address: string
-}
-
-const ChatContactForm: FC<formProp> = ({ func}) => {
+const ChatContactForm: FC<formProp> = ({ func }) => {
 
     const [btnState, setBtnState] = useState<IButtonState>({} as IButtonState);
 
@@ -36,19 +33,26 @@ const ChatContactForm: FC<formProp> = ({ func}) => {
     const cssLoader = "animate-spin h-7 w-7";
     const loaderCss = `${cssLoader} text-white`;
 
-    const { register, handleSubmit, watch, setValue, formState: { errors, touchedFields, dirtyFields } } = useForm<IContactForm>({
+    const { register, handleSubmit, watch, setValue, formState: { errors, touchedFields, dirtyFields } } = useForm<IChatContactProps>({
         resolver: yupResolver(schema)
     });
-    const onSubmit = (data: IContactForm) => handleFormSubmission(data);
+    const onSubmit = (data: IChatContactProps) => handleFormSubmission(data);
 
-    const handleFormSubmission = async (data: IContactForm): Promise<void> => {
+    const handleFormSubmission = async (data: IChatContactProps): Promise<void> => {
 
         if(!btnState.hasSubmitted){
-            const user: IUserProps | null = await getUser(watch("address"));
-            console.log(user)
+            const contactAddress: string = watch("address");
+            const user: IUserProps | null = await getUser(contactAddress);
+            let chatContact: IChatContactProps | null = null;
+
             if (user?.pseudo != null) {
-                func && func(user.pseudo);
+                chatContact = {
+                    pseudo: user.pseudo,
+                    address: contactAddress
+                };
             }
+            
+            func && func(chatContact);
         }        
     }
 
