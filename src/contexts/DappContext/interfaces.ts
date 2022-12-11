@@ -5,7 +5,7 @@ import IGiftCardProps from "../../components/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 import { Address } from "../../helpers/typesHelpers";
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
-import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
+import { GiftNetwork as GiftNetworkContract, MessageStructOutput} from '../../typechain-types/contracts/GiftNetwork';
 
 export enum StateTypes {
     RESET = 'RESET',
@@ -69,6 +69,8 @@ export interface IDappContextProps extends IChildrenProps {
     getCurrentUser(): Promise<IUserProps | null>,
     getUser(address: Address): Promise<IUserProps | null>,
     setCurrentUser(pseudo: string, ipfsLink: string) : Promise<void>,
+    readMessage(anotherUserAddress:Address): Promise<MessageStructOutput[]>,
+    sendMessage(to:Address, message: string): Promise<void>,
     setNewDAOProposal(daoType: DAOTypes, beneficiary: Address | null, description: string): void,
     setDAOVote(vote: boolean): void,
     // getDAOVote(): Promise<number>,

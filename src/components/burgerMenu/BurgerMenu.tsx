@@ -69,17 +69,11 @@ const BurgerMenu = () => {
             <hr ref={burgerMenuRef3} className={cssHr}/>
             {hiddenMenuOpened && 
             <div className="hidden md:flex md:justify-center md:items-center">
-                <div className="items-center text-center px-3 py-2 bg-gtCamel text-bg-DarkBLue text-sm font-extrabold">
+                <div className="items-center text-center px-3 py-6 bg-gtCamel text-bg-DarkBLue text-sm font-extrabold">
                     <button type="button" className="px-10 py-2 bg-slate-400 text-white rounded-full cursor-pointer"
                         onClick={handleMyAccountClick}>
                         {myAccountLib()}
                     </button>
-                    <br /><br />
-                    {accountExists && 
-                    <button type="button" className="px-14 py-2 bg-slate-400 text-white rounded-full cursor-pointer"
-                        onClick={handleChatClick}>
-                        Discuter
-                    </button>}
                 </div>
             </div>}
             {displayAccountModal && <AccountModal handleUpdate={handleUpdateMyAccountClick} handleClose={handleCloseMyAccountClick} />}

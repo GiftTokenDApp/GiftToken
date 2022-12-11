@@ -148,11 +148,11 @@ contract GiftNetwork is Ownable, IGiftNetwork {
 
     /**
      * @notice Read messages from an another user
-     * @param _from Sender's address
+     * @param _anotherUserAddress Another user's address
      * @return Message[]
      */
-    function readMessage(address _from) external view returns(Message[] memory) {
-        bytes32 chatCode = getChatCode(msg.sender, _from);
+    function readMessage(address _anotherUserAddress) external view returns(Message[] memory) {
+        bytes32 chatCode = getChatCode(msg.sender, _anotherUserAddress);
         return privateChats[chatCode];
     }
 

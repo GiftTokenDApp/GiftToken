@@ -266,7 +266,7 @@ export interface GiftNetwork extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     readMessage(
-      _from: PromiseOrValue<string>,
+      _anotherUserAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[MessageStructOutput[]]>;
 
@@ -314,7 +314,7 @@ export interface GiftNetwork extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   readMessage(
-    _from: PromiseOrValue<string>,
+    _anotherUserAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<MessageStructOutput[]>;
 
@@ -362,7 +362,7 @@ export interface GiftNetwork extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     readMessage(
-      _from: PromiseOrValue<string>,
+      _anotherUserAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<MessageStructOutput[]>;
 
@@ -438,7 +438,7 @@ export interface GiftNetwork extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     readMessage(
-      _from: PromiseOrValue<string>,
+      _anotherUserAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -487,7 +487,7 @@ export interface GiftNetwork extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     readMessage(
-      _from: PromiseOrValue<string>,
+      _anotherUserAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

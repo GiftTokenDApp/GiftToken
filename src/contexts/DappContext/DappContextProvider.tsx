@@ -14,6 +14,7 @@ import { DAOTypes, IDappContextProps, StateTypes } from "./interfaces";
 import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IUserProps } from "../../components/forms/IUserProps";
+import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
 
 // let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 let FactoryAddress: Address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
@@ -21,38 +22,6 @@ let FactoryAddress: Address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState('');
-
-  // const cardsList = await dappContextState.giftFactoryContract.getLinks(dappContextState.accounts[0]);  
-  // const cardsList = await dappContextState.giftCardContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.accounts[0]);  
-  
-    // const loadCards = (cards: IGiftCardProps[]) => {
-  //   const newState = {...mainContextState};
-  //   newState.cards = cards;
-  //   newState.currentCard = cards[0];
-  //   mainContextDispatch({
-  //     type: StateTypes.UPDATE,
-  //     payload: {...mainContextState, ...newState},
-  //   });
-  // }
-
-  // const updateCurrentCard = (cardProps: IGiftCardProps) => {
-  //   const newState = {...mainContextState};    
-  //   newState.currentCard = cardProps;
-  //   const newCardsList = newState?.cards?.map(card => {
-  //     const newCard = {...card}
-  //     if(card.address === cardProps.address){
-  //       newCard.coinsAmount = cardProps.coinsAmount
-  //     }
-  //     return newCard
-  //   })
-  //   if(newCardsList){
-  //     newState.cards = newCardsList;
-  //   }
-  //   mainContextDispatch({
-  //     type: StateTypes.UPDATE,
-  //     payload: {...mainContextState, ...newState},
-  //   });
-  // }  
 
   async function getCardsAddressesList() {
     if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
@@ -277,6 +246,31 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       from: dappContextState.currentAccount,
     };
     const transaction = await dappContextState.giftNetworkContract.connect(dappContextState.signer).setUser(pseudo, ipfsLink, trx);              
+    await transaction.wait();
+  }
+
+  async function readMessage(anotherUserAddress:Address): Promise<MessageStructOutput[]> {
+
+    if (dappContextState.giftNetworkContract == null || dappContextState.currentAccount == null) {
+      return [];
+    }
+
+    const trx = {
+      from: dappContextState.currentAccount,
+    };
+    return await dappContextState.giftNetworkContract.readMessage(anotherUserAddress, trx);              
+  }
+
+  async function sendMessage(to:Address, message: string): Promise<void> {
+
+    if (dappContextState.giftNetworkContract == null || dappContextState.currentAccount == null) {
+      return;
+    }
+
+    const trx = {
+      from: dappContextState.currentAccount,
+    };
+    const transaction = await dappContextState.giftNetworkContract.connect(dappContextState.signer).sendMessage(to, message, trx);              
     await transaction.wait();
   }
 
@@ -547,6 +541,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       getCurrentUser,
       getUser,
       setCurrentUser,
+      readMessage,
+      sendMessage,
       setNewDAOProposal,
       setDAOVote,
       // getDAOVote,
