@@ -432,8 +432,10 @@ contract GiftCard is Ownable, IGiftCard {
     function changeBeneficiary(address _newBeneficiary) internal {
         require(_newBeneficiary != NULLADDRESS, "A beneficiary address is necessary");
 
+        addRole(beneficiary, Role.Beneficiary);
         address oldBeneficiary = beneficiary;
         beneficiary = _newBeneficiary;
+        
         emit BeneficiaryChanged(oldBeneficiary, _newBeneficiary);
     }
 
