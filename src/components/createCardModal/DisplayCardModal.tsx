@@ -67,7 +67,9 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       // console.log("vote", getDAOVote());
       // getDAOVote();
       // getVote()
-      console.log("voteAAAA",dappContextState.cardDAOData?.currentProposalUserVote);
+      // console.log("voteAAAA",dappContextState.cardDAOData?.currentProposalUserVote);
+      // dappContextState.cardDAOData?.currentProposalUserVote?.toString() === "0" ? console.log("OUI") : console.log("non");
+      // ;
       
       // console.log(dappContextState.currentCard?.cardDAOAddress);
       // console.log(dappContextState.cardDAOData?.currentProposal);
@@ -147,11 +149,11 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                         </>
                       }
                       {
-                        dappContextState.cardDAOData?.currentProposalUserVote === 0 ? <div className="w-full flexJIC gap-12">
+                        dappContextState.cardDAOData?.currentProposalUserVote === '0' ? <div className="w-full flexJIC gap-12">
                           <DisplayCardModalButton title="Voter contre" css="bg-red-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
                           <DisplayCardModalButton title="Voter pour" css="bg-emerald-400" vote={true} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
                         </div> : <div className="w-full flexJIC mt-4 text-3xl">
-                          <span>Vous avez voté {dappContextState.cardDAOData?.currentProposalUserVote === 1 ? <span className="text-emerald-400">pour</span>:<span className="text-red-400">contre</span>}</span>
+                          <span>Vous avez voté {dappContextState.cardDAOData?.currentProposalUserVote === '1' ? <span className="text-emerald-400">POUR</span>:<span className="text-red-400">CONTRE</span>}</span>
                         </div>
                       }
                     </div>

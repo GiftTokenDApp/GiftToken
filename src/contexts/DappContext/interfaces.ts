@@ -45,7 +45,7 @@ export type IDappContextStateProps = {
         currentProposal?: any | null,
         proposalBeneficiary?: any | null,
         lastProposals?: any | null,
-        currentProposalUserVote?: number | null,
+        currentProposalUserVote?: string | null,
     },
 }
 

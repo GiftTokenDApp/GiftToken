@@ -209,7 +209,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           // console.log(1,currentProposal);
           // console.log(2,proposalBeneficiary);
           // console.log(3,lastProposals);
-          console.log(4,userVote);
+          // console.log(4,userVote);
           const newCardDAOData = {
             currentProposal: currentProposal,
             proposalBeneficiary: proposalBeneficiary,
