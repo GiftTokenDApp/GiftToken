@@ -32,6 +32,7 @@ const initialState = {
     currentProposal: null,
     proposalBeneficiary: null,
     lastProposals: null,
+    currentProposalUserVote: null,
   },
 };
 

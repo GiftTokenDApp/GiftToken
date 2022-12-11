@@ -56,14 +56,22 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
     }
     
     useEffect(() => {
+      // const getVote = async() => {
+      //   const vote = await getDAOVote();
+      //   setUserVote(vote);
+      // }
       // dappContextState && console.log(dappContextState.cardDAOData);
-      dappContextState && console.log(dappContextState.lastEvent);
-      console.log(dappContextState.displayEvent);
-      console.log(cardMode);
-      
+      // dappContextState && console.log(dappContextState.lastEvent);
+      // console.log(dappContextState.displayEvent);
+      // console.log(cardMode);
+      // console.log("vote", getDAOVote());
+      // getDAOVote();
+      // getVote()
+      console.log("voteAAAA",dappContextState.cardDAOData?.currentProposalUserVote);
       
       // console.log(dappContextState.currentCard?.cardDAOAddress);
       // console.log(dappContextState.cardDAOData?.currentProposal);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dappContextState])  
 
     useEffect(() => {
@@ -138,10 +146,14 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                           <span>Voici l'adresse proposée en tant que nouveau bénéficiaire : <span className="text-white">{dappContextState.cardDAOData?.proposalBeneficiary}</span></span>
                         </>
                       }
-                      <div className="w-full flexJIC gap-12">
-                        <DisplayCardModalButton title="Voter contre" css="bg-red-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
-                        <DisplayCardModalButton title="Voter pour" css="bg-emerald-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
-                      </div>
+                      {
+                        dappContextState.cardDAOData?.currentProposalUserVote === 0 ? <div className="w-full flexJIC gap-12">
+                          <DisplayCardModalButton title="Voter contre" css="bg-red-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
+                          <DisplayCardModalButton title="Voter pour" css="bg-emerald-400" vote={true} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
+                        </div> : <div className="w-full flexJIC mt-4 text-3xl">
+                          <span>Vous avez voté {dappContextState.cardDAOData?.currentProposalUserVote === 1 ? <span className="text-emerald-400">pour</span>:<span className="text-red-400">contre</span>}</span>
+                        </div>
+                      }
                     </div>
                   }
                 </div>

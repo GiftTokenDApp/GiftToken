@@ -168,7 +168,9 @@ contract GiftDAO is Ownable, IGiftDAO {
      */
     function vote(bool _isApproved) external isVoteOpenedProposal {
         require(getVote(msg.sender) == uint(VoteResult.Unknown), "You already have vote");
+        require(currentProposal.proposalResult == CardProposalResult.Unknown || currentProposal.proposalResult == CardProposalResult.Pending, "Voting session has ended");
 
+        votes[msg.sender][currentProposal.id] = _isApproved ? VoteResult.Approved : VoteResult.Refused;
         if (_isApproved) {
             currentProposal.approvedCount++;
         }

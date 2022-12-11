@@ -15,7 +15,8 @@ import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IUserProps } from "../../components/forms/IUserProps";
 
-let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
+// let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
+let FactoryAddress: Address = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
@@ -204,13 +205,16 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const currentProposal = await cardDAOContract.currentProposal();          
           const proposalBeneficiary = await cardDAOContract.proposalBeneficiary();          
           const lastProposals = await cardDAOContract.getProposals();   
+          const userVote = await cardDAOContract.getVote(dappContextState.currentAccount);
           // console.log(1,currentProposal);
           // console.log(2,proposalBeneficiary);
           // console.log(3,lastProposals);
+          console.log(4,userVote);
           const newCardDAOData = {
             currentProposal: currentProposal,
             proposalBeneficiary: proposalBeneficiary,
             lastProposals: lastProposals,
+            currentProposalUserVote: userVote.toString(), 
           }    
           // cardDAODataList.push(newCardDAOData);     
           dappContextDispatch({
@@ -311,6 +315,24 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
     }
   }  
+
+  // async function getDAOVote() {
+  //   if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard && dappContextState.currentAccount) {    
+  //     try {   
+  //         const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);       
+  //         const userVote = await cardDAOContract.connect(dappContextState.signer).getVote(dappContextState.currentAccount);
+  //         const proposal = await cardDAOContract.connect(dappContextState.signer).currentProposal();
+  //         console.log("approuvé",proposal.approvedCount.toString());
+  //         console.log("refusé",proposal.refusedCount.toString());
+  //         if(userVote){
+  //           return userVote.toString();    
+  //         }       
+  //     } catch (err) {
+  //         console.log(err);
+  //         err && setError(err.toString());
+  //     }
+  //   }
+  // }  
 
   async function loadData(accounts: Address[] | null): Promise<void> {
     let currentAccount : Address | null = null;
@@ -527,6 +549,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       setCurrentUser,
       setNewDAOProposal,
       setDAOVote,
+      // getDAOVote,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

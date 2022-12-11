@@ -45,6 +45,7 @@ export type IDappContextStateProps = {
         currentProposal?: any | null,
         proposalBeneficiary?: any | null,
         lastProposals?: any | null,
+        currentProposalUserVote?: number | null,
     },
 }
 
@@ -70,4 +71,5 @@ export interface IDappContextProps extends IChildrenProps {
     setCurrentUser(pseudo: string, ipfsLink: string) : Promise<void>,
     setNewDAOProposal(daoType: DAOTypes, beneficiary: Address | null, description: string): void,
     setDAOVote(vote: boolean): void,
+    // getDAOVote(): Promise<number>,
 }
