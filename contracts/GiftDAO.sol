@@ -189,22 +189,22 @@ contract GiftDAO is Ownable, IGiftDAO {
         currentProposal.closedDate = block.timestamp;
 
         if (currentProposal.approvedCount > currentProposal.refusedCount) {
-            currentProposal.proposalResult == CardProposalResult.Approved;
+            currentProposal.proposalResult = CardProposalResult.Approved;
         }
         else if (currentProposal.approvedCount < currentProposal.refusedCount) {
-            currentProposal.proposalResult == CardProposalResult.Refused;
+            currentProposal.proposalResult = CardProposalResult.Refused;
         }
         else {
             VoteResult creatorVote = VoteResult(getVote(giftCard.getCreator()));
 
             if (creatorVote == VoteResult.Approved) {
-                currentProposal.proposalResult == CardProposalResult.ApprovedWithCreatorWeight;
+                currentProposal.proposalResult = CardProposalResult.ApprovedWithCreatorWeight;
             }
             else if (creatorVote == VoteResult.Approved) {
-                currentProposal.proposalResult == CardProposalResult.RefusedWithCreatorWeight;
+                currentProposal.proposalResult = CardProposalResult.RefusedWithCreatorWeight;
             }
             else {
-                currentProposal.proposalResult == CardProposalResult.Equality; 
+                currentProposal.proposalResult = CardProposalResult.Equality; 
             }
         }
 

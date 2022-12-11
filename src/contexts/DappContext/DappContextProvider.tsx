@@ -485,6 +485,22 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             getCardsAddressesList();
           }
         });
+        cardDAOContract?.on("BeneficiaryChanged", (_address: string, _amount: number, _timestamp: number) => {
+          const lastEvent = {
+            name: "BeneficiaryChanged",
+            address: _address,
+            amount: _amount / 10**18,
+            timestamp: _timestamp,
+          }
+          if (lastEvent.address !== dappContextState.lastEvent?.address && lastEvent.timestamp !== dappContextState.lastEvent?.timestamp) {
+            const displayEvent = true;
+            dappContextDispatch({
+              type: StateTypes.UPDATE,
+              payload: { ...dappContextState, lastEvent, displayEvent }
+            });
+            getCardsAddressesList();
+          }
+        });
       } catch (err) {
         console.error(err);
       }

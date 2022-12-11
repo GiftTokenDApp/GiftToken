@@ -76,8 +76,9 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
       //   setUserVote(vote);
       // }
       // dappContextState && console.log(dappContextState.cardDAOData);
-      dappContextState && console.log(dappContextState.lastEvent);
+      dappContextState && console.log("lastEvent",dappContextState.lastEvent);
       dappContextState && console.log(dappContextState.cardDAOData?.currentProposal);
+      dappContextState && console.log(dappContextState.cardDAOData?.proposalBeneficiary);
       // console.log(dappContextState.displayEvent);
       // console.log(cardMode);
       // console.log("vote", getDAOVote());
