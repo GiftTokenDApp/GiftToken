@@ -12,6 +12,7 @@ const actions = {
 };
 
 const initialState = {
+  currentAccount: null,
   accounts: null,
   provider: null,
   giftFactoryContract: null,

@@ -26,6 +26,7 @@ const AccountModal: React.FC<ModalProps> = ({ handleUpdate, handleClose }) => {
     const handleFormSubmission = async (data: IUserProps) => {
       await setCurrentUser(data.pseudo, data.ipfsLink ?? "");
       await handleUpdate();
+      await handleClose();
     }
 
     useEffect(() => {
@@ -40,7 +41,7 @@ const AccountModal: React.FC<ModalProps> = ({ handleUpdate, handleClose }) => {
       if (userExists) {
         setTitleLib("Mettre à jour mon compte");
         buttonLib = "Mettre à jour";
-        const user: IUserProps = await getCurrentUser();
+        const user: IUserProps | null = await getCurrentUser();
         setUser(user);
       }
       else {

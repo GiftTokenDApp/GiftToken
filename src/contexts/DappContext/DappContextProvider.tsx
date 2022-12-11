@@ -54,9 +54,9 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   // }  
 
   async function getCardsAddressesList() {
-    if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null) {      
+    if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
       try {  
-          const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.accounts[0]); 
+          const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount); 
           const cardsDataList: IGiftCardProps[] = [];
           for (let i = 0; i < cardsAddressesList.length; i++) {
             const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);            
@@ -116,10 +116,10 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   }
 
   async function createCard(newCard: INewCardProps) {
-      if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null) {
+      if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {
           try {
               const trx = {
-                  from: dappContextState.accounts[0],
+                  from: dappContextState.currentAccount,
                   value: ethers.utils.parseEther(`${newCard.amount}`),
               }
               const transaction = await dappContextState.giftFactoryContract.connect(dappContextState.signer).createCard(newCard.title, newCard.description, newCard.goal, newCard.releaseDate, newCard.beneficiary, trx);               
@@ -135,7 +135,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       if(typeof window.ethereum !== 'undefined') {
           try {
               const trx = {
-                  from: dappContextState.accounts[0],
+                  from: dappContextState.currentAccount,
                   to: dappContextState.currentCard?.address,
                   value: ethers.utils.parseEther(`${amount}`),
               }
@@ -234,10 +234,15 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   } 
 
   async function getCurrentUserExists(): Promise<boolean> {
-    return await getUserExists(dappContextState.accounts[0]);
+
+    if (dappContextState.currentAccount == null) {
+      return false;
+    }
+
+    return await getUserExists(dappContextState.currentAccount);
   } 
 
-  async function getUser(address: Address): Promise<IUserProps> {
+  async function getUser(address: Address): Promise<IUserProps | null> {
 
     if (dappContextState.giftNetworkContract == null) {
         return {
@@ -249,18 +254,23 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     return await dappContextState.giftNetworkContract.getUser(address);
   } 
 
-  async function getCurrentUser(): Promise<IUserProps> {
-    return await getUser(dappContextState.accounts[0]);
+  async function getCurrentUser(): Promise<IUserProps | null> {
+
+    if (dappContextState.currentAccount == null) {
+      return null;
+    }
+
+    return await getUser(dappContextState.currentAccount);
   } 
 
   async function setCurrentUser(pseudo: string, ipfsLink: string): Promise<void> {
 
-    if (dappContextState.giftNetworkContract == null) {
+    if (dappContextState.giftNetworkContract == null || dappContextState.currentAccount == null) {
       return;
     }
 
     const trx = {
-      from: dappContextState.accounts[0],
+      from: dappContextState.currentAccount,
     };
     const transaction = await dappContextState.giftNetworkContract.connect(dappContextState.signer).setUser(pseudo, ipfsLink, trx);              
     await transaction.wait();
@@ -302,26 +312,40 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     }
   }  
 
+  async function loadData(accounts: Address[] | null): Promise<void> {
+    let currentAccount : Address | null = null;
+    let provider;
+    let giftFactoryContract: GiftFactoryContract | null = null;
+    let signer;   
+    let giftNetworkContract: GiftNetworkContract | null = null;
+
+    try {
+      if (accounts == null) {
+        accounts = await window.ethereum.request({method:'eth_requestAccounts'});
+      }
+      
+      currentAccount = accounts != null && accounts.length ? accounts[0] : null;
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
+      signer = provider.getSigner();   
+      const networkAddress = await giftFactoryContract.getGiftNetwork();
+      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
+    } catch (err) {
+      console.log(err);
+    }
+
+    dappContextDispatch({
+      type: StateTypes.UPDATE,
+      payload: { currentAccount, accounts, provider, giftFactoryContract, signer, giftNetworkContract }
+    });
+  }
+
   const init = useCallback(
     async () => {
-      let accounts;
-      let provider;
-      let giftFactoryContract: GiftFactoryContract | null = null;
-      let signer;   
-      let giftNetworkContract: GiftNetworkContract | null = null;
-      try {
-        accounts = await window.ethereum.request({method:'eth_requestAccounts'});
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
-        signer = provider.getSigner();   
-        const networkAddress = await giftFactoryContract.getGiftNetwork();
-        giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
-      } catch (err) {
-        console.log(err);
-      }
-      dappContextDispatch({
-        type: StateTypes.UPDATE,
-        payload: { accounts, provider, giftFactoryContract, signer, giftNetworkContract }
+      await loadData(null);
+
+      window.ethereum.on('accountsChanged', async (newAccounts: Address[]) => {
+        await loadData(newAccounts);
       });
     }, []);
   

@@ -115,7 +115,7 @@ const ChangeCardBeneficiaryForm: FC<formProp> = ({ daoType, func })  => {
             <form className="w-[90%] h-full grid grid-cols-2 grid-rows-9 gap-x-12 gap-y-24 items-center mt-6" onSubmit={handleSubmit(onSubmit)}>
                 <input type="text" {...register("beneficiary")} role="presentation" autoComplete="off" id="beneficiaryInput" placeholder="Nouveau bénéficiaire" className="cardInput" />
                 {
-                    touchedFields.beneficiary && dirtyFields.beneficiary && errors.beneficiary?.message ? <ErrorSpan errorMsg={errors.beneficiary?.message} /> : <div className="w-full flexJIC"><motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className={btnState.optionsBtnCss} onClick={() => setValue("beneficiary", dappContextState.accounts[0])}>Se proposer comme bénéficiaire</motion.button></div>
+                    touchedFields.beneficiary && dirtyFields.beneficiary && errors.beneficiary?.message ? <ErrorSpan errorMsg={errors.beneficiary?.message} /> : <div className="w-full flexJIC"><motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} type="submit" className={btnState.optionsBtnCss} onClick={() => setValue("beneficiary", dappContextState.currentAccount ?? '')}>Se proposer comme bénéficiaire</motion.button></div>
                 }
                 <input type="text" {...register("description")} role="presentation" autoComplete="off" id="descriptionInput" placeholder="Motif de la demande" className="cardInput" />
                 {

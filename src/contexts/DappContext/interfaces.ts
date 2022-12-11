@@ -25,7 +25,8 @@ export enum DAOTypes {
 }
 
 export type IDappContextStateProps = {
-    accounts: any,
+    currentAccount: Address | null,
+    accounts: Address[] | null,
     provider: any,
     giftFactoryContract: GiftFactoryContract | null,
     signer: any, 
@@ -64,8 +65,8 @@ export interface IDappContextProps extends IChildrenProps {
     giveToCard(amountToSend: number): void,
     getCurrentUserExists(): Promise<boolean>,
     getUserExists(address: Address): Promise<boolean>,
-    getCurrentUser(): Promise<IUserProps>,
-    getUser(address: Address): Promise<IUserProps>,
+    getCurrentUser(): Promise<IUserProps | null>,
+    getUser(address: Address): Promise<IUserProps | null>,
     setCurrentUser(pseudo: string, ipfsLink: string) : Promise<void>,
     setNewDAOProposal(daoType: DAOTypes, beneficiary: Address | null, description: string): void,
     setDAOVote(vote: boolean): void,
