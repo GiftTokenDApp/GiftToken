@@ -9,6 +9,7 @@ import ChatSendForm from "../forms/ChatSendForm";
 import ChatContactForm from "../forms/ChatContactForm";
 import { IChatContactProps } from "../forms/IChatContactProps";
 import { MessageStructOutput } from "../../typechain-types/contracts/GiftNetwork";
+import { Address } from "../../helpers/typesHelpers";
 
 type ModalProps = {
   handleClose : () => void,
@@ -44,22 +45,50 @@ const ChatModal: React.FC<ModalProps> = ({ handleClose }) => {
         setContact(null);
         setMessages([]);
       }
-
-      init();
     }
 
     useEffect(() => {
       init();
     }, [contact]);
     
-    const displayedMessages = (): string => {
-      let text = '';
+    const formatMessages = (): string => {
 
-      for (let message of messages) {
-        text += message;
+      if (messages == null || !messages.length) {
+        return '';
       }
 
-      return text;
+      let result = '';
+
+      for (let message of messages) {
+        result += formatMessage(message);
+      }
+
+      return result;
+    }
+
+    const formatMessage = (rawMessage : MessageStructOutput): string => {
+      
+      if (rawMessage == null) {
+        return '';
+      }
+
+      const sender: Address = rawMessage[0];
+      const date: Date = new Date(rawMessage[1].toNumber() * 1000);
+      const message: string = rawMessage[2];
+      const isCurrentUser: boolean = sender.toLowerCase() === dappContextState.currentAccount;
+
+      const userName: string = isCurrentUser ? user?.pseudo ?? '': contact?.pseudo ?? '';
+      let result: string = `${formatDateToStrong(date)} - ${userName} : <i>${message}</i><br />`;
+
+      if (isCurrentUser) {
+        result = `<span style="color:red">${result}</span>`;
+      }
+
+      return result;
+    }
+
+    const formatDateToStrong = (date: Date): string => {
+      return date.toISOString().replace('T', ' ').slice(0, -5);
     }
 
     const init = async() => {
@@ -103,8 +132,8 @@ const ChatModal: React.FC<ModalProps> = ({ handleClose }) => {
                 <ChatContactForm func={handleContactFormSubmission}/>
                 { contact && <>
                     <br />
-                    <div className="block p-2.5 w-[80%] h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      {displayedMessages()}
+                    <div className="block p-2.5 w-[80%] h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      dangerouslySetInnerHTML={{ __html: formatMessages() }}>
                     </div>
                     <ChatSendForm contact={contact}/>
                   </>

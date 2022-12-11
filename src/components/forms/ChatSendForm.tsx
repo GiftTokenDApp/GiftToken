@@ -5,11 +5,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import CircleLoader from "../loader/CircleLoader";
 import { useDappContext } from "../../contexts/DappContext";
-import { Address } from "../../helpers/typesHelpers";
 import { IChatContactProps } from "./IChatContactProps";
 
 const schema = yup.object({
-    address: yup.string().min(42,"L'adresse doit faire caractères").max(42,"L'adresse doit faire caractères").trim().ensure().required("L'adresse est obligatoire"),
+    message: yup.string().min(5,"Le message doit faire au moins 5 caractères").max(255,"Le message ne doit pas faire plus de 255 caractères").trim().ensure().required("L'adresse est obligatoire"),
 }).required()
 
 type formProp = {
@@ -43,9 +42,9 @@ const ChatSendForm: FC<formProp> = ({ contact }) => {
     const onSubmit = (data: IChatSendForm) => handleFormSubmission(data);
 
     const handleFormSubmission = async (data: IChatSendForm): Promise<void> => {
-        console.log(data);
+
         if(!btnState.hasSubmitted && data.message != null && data.message !== ''){
-            sendMessage(contact.address, data.message);
+            await sendMessage(contact.address, data.message);
         }        
     }
 
@@ -54,7 +53,7 @@ const ChatSendForm: FC<formProp> = ({ contact }) => {
     }, []);
       
     const init = async() => {
-        const submitBtnCss:string = "btnForm w-48 mr-10";
+        const submitBtnCss:string = "btnForm";
         
         setBtnState({
             hasSubmitted: btnState.displayLoader,
