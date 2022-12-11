@@ -2,8 +2,10 @@
 
 ## Contenu de la Dapp
 
-Le projet courant contient le contrat `GiftToken.sol`\
-Lorem Ipsum...
+Le projet courant contient le contrat `GiftFactory.sol`\
+Ce dernier permet de créer le contrat `GiftNetwork.sol` qui gère la partie réseau social\
+De plus le contrat `GiftFactory.sol` permet de générer les cartes cadeaux qui sont respectivement des contrats `GiftCard.sol`\
+Le contrat `GiftCard.sol` quand à lui génère un contrat `GiftDAO.sol` qui permet de créer la micro-DAO d'une carte.
 ___________________________________________________________________________________________________________________________________________
 ## Prérequis
 
