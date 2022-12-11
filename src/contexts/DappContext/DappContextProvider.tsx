@@ -269,7 +269,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   async function setNewDAOProposal(daoType: DAOTypes, beneficiary: Address, description: string) {
     if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
       try {   
-          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);       
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);       
           switch (daoType) {
             case DAOTypes.UNLOCK:
               await cardDAOContract.connect(dappContextState.signer).createOutpassedRequierementsProposal(description);     
@@ -293,7 +293,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   async function setDAOVote(vote: boolean) {
     if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard) {    
       try {   
-          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider);       
+          const cardDAOContract = new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider);       
           await cardDAOContract.connect(dappContextState.signer).vote(vote);                  
       } catch (err) {
           console.log(err);
@@ -372,7 +372,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             getCardsAddressesList();
           }
         });
-        const cardDAOContract = dappContextState.currentCard?.cardDAOAddress ? new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAO.abi, dappContextState.provider) : null;  
+        const cardDAOContract = dappContextState.currentCard?.cardDAOAddress ? new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider) : null;  
         cardDAOContract?.on("PropositionOpened", (_address: string, _amount: number, _timestamp: number) => {
           const lastEvent = {
             name: "PropositionOpened",
