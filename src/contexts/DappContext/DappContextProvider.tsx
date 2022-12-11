@@ -251,7 +251,10 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       return [];
     }
 
-    return await dappContextState.giftNetworkContract.readMessage(anotherUserAddress);              
+    const trx = {
+      from: dappContextState.currentAccount,
+    };
+    return await dappContextState.giftNetworkContract.readMessage(anotherUserAddress, trx);              
   }
 
   async function sendMessage(to:Address, message: string): Promise<void> {

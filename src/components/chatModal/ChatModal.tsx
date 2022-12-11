@@ -80,7 +80,7 @@ const ChatModal: React.FC<ModalProps> = ({ handleClose }) => {
       const userName: string = isCurrentUser ? user?.pseudo ?? '': contact?.pseudo ?? '';
       let result: string = `${formatDateToStrong(date)} - ${userName} : <i>${message}</i><br />`;
 
-      if (isCurrentUser) {
+      if (!isCurrentUser) {
         result = `<span style="color:red">${result}</span>`;
       }
 
