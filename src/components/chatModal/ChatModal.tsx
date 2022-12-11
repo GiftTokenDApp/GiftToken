@@ -75,7 +75,7 @@ const ChatModal: React.FC<ModalProps> = ({ handleClose }) => {
       const sender: Address = rawMessage[0];
       const date: Date = new Date(rawMessage[1].toNumber() * 1000);
       const message: string = rawMessage[2];
-      const isCurrentUser: boolean = sender.toLowerCase() === dappContextState.currentAccount;
+      const isCurrentUser: boolean = sender !== contact?.address;
 
       const userName: string = isCurrentUser ? user?.pseudo ?? '': contact?.pseudo ?? '';
       let result: string = `${formatDateToStrong(date)} - ${userName} : <i>${message}</i><br />`;
