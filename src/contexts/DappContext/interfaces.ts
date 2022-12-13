@@ -76,4 +76,5 @@ export interface IDappContextProps extends IChildrenProps {
     setDAOVote(vote: boolean): void,
     // getDAOVote(): Promise<number>,
     endDAO(): void,
+    login(): void,
 }

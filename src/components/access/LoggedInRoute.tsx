@@ -1,13 +1,13 @@
 import React from 'react'
 import { IChildrenProps as IRequireAuthProps } from '../../helpers/interfacesHelpers'
-import { useAuth } from '../../contexts/AuthContext'
 import { useLocation, Navigate } from "react-router-dom"
+import { useDappContext } from '../../contexts/DappContext'
 
 const LoggedinRoute: React.FC<IRequireAuthProps> = ({ children }) => {
-    const currentUser = useAuth()
+    const {dappContextState} = useDappContext()
     const location = useLocation()
 
-    if (!currentUser?.currentUser) {
+    if (!dappContextState.currentAccount) {
         // Redirect them to the /login page, but save the current location they were
         // trying to go to when they were redirected. This allows us to send them
         // along to that page after they login, which is a nicer user experience

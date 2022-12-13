@@ -369,7 +369,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
       signer = provider.getSigner();   
       const networkAddress = await giftFactoryContract.getGiftNetwork();
-      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
+      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
     } catch (err) {
       console.log(err);
     }
@@ -380,7 +380,16 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     });
   }
 
-  const init = useCallback(
+  // useEffect(() => {
+  //   (dappContextState.currentAccount != null && loggedIn ) ? authCheck(dappContextState.currentAccount) : authCheck(null);
+
+  //   return () => {
+  //     authCheck(null)
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [loggedIn])
+
+  const init = useCallback(    
     async () => {
       await loadData(null);
 
@@ -388,8 +397,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
         await loadData(newAccounts);
       });
     }, []);
-  
-  useEffect(() => {
+
+  const login = useCallback(() => {
     const tryInit = async () => {
       try {
         init();
@@ -398,7 +407,18 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
     };
     tryInit();
-  }, [init]);
+  }, [init])
+    
+  // useEffect(() => {    
+  //   const tryInit = async () => {
+  //     try {
+  //       init();
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
+  //   tryInit();
+  // }, [init]);
 
   useEffect(() => {
     if (dappContextState.giftFactoryContract) {
@@ -536,6 +556,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       setDAOVote,
       // getDAOVote,
       endDAO,
+      login,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
