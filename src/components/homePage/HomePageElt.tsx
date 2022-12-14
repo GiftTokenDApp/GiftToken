@@ -62,7 +62,7 @@ const CardCarousel = () => {
                 return newLi
             })              
             newGiftCardsElementsList && setCardsList(newGiftCardsElementsList);   
-            newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[0]);  
+            newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[indexes.currentIndex]);  
             firstRender && hideEventData();
             setFirstRender(false);
         }

@@ -15,7 +15,7 @@ function HomePage() {
 
   const handleCloseModal = useCallback(()=>{
     resetModalDisplay();
-    hideEventData()
+    hideEventData();
   },[hideEventData, resetModalDisplay])
 
   return (
