@@ -175,9 +175,9 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address)"](ownerAddress);            
             const expectedLinksList= [
-                '0xe3ADd897e69010709498738e5116C06B4D81e672',
-                '0x08957fd2346e89192C452c47a5f6631c63c91Eac',
-                '0xDA0783B7eb9c9d3cD179B1c425908a21086117E6'
+                '0xBf5A316F4303e13aE92c56D2D8C9F7629bEF5c6e',
+                '0xbA94C268049DD87Ded35F41F6D4C7542b4BdB767',
+                '0x72c1e366E34aC57376BC71Bda0C093b89ADB57Ee'
             ]
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -204,9 +204,9 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address,uint256)"](ownerAddress, BigNumber.from(2));
             const expectedLinksList= [
-                '0x874305DB059EF37C48536F32Dd109b4C7aB60a6d',
-                '0x9F99f4f06Fc3B3FB9170b48c00207431982D7f3f',
-                '0x157C59446c677ff70B32bEF30324A8B6e7238F53'
+                '0xa0372fAAfE21A4E4e1D0fDc62D1f7Be957c08cB2',
+                '0xdD8670CCb655041B202422A6706F18c71117f9d6',
+                '0xF8698093eF2A86718040fabcaCaf8bf556911301'
             ]
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -242,8 +242,8 @@ describe("GiftFactory testing", () => {
             }
             const links: string[] = await giftFactory["getLinks(address,uint256,uint256)"](ownerAddress, BigNumber.from(0), BigNumber.from(2));
             const expectedLinksList= [
-                '0x0a26c41eB1D42981aD15d7D593789cC455B7Ae71',
-                '0x3056A5f9c067A69622fc301a0b8A279eFa73C24b'
+                '0xc641b89a8D3d81151c6cD2f05fa593c95D2C1FFc',
+                '0xe3be36986D245A31d74157dAac38B7A8F8552881'
             ]            
             expect(links).to.deep.equal(expectedLinksList);
         });
@@ -280,7 +280,7 @@ describe("GiftFactory testing", () => {
                 value = cardCreatedEvent.args[1];
             }
             
-            cardCreatedAddress = '0x815b1008f769e9CDD38e4A3fe2236FD56aD508D8';
+            cardCreatedAddress = '0xb6410CE04122bDAe70D8F2f509e9814B51766618';
             expect(address).to.be.not.null;
             expect(address).to.be.equal(cardCreatedAddress);
             expect(value).to.be.not.null;

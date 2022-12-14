@@ -369,8 +369,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
       signer = provider.getSigner();   
-      const networkAddress = await giftFactoryContract.getGiftNetwork();
-      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
+      // const networkAddress = await giftFactoryContract.getGiftNetwork();
+      // giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
     } catch (err) {
       console.log(err);
     }
@@ -381,7 +381,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     });
   }
 
-  const init = useCallback(
+  /**
+   * This function is first called with the login function
+   * It provides a listener on the account change event
+   * It will rerender on each account change
+   */
+  const init = useCallback(    
     async () => {
       await loadData(null);
 
@@ -389,8 +394,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
         await loadData(newAccounts);
       });
     }, []);
-  
-  useEffect(() => {
+
+  /**
+     * This function is called on click over login button
+     * It initialize the DApp
+     */
+  const login = useCallback(() => {
     const tryInit = async () => {
       try {
         init();
@@ -399,8 +408,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
     };
     tryInit();
-  }, [init]);
+  }, [init])
 
+  /**
+   * This function is called whenever the main contract is changed
+   * It will add listeners to blockchain events
+   */
   useEffect(() => {
     if (dappContextState.giftFactoryContract) {
       try {
@@ -509,6 +522,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dappContextState])
 
+  /**
+   * This useEffect triggers whenever the displayed card changes
+   * It calls a blockchain reading on the whole cards list
+   * to update the user's view with proper data
+   */
   useEffect(() => {
     dappContextState.currentCard && getCardDAOData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -537,6 +555,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       setDAOVote,
       // getDAOVote,
       endDAO,
+      login,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
