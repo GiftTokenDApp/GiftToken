@@ -13,14 +13,16 @@ import GtCardButton from "../elements/buttons/gtCardButton/GtCardButton";
 
 const CardCarousel = () => {
 
-    const { dappContextState, setCurrentCardFromData, getCardsAddressesList } = useDappContext();
+    const { dappContextState, setCurrentCardFromData, getCardsAddressesList, hideEventData } = useDappContext();
 
     const [indexes, setIndexes] = useState({
         previousIndex: dappContextState.cardsDataList ? dappContextState.cardsDataList.length - 1 : 1,
         currentIndex: 0,
         nextIndex: 1
     });
-    const [trigger, setTrigger] = useState(true)
+    // This state is made to prevent cardCreationEvent to display
+    const [trigger, setTrigger] = useState(true);
+    const [firstRender, setFirstRender] = useState(true);
     const [cardsList, setCardsList] = useState<JSX.Element[] | null>([])
 
     const switchCardToDisplay = (dir: string) => {
@@ -61,6 +63,8 @@ const CardCarousel = () => {
             })              
             newGiftCardsElementsList && setCardsList(newGiftCardsElementsList);   
             newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[0]);  
+            firstRender && hideEventData();
+            setFirstRender(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dappContextState.cardsDataList, indexes])
