@@ -298,6 +298,8 @@ export interface GiftCardInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "Participated(address,uint256,uint256)": EventFragment;
     "ProperlyCreated()": EventFragment;
+    "RoleAdded(address,uint256)": EventFragment;
+    "RoleRevoked(address,uint256)": EventFragment;
     "SendedMessage(address)": EventFragment;
     "StatusChanged(uint256,uint256)": EventFragment;
   };
@@ -307,6 +309,8 @@ export interface GiftCardInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Participated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProperlyCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SendedMessage"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StatusChanged"): EventFragment;
 }
@@ -363,6 +367,28 @@ export interface ProperlyCreatedEventObject {}
 export type ProperlyCreatedEvent = TypedEvent<[], ProperlyCreatedEventObject>;
 
 export type ProperlyCreatedEventFilter = TypedEventFilter<ProperlyCreatedEvent>;
+
+export interface RoleAddedEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type RoleAddedEvent = TypedEvent<
+  [string, BigNumber],
+  RoleAddedEventObject
+>;
+
+export type RoleAddedEventFilter = TypedEventFilter<RoleAddedEvent>;
+
+export interface RoleRevokedEventObject {
+  arg0: string;
+  arg1: BigNumber;
+}
+export type RoleRevokedEvent = TypedEvent<
+  [string, BigNumber],
+  RoleRevokedEventObject
+>;
+
+export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
 export interface SendedMessageEventObject {
   arg0: string;
@@ -741,6 +767,18 @@ export interface GiftCard extends BaseContract {
 
     "ProperlyCreated()"(): ProperlyCreatedEventFilter;
     ProperlyCreated(): ProperlyCreatedEventFilter;
+
+    "RoleAdded(address,uint256)"(
+      arg0?: null,
+      arg1?: null
+    ): RoleAddedEventFilter;
+    RoleAdded(arg0?: null, arg1?: null): RoleAddedEventFilter;
+
+    "RoleRevoked(address,uint256)"(
+      arg0?: null,
+      arg1?: null
+    ): RoleRevokedEventFilter;
+    RoleRevoked(arg0?: null, arg1?: null): RoleRevokedEventFilter;
 
     "SendedMessage(address)"(arg0?: null): SendedMessageEventFilter;
     SendedMessage(arg0?: null): SendedMessageEventFilter;

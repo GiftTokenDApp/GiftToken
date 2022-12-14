@@ -2,11 +2,11 @@ import React, { FC, useState } from 'react';
 import { motion } from "framer-motion"
 import ISigninButtonProps from './interface';
 import CircleLoader from '../../loader/CircleLoader';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useDappContext } from '../../../contexts/DappContext';
 
 const SigninButton: FC<ISigninButtonProps> = ({ title, css }) => {
 
-  const { login } = useAuth()
+  const { login } = useDappContext()
   const [btnState, setBtnState] = useState({ 
     btnTxt: title,
     displayLoader: false,
@@ -16,7 +16,7 @@ const SigninButton: FC<ISigninButtonProps> = ({ title, css }) => {
   const cssLoader = "animate-spin h-7 w-7"
   const loaderCss = css === "btnHeaderGray" ? `${cssLoader} text-lightTurquoise` : css === "btnGray" ? `${cssLoader} text-lightTurquoise` : `${cssLoader} text-darkerGray`
   const handleClick = () => {
-    login(true)
+    login()
     css === "btnHeaderGray" ? btnState.displayLoader ? setBtnState({
       btnTxt: title,
       displayLoader: false,

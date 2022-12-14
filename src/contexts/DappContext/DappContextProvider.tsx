@@ -15,6 +15,7 @@ import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IUserProps } from "../../components/forms/IUserProps";
 import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
+import { GiftCard } from "../../typechain-types";
 
 // let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 let FactoryAddress: Address = '0xAb880578723d58d0A7115b95751Eae7d39789850';
@@ -29,11 +30,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount); 
           const cardsDataList: IGiftCardProps[] = [];
           for (let i = 0; i < cardsAddressesList.length; i++) {
-            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);            
+            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
             const cardTitle = await giftCardContract.title();          
             const cardDescription = await giftCardContract.description();          
             const cardCreationDate = await giftCardContract.creationDate();          
-            const cardGoal = await giftCardContract.requierementToBeReleased();          
+            const cardGoal = await giftCardContract.requierementToBeReleased();
             const cardCreator = await giftCardContract.getCreator();          
             const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
             const cardBeneficiary = await giftCardContract.getBeneficiary();          
@@ -102,13 +103,13 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   }
 
   async function releaseAllToCurrent(): Promise<void> {
-    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard != null && dappContextState.currentAccount != null) {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard != null) {
         try {
             const trx = {
-                from: dappContextState.currentAccount,
+                from: dappContextState.currentCard?.beneficiary,
             }
             const giftCardContract = new ethers.Contract(dappContextState.currentCard.address, GiftCardContractFactory.abi, dappContextState.provider);  
-            const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentAccount, trx);               
+            const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentCard?.beneficiary, trx);               
             await transaction.wait();
             getCardsAddressesList();
         } catch (err) {
@@ -368,8 +369,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
       signer = provider.getSigner();   
-      const networkAddress = await giftFactoryContract.getGiftNetwork();
-      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract;    
+      // const networkAddress = await giftFactoryContract.getGiftNetwork();
+      // giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
     } catch (err) {
       console.log(err);
     }
@@ -380,7 +381,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     });
   }
 
-  const init = useCallback(
+  /**
+   * This function is first called with the login function
+   * It provides a listener on the account change event
+   * It will rerender on each account change
+   */
+  const init = useCallback(    
     async () => {
       await loadData(null);
 
@@ -388,8 +394,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
         await loadData(newAccounts);
       });
     }, []);
-  
-  useEffect(() => {
+
+  /**
+     * This function is called on click over login button
+     * It initialize the DApp
+     */
+  const login = useCallback(() => {
     const tryInit = async () => {
       try {
         init();
@@ -398,8 +408,12 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       }
     };
     tryInit();
-  }, [init]);
+  }, [init])
 
+  /**
+   * This function is called whenever the main contract is changed
+   * It will add listeners to blockchain events
+   */
   useEffect(() => {
     if (dappContextState.giftFactoryContract) {
       try {
@@ -508,6 +522,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dappContextState])
 
+  /**
+   * This useEffect triggers whenever the displayed card changes
+   * It calls a blockchain reading on the whole cards list
+   * to update the user's view with proper data
+   */
   useEffect(() => {
     dappContextState.currentCard && getCardDAOData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -536,6 +555,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       setDAOVote,
       // getDAOVote,
       endDAO,
+      login,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

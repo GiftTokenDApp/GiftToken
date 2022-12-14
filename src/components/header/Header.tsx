@@ -2,8 +2,8 @@ import React, { FC } from "react";
 import BurgerMenu from "../burgerMenu/BurgerMenu";
 import SigninButton from "../buttons/signinbutton/SigninButton";
 import Logo from "../logo/Logo";
-import { useAuth } from '../../contexts/AuthContext';
 import { formatETHAddress } from "../../helpers/functionsHelpers";
+import { useDappContext } from "../../contexts/DappContext";
 
 type HeaderProps = {
   headerType: string,
@@ -11,11 +11,11 @@ type HeaderProps = {
 
 const Header: FC<HeaderProps> = ({ headerType }) => {
 
-  const { currentUser } = useAuth()
+  const { dappContextState } = useDappContext()
 
   const cssHeader = "w-full py-12 gap-3 z-50 md:flex-row md:justify-between md:h-36 md:py-0 md:gap-4";
   const headerCSS = headerType ==="homePage" ? `${cssHeader} h-28 flexJIC bg-gtYellow` : `${cssHeader} h-40 flexJIC flex-col md:justify-between` 
-  const ShortenedCurrentUserAddress = formatETHAddress(currentUser?.address ?? "");
+  const ShortenedCurrentUserAddress = formatETHAddress(dappContextState.currentAccount ?? "");
 
   return (
     <header className={headerCSS}>
