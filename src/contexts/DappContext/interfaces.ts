@@ -25,6 +25,7 @@ export enum DAOTypes {
 }
 
 export type IDappContextStateProps = {
+    functionCallTimer: number,
     currentAccount: Address | null,
     accounts: Address[] | null,
     provider: any,

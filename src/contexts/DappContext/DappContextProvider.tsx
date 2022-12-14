@@ -21,51 +21,56 @@ let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState('');
+  // const [timer, setTimer] = useState(new Date(Date.now()).getSeconds());
 
   async function getCardsAddressesList() {
-    if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
-      try {  
-          const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount);
-          const cardsDataList: IGiftCardProps[] = [];
-          // for (let i = 0; i < cardsAddressesList.length; i++) {
-          for (let i = cardsAddressesList.length - 1; i >= 0; i--) {
-            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
-            const cardTitle = await giftCardContract.title();          
-            const cardDescription = await giftCardContract.description();          
-            const cardCreationDate = await giftCardContract.creationDate();          
-            const cardGoal = await giftCardContract.requierementToBeReleased();
-            const cardCreator = await giftCardContract.getCreator();          
-            const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
-            const cardBeneficiary = await giftCardContract.getBeneficiary();          
-            const cardStatus = await giftCardContract.getStatus();          
-            const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
-            const cardCoinsAmount = await giftCardContract.provider.getBalance(cardsAddressesList[i]);
-            const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;
-            const cardDAOAddress = await giftCardContract.getCardDAOAddress();         
-            const newCardData = {
-              address: cardsAddressesList[i],
-              contract: giftCardContract,
-              title: cardTitle,
-              description: cardDescription,
-              creationDate: cardCreationDate,
-              goal: cardGoal,
-              creator: cardCreator,
-              funders: cardFunders,
-              beneficiary: cardBeneficiary,
-              status: cardStatus,
-              releaseDate: cardReleaseDate,
-              coinsAmount: parsedEth,
-              cardDAOAddress: cardDAOAddress,
-            }    
-            cardsDataList.push(newCardData);
-          }        
-          dappContextDispatch({
-            type: StateTypes.UPDATE_CARDS,
-            payload: {...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList},
-          });
-      } catch (err) {
-          console.log(err);
-          err && setError(err.toString());
+    const newTime = Date.now();
+    console.log(newTime, dappContextState.functionCallTimer); 
+    if(dappContextState?.functionCallTimer && newTime > dappContextState.functionCallTimer){   
+      if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
+        try {  
+            const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount);
+            const cardsDataList: IGiftCardProps[] = [];
+            // for (let i = 0; i < cardsAddressesList.length; i++) {
+            for (let i = cardsAddressesList.length - 1; i >= 0; i--) {
+              const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
+              const cardTitle = await giftCardContract.title();          
+              const cardDescription = await giftCardContract.description();          
+              const cardCreationDate = await giftCardContract.creationDate();          
+              const cardGoal = await giftCardContract.requierementToBeReleased();
+              const cardCreator = await giftCardContract.getCreator();          
+              const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
+              const cardBeneficiary = await giftCardContract.getBeneficiary();          
+              const cardStatus = await giftCardContract.getStatus();          
+              const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
+              const cardCoinsAmount = await giftCardContract.provider.getBalance(cardsAddressesList[i]);
+              const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;
+              const cardDAOAddress = await giftCardContract.getCardDAOAddress();         
+              const newCardData = {
+                address: cardsAddressesList[i],
+                contract: giftCardContract,
+                title: cardTitle,
+                description: cardDescription,
+                creationDate: cardCreationDate,
+                goal: cardGoal,
+                creator: cardCreator,
+                funders: cardFunders,
+                beneficiary: cardBeneficiary,
+                status: cardStatus,
+                releaseDate: cardReleaseDate,
+                coinsAmount: parsedEth,
+                cardDAOAddress: cardDAOAddress,
+              }    
+              cardsDataList.push(newCardData);
+            }        
+            dappContextDispatch({
+              type: StateTypes.UPDATE_CARDS,
+              payload: {...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList, functionCallTimer: newTime},
+            });
+        } catch (err) {
+            console.log(err);
+            err && setError(err.toString());
+        }
       }
     }
   }  
@@ -404,7 +409,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     let giftFactoryContract: GiftFactoryContract | null = null;
     let signer;   
     let giftNetworkContract: GiftNetworkContract | null = null;
-
+    let functionCallTimer: number = Date.now();
     try {
       if (accounts == null) {
         accounts = await window.ethereum.request({method:'eth_requestAccounts'});
@@ -422,7 +427,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
 
     dappContextDispatch({
       type: StateTypes.UPDATE,
-      payload: { currentAccount, accounts, provider, giftFactoryContract, signer, giftNetworkContract }
+      payload: { functionCallTimer, currentAccount, accounts, provider, giftFactoryContract, signer, giftNetworkContract }
     });
   }
 

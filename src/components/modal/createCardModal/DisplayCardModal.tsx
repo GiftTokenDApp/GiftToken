@@ -70,7 +70,6 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
     }
     
     const withdraw = async () => {
-
       if (dappContextState?.currentCard?.address != null) {
         await releaseAllToCurrent();
         handleClose();
