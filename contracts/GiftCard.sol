@@ -55,6 +55,10 @@ contract GiftCard is Ownable, IGiftCard {
     
     event StatusChanged(uint, uint);
 
+    event RoleAdded(address, uint);
+
+    event RoleRevoked(address, uint);
+
     event BeneficiaryChanged(address, address);
 
     event Participated(address, uint, uint);
@@ -172,10 +176,9 @@ contract GiftCard is Ownable, IGiftCard {
         description = _description;
         requierementToBeReleased  = _requierementToBeReleased;
         dateToBeReleased  = _dateToBeReleased;
-        beneficiary = _beneficiary; 
 
         if (beneficiary != NULLADDRESS) {
-            addRole(beneficiary, Role.Beneficiary);
+            changeBeneficiary(_beneficiary);
         }
 
         addRole(_creator, Role.Creator);
@@ -426,13 +429,16 @@ contract GiftCard is Ownable, IGiftCard {
     }
 
     /**
-     * @notice Change beneficiary of this card
+     * @notice Change beneficiary of this card (and revoke the older beneficiary)
      * @param _newBeneficiary New beneficiary
      */
     function changeBeneficiary(address _newBeneficiary) internal {
         require(_newBeneficiary != NULLADDRESS, "A beneficiary address is necessary");
+        require(_newBeneficiary != beneficiary, "The new beneficiary is the same");
 
-        addRole(beneficiary, Role.Beneficiary);
+        revokeRole(beneficiary, Role.Beneficiary);
+        addRole(_newBeneficiary, Role.Beneficiary);
+        
         address oldBeneficiary = beneficiary;
         beneficiary = _newBeneficiary;
         
@@ -447,6 +453,18 @@ contract GiftCard is Ownable, IGiftCard {
      */
     function addRole(address _address, Role _role) internal {
         roles[_address][uint(_role)-1] = true;
+        emit RoleAdded(_address, uint(_role));
+    }
+
+    /**
+     * @notice Revoke a role for an adress
+     * @dev Internal function without access restriction
+     * @param _address Role's address
+     * @param _role The role
+     */
+    function revokeRole(address _address, Role _role) internal {
+        roles[_address][uint(_role)-1] = false;
+        emit RoleRevoked(_address, uint(_role));
     }
 
     /**

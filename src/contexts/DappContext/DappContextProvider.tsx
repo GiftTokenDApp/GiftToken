@@ -15,6 +15,7 @@ import { Address } from "../../helpers/typesHelpers";
 import IGiftCardProps from "../../components/giftCard/interface";
 import { IUserProps } from "../../components/forms/IUserProps";
 import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
+import { GiftCard } from "../../typechain-types";
 
 // let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 let FactoryAddress: Address = '0xAb880578723d58d0A7115b95751Eae7d39789850';
@@ -29,11 +30,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount); 
           const cardsDataList: IGiftCardProps[] = [];
           for (let i = 0; i < cardsAddressesList.length; i++) {
-            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);            
+            const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
             const cardTitle = await giftCardContract.title();          
             const cardDescription = await giftCardContract.description();          
             const cardCreationDate = await giftCardContract.creationDate();          
-            const cardGoal = await giftCardContract.requierementToBeReleased();          
+            const cardGoal = await giftCardContract.requierementToBeReleased();
             const cardCreator = await giftCardContract.getCreator();          
             const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
             const cardBeneficiary = await giftCardContract.getBeneficiary();          
@@ -102,13 +103,13 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   }
 
   async function releaseAllToCurrent(): Promise<void> {
-    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard != null && dappContextState.currentAccount != null) {
+    if(typeof window.ethereum !== 'undefined' && dappContextState.currentCard != null) {
         try {
             const trx = {
-                from: dappContextState.currentAccount,
+                from: dappContextState.currentCard?.beneficiary,
             }
             const giftCardContract = new ethers.Contract(dappContextState.currentCard.address, GiftCardContractFactory.abi, dappContextState.provider);  
-            const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentAccount, trx);               
+            const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentCard?.beneficiary, trx);               
             await transaction.wait();
             getCardsAddressesList();
         } catch (err) {
