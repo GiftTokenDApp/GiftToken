@@ -9,16 +9,14 @@ import { GiftDAO__factory as GiftDAOContractFactory} from '../../typechain-types
 import { GiftNetwork__factory as GiftNetworkContractFactory} from '../../typechain-types/factories/contracts/GiftNetwork__factory';
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
 import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
-import { INewCardProps } from "../../components/forms/INewCardProps";
 import { DAOTypes, IDappContextProps, StateTypes } from "./interfaces";
 import { Address } from "../../helpers/typesHelpers";
-import IGiftCardProps from "../../components/giftCard/interface";
-import { IUserProps } from "../../components/forms/IUserProps";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
-import { GiftCard } from "../../typechain-types";
+import { INewCardProps } from "../../components/elements/forms/INewCardProps";
+import { IUserProps } from "../../components/elements/forms/IUserProps";
 
-// let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
-let FactoryAddress: Address = '0xAb880578723d58d0A7115b95751Eae7d39789850';
+let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
@@ -369,8 +367,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
       signer = provider.getSigner();   
-      // const networkAddress = await giftFactoryContract.getGiftNetwork();
-      // giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
+      const networkAddress = await giftFactoryContract.getGiftNetwork();
+      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
     } catch (err) {
       console.log(err);
     }

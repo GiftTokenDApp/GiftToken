@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
-import { INewCardProps } from "../../components/forms/INewCardProps";
-import { IUserProps } from "../../components/forms/IUserProps";
-import IGiftCardProps from "../../components/giftCard/interface";
+import { INewCardProps } from "../../components/elements/forms/INewCardProps";
+import { IUserProps } from "../../components/elements/forms/IUserProps";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 import { Address } from "../../helpers/typesHelpers";
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';

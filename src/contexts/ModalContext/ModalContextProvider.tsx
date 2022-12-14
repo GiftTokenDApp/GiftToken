@@ -3,7 +3,7 @@ import ModalContext from "./ModalContext";
 import { IChildrenProps } from '../../helpers/interfacesHelpers';
 import { initialState, reducer } from "./state";
 import { IModalContextProps, StateTypes } from "./interfaces";
-import IGiftCardProps from "../../components/giftCard/interface";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 
 const ModalContextProvider: FC<IChildrenProps> = ({ children }) => {
 

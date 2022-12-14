@@ -1,5 +1,5 @@
 import React from "react";
-import SigninButton from "../buttons/signinbutton/SigninButton";
+import SigninButton from "../elements/buttons/signinbutton/SigninButton";
 import ILandingPageVPProps from "./interface";
 
 const LandingPageVP: React.FC<ILandingPageVPProps> = ({ title, subTitle, img, type, btnTxt, btnCss }) => {

@@ -41,11 +41,11 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       accounts: defaultHardhatAccounts
     },
-    // goerli: {
-    //   chainId: 5,
-    //   url: `https://goerli.infura.io/v3/${INFURA_KEY}`,
-    //   accounts: [PRIVATE_KEY]
-    // }
+    goerli: {
+      chainId: 5,
+      url: `https://goerli.infura.io/v3/${INFURA_KEY}`,
+      accounts: [PRIVATE_KEY]
+    }
   },
   typechain: {
     outDir: 'src/typechain-types',

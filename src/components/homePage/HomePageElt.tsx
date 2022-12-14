@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import css from "./homePageElt.module.css";
-import { GiftCard } from "../giftCard";
-import GtCardButton from "../buttons/gtCardButton/GtCardButton";
+import { GiftCard } from "../elements/giftCard";
+import GtCardButton from "../elements/buttons/gtCardButton/GtCardButton";
 import { determineClasses } from "./functions";
-import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
+import GtAddCardButton from "../elements/buttons/gtAddCardButton/GtAddCardButton";
 import { useDappContext } from "../../contexts/DappContext";
 
 /*

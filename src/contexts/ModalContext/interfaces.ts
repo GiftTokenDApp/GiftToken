@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import IGiftCardProps from "../../components/giftCard/interface";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 
 export enum StateTypes {
