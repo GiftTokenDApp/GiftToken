@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
-import { INewCardProps } from "../../components/forms/INewCardProps";
-import { IUserProps } from "../../components/forms/IUserProps";
-import IGiftCardProps from "../../components/giftCard/interface";
+import { INewCardProps } from "../../components/elements/forms/INewCardProps";
+import { IUserProps } from "../../components/elements/forms/IUserProps";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 import { IChildrenProps } from "../../helpers/interfacesHelpers";
 import { Address } from "../../helpers/typesHelpers";
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
@@ -60,7 +60,7 @@ export interface IDappContextProps extends IChildrenProps {
     createCard(newCard: INewCardProps): Promise<void>;
     releaseAllToCurrent(): Promise<void>;
     hideEventData(): void;
-    getCardsAddressesList(): void;
+    getCardsAddressesList(call: string): void;
     getCardData(cardAddress: Address): any;
     setCurrentCardFromIndex(currentCardIndex: number): void;
     setCurrentCardFromData(currentCardData: IGiftCardProps): void;

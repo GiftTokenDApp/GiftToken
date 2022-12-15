@@ -177,7 +177,7 @@ contract GiftCard is Ownable, IGiftCard {
         requierementToBeReleased  = _requierementToBeReleased;
         dateToBeReleased  = _dateToBeReleased;
 
-        if (beneficiary != NULLADDRESS) {
+        if (_beneficiary != NULLADDRESS) {
             changeBeneficiary(_beneficiary);
         }
 

@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react'
 import { AnimatePresence } from "framer-motion";
-import Footer from '../components/footer/Footer';
-import Header from '../components/header/Header';
+import Footer from '../components/elements/footer/Footer';
+import Header from '../components/elements/header/Header';
 import HomePageElt from '../components/homePage/HomePageElt';
 import { useModalContext } from '../contexts/ModalContext';
-import CreateCardModal from '../components/createCardModal/CreateCardModal';
-import DisplayCardModal from '../components/createCardModal/DisplayCardModal';
+import CreateCardModal from '../components/modal/cardsModal/CreateCardModal';
+import DisplayCardModal from '../components/modal/cardsModal/DisplayCardModal';
 import { useDappContext } from '../contexts/DappContext';
 
 function HomePage() {
@@ -15,21 +15,21 @@ function HomePage() {
 
   const handleCloseModal = useCallback(()=>{
     resetModalDisplay();
-    hideEventData()
+    hideEventData();
   },[hideEventData, resetModalDisplay])
 
   return (
     <div className="w-full h-full flexJIC flex-col font-poppinsRegular md:gap-6">
       <Header headerType='homePage' />
       <div className="w-full h-[82vh] flex justify-start items-center flex-col md:h-[81vh]">
-      <div className="w-full h-[12vh] flexJIC flex-col gap-12 text-center text-gtDarkBlue md:h-[15vh] lg:flex-row-reverse lg:text-left">
-        <h1 className='flexJIC h-2/6 px-5 pb-1 text-center text-lg font-bold md:text-3xl md:font-extrabold md:h-1/6 md:px-12 md:pb-5'>Créer, cagnoter, abonder, offrer une carte cadeau et bien plus encore !</h1>
-      </div>
-      <div className="w-full h-[69.3vh] flexJIC">
-          <div className="w-4/6 h-5/6 flexJIC mb-20">
-            <HomePageElt />
-          </div>
-      </div>
+        <div className="w-full h-[12vh] flexJIC flex-col gap-12 text-center text-gtDarkBlue md:h-[15vh] lg:flex-row-reverse lg:text-left">
+          <h1 className='flexJIC h-2/6 px-5 pb-1 text-center text-lg font-bold md:text-3xl md:font-extrabold md:h-1/6 md:px-12 md:pb-5'>Créer, cagnoter, abonder, offrer une carte cadeau et bien plus encore !</h1>
+        </div>
+        <div className="w-full h-[69.3vh] flexJIC">
+            <div className="w-4/6 h-5/6 flexJIC mb-20">
+              <HomePageElt />
+            </div>
+        </div>
       </div>
       <Footer />
       <AnimatePresence

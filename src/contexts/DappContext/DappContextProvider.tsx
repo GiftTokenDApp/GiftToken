@@ -9,27 +9,27 @@ import { GiftDAO__factory as GiftDAOContractFactory} from '../../typechain-types
 import { GiftNetwork__factory as GiftNetworkContractFactory} from '../../typechain-types/factories/contracts/GiftNetwork__factory';
 import { GiftFactory as GiftFactoryContract} from '../../typechain-types/contracts/GiftFactory';
 import { GiftNetwork as GiftNetworkContract} from '../../typechain-types/contracts/GiftNetwork';
-import { INewCardProps } from "../../components/forms/INewCardProps";
 import { DAOTypes, IDappContextProps, StateTypes } from "./interfaces";
 import { Address } from "../../helpers/typesHelpers";
-import IGiftCardProps from "../../components/giftCard/interface";
-import { IUserProps } from "../../components/forms/IUserProps";
+import IGiftCardProps from "../../components/elements/giftCard/interface";
 import { MessageStructOutput } from "../../typechain-types/contracts/interfaces/IGiftNetwork";
-import { GiftCard } from "../../typechain-types";
+import { INewCardProps } from "../../components/elements/forms/INewCardProps";
+import { IUserProps } from "../../components/elements/forms/IUserProps";
 
-// let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
-let FactoryAddress: Address = '0xAb880578723d58d0A7115b95751Eae7d39789850';
+let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState('');
 
-  async function getCardsAddressesList() {
+  async function getCardsAddressesList(call: string) {
+    // console.log(call);
     if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
       try {  
-          const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount); 
+          const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount);
           const cardsDataList: IGiftCardProps[] = [];
-          for (let i = 0; i < cardsAddressesList.length; i++) {
+          // for (let i = 0; i < cardsAddressesList.length; i++) {
+          for (let i = cardsAddressesList.length - 1; i >= 0; i--) {
             const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
             const cardTitle = await giftCardContract.title();          
             const cardDescription = await giftCardContract.description();          
@@ -62,13 +62,59 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           }        
           dappContextDispatch({
             type: StateTypes.UPDATE_CARDS,
-            payload: {...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList},
+            payload: { ...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList },
           });
       } catch (err) {
-          err && setError(err.toString());
+        console.log(err);
+        err && setError(err.toString());
       }
     }
   }  
+  //   if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
+  //     try {  
+  //         const cardsAddressesList = await dappContextState.giftFactoryContract.connect(dappContextState.signer)['getLinks(address)'](dappContextState.currentAccount);
+  //         const cardsDataList: IGiftCardProps[] = [];
+  //         for (let i = 0; i < cardsAddressesList.length; i++) {
+  //           const giftCardContract = new ethers.Contract(cardsAddressesList[i], GiftCardContractFactory.abi, dappContextState.provider);
+  //           const cardTitle = await giftCardContract.title();          
+  //           const cardDescription = await giftCardContract.description();          
+  //           const cardCreationDate = await giftCardContract.creationDate();          
+  //           const cardGoal = await giftCardContract.requierementToBeReleased();
+  //           const cardCreator = await giftCardContract.getCreator();          
+  //           const cardFunders = await giftCardContract.connect(dappContextState.signer)['getParticipants()']();         
+  //           const cardBeneficiary = await giftCardContract.getBeneficiary();          
+  //           const cardStatus = await giftCardContract.getStatus();          
+  //           const cardReleaseDate = await giftCardContract.getDateToBeReleased(); 
+  //           const cardCoinsAmount = await giftCardContract.provider.getBalance(cardsAddressesList[i]);
+  //           const parsedEth = parseInt(cardCoinsAmount.toString()) / 10 ** 18;
+  //           const cardDAOAddress = await giftCardContract.getCardDAOAddress();         
+  //           const newCardData = {
+  //             address: cardsAddressesList[i],
+  //             contract: giftCardContract,
+  //             title: cardTitle,
+  //             description: cardDescription,
+  //             creationDate: cardCreationDate,
+  //             goal: cardGoal,
+  //             creator: cardCreator,
+  //             funders: cardFunders,
+  //             beneficiary: cardBeneficiary,
+  //             status: cardStatus,
+  //             releaseDate: cardReleaseDate,
+  //             coinsAmount: parsedEth,
+  //             cardDAOAddress: cardDAOAddress,
+  //           }    
+  //           cardsDataList.push(newCardData);
+  //         }        
+  //         dappContextDispatch({
+  //           type: StateTypes.UPDATE_CARDS,
+  //           payload: {...dappContextState, cardsAddressesList: cardsAddressesList, cardsDataList: cardsDataList},
+  //         });
+  //     } catch (err) {
+  //         console.log(err);
+  //         err && setError(err.toString());
+  //     }
+  //   }
+  // }  
   
   const setCurrentCardFromIndex = (currentCardIndex: number) => {
     if (dappContextState.cardsDataList) {
@@ -95,7 +141,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               }
               const transaction = await dappContextState.giftFactoryContract.connect(dappContextState.signer).createCard(newCard.title, newCard.description, newCard.goal, newCard.releaseDate, newCard.beneficiary, trx);               
               await transaction.wait();
-              getCardsAddressesList();
+              getCardsAddressesList("createCard");
           } catch (err) {
               err && setError(err.toString());
           }
@@ -111,10 +157,10 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
             const giftCardContract = new ethers.Contract(dappContextState.currentCard.address, GiftCardContractFactory.abi, dappContextState.provider);  
             const transaction = await giftCardContract.connect(dappContextState.signer).releaseAll(dappContextState.currentCard?.beneficiary, trx);               
             await transaction.wait();
-            getCardsAddressesList();
+            getCardsAddressesList("releaseAllToCurrent");
         } catch (err) {
-            err && setError(err.toString());
             console.log(err);
+            err && setError(err.toString());
         }
     }
   }
@@ -129,10 +175,10 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               }
               const transaction = await dappContextState.signer.sendTransaction(trx);               
               await transaction.wait();
-              getCardsAddressesList();
+              getCardsAddressesList("giveToCard");
           } catch (err) {
             console.log(err);
-              err && setError(err.toString());
+            err && setError(err.toString());
           }
       }
   }
@@ -178,8 +224,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
           newCardsDataList?.push(newCardData)
           return newCardsDataList;
       } catch (err) {
-        console.log("erreur", err);
-          err && setError(err.toString());
+        console.log(err);
+        err && setError(err.toString());
       }
     }
   }
@@ -359,7 +405,6 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     let giftFactoryContract: GiftFactoryContract | null = null;
     let signer;   
     let giftNetworkContract: GiftNetworkContract | null = null;
-
     try {
       if (accounts == null) {
         accounts = await window.ethereum.request({method:'eth_requestAccounts'});
@@ -369,10 +414,11 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       provider = new ethers.providers.Web3Provider(window.ethereum);
       giftFactoryContract = new ethers.Contract(FactoryAddress, GiftFactoryContractFactory.abi, provider) as GiftFactoryContract;    
       signer = provider.getSigner();   
-      // const networkAddress = await giftFactoryContract.getGiftNetwork();
-      // giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
+      const networkAddress = await giftFactoryContract.getGiftNetwork();
+      giftNetworkContract = new ethers.Contract(networkAddress, GiftNetworkContractFactory.abi, provider) as GiftNetworkContract; 
     } catch (err) {
       console.log(err);
+      err && setError(err.toString());
     }
 
     dappContextDispatch({
@@ -404,7 +450,8 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
       try {
         init();
       } catch (err) {
-        console.error(err);
+        console.log(err);
+        err && setError(err.toString());
       }
     };
     tryInit();
@@ -430,7 +477,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("CreateCardEvent");
             !dappContextState.currentCard && setCurrentCardFromIndex(0); 
           }
         });
@@ -447,7 +494,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("ParticipatedEvent");
           }
         });
         const cardDAOContract = dappContextState.currentCard?.cardDAOAddress ? new ethers.Contract(dappContextState.currentCard?.cardDAOAddress, GiftDAOContractFactory.abi, dappContextState.provider) : null;  
@@ -464,7 +511,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("PropositionOpenedEvent");
           }
         }); 
         cardDAOContract?.on("ParticipantVoted", (_address: string, _amount: number, _timestamp: number) => {
@@ -480,7 +527,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("ParticipantVotedEvent");
           }
         });
         cardDAOContract?.on("PropositionClosed", (_address: string, _amount: number, _timestamp: number) => {
@@ -496,7 +543,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("PropositionClosedEvent");
           }
         });
         cardDAOContract?.on("BeneficiaryChanged", (_address: string, _amount: number, _timestamp: number) => {
@@ -512,15 +559,16 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
               type: StateTypes.UPDATE,
               payload: { ...dappContextState, lastEvent, displayEvent }
             });
-            getCardsAddressesList();
+            getCardsAddressesList("BeneficiaryChangedEvent");
           }
         });
       } catch (err) {
-        console.error(err);
+        console.log(err);
+        err && setError(err.toString());
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dappContextState])
+  }, [dappContextState.giftFactoryContract, dappContextState.currentCard])
 
   /**
    * This useEffect triggers whenever the displayed card changes
@@ -536,6 +584,7 @@ const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
     () => ({
       dappContextState,
       dappContextDispatch,
+      error,
       createCard,
       releaseAllToCurrent,
       hideEventData,

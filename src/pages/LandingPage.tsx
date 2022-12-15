@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "../components/header/Header"
+import Header from "../components/elements/header/Header"
 import LandingPageVP from "../components/landingPage/LandingPageVP"
-import Footer from "../components/footer/Footer"
+import Footer from "../components/elements/footer/Footer"
 import { landingPageVPData } from "../components/landingPage";
 
 function LandingPage() {

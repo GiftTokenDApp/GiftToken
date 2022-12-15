@@ -44,22 +44,22 @@ const VPIllustrations4 = {
 
 
 export const landingPageVPData: Array<ILandingPageVPProps> = [{
-    title:'Votre créateur de liste de souhaits en ligne',
+    title:'Votre créateur de cartes cadeaux crypto',
     subTitle:'Le meilleur moyen de trouver le cadeau idéal !',
     img: VPIllustrations1,
     type: "1",
     btnTxt: "Je me lance",
     btnCss: 'btnPurple',
 }, {
-    title:'Créez vos listes de souhaits et partagez-les !',
-    subTitle:'C\'est facile et vous décidez qui peut les voir',
+    title:'Créez vos cartes et partagez-les !',
+    subTitle:'C\'est facile à prendre en main',
     img: VPIllustrations2,
     type: "2",
     btnTxt: "Je crée ma carte",
     btnCss: 'btnTurquoise',
 }, {
-    title:'Accèdez aux listes de vos amis',
-    subTitle:'pour exaucer leurs souhaits',
+    title:'Accèdez aux cartes de vos amis',
+    subTitle:"pour leur offrir l'avenir",
     img: VPIllustrations3,
     type: "3",
     btnTxt: "J'abonde une carte",

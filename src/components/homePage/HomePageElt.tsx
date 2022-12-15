@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import css from "./homePageElt.module.css";
-import { GiftCard } from "../giftCard";
-import GtCardButton from "../buttons/gtCardButton/GtCardButton";
 import { determineClasses } from "./functions";
-import GtAddCardButton from "../buttons/gtAddCardButton/GtAddCardButton";
 import { useDappContext } from "../../contexts/DappContext";
+import { GiftCard } from "../elements/giftCard";
+import GtAddCardButton from "../elements/buttons/gtAddCardButton/GtAddCardButton";
+import GtCardButton from "../elements/buttons/gtCardButton/GtCardButton";
 
 /*
  * Read the blog post here:
@@ -13,14 +13,16 @@ import { useDappContext } from "../../contexts/DappContext";
 
 const CardCarousel = () => {
 
-    const { dappContextState, setCurrentCardFromData, getCardsAddressesList } = useDappContext();
+    const { dappContextState, setCurrentCardFromData, getCardsAddressesList, hideEventData } = useDappContext();
 
     const [indexes, setIndexes] = useState({
         previousIndex: dappContextState.cardsDataList ? dappContextState.cardsDataList.length - 1 : 1,
         currentIndex: 0,
         nextIndex: 1
     });
-    const [trigger, setTrigger] = useState(true)
+    // This state is made to prevent cardCreationEvent to display
+    const [trigger, setTrigger] = useState(true);
+    const [firstRender, setFirstRender] = useState(true);
     const [cardsList, setCardsList] = useState<JSX.Element[] | null>([])
 
     const switchCardToDisplay = (dir: string) => {
@@ -58,15 +60,17 @@ const CardCarousel = () => {
                     <GiftCard key={card.address} address={card.address} contract={card.contract} title={card.title} description={card.description} creationDate={card.creationDate} goal={card.goal} creator={card.creator} funders={card.funders} beneficiary={card.beneficiary} status={card.status} releaseDate={card.releaseDate} coinsAmount={card.coinsAmount} cardDAOAddress={card.cardDAOAddress} />
                 </li>
                 return newLi
-            })  
+            })              
             newGiftCardsElementsList && setCardsList(newGiftCardsElementsList);   
-            newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[0]);
+            newGiftCardsElementsList && setCurrentCardFromData(dappContextState.cardsDataList[indexes.currentIndex]);  
+            firstRender && hideEventData();
+            setFirstRender(false);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dappContextState.cardsDataList, indexes])
 
     useEffect(() => {
-        getCardsAddressesList();        
+        getCardsAddressesList("HomepageElt");        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     
