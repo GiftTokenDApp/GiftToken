@@ -130,11 +130,20 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                   <span>{ shortenedBeneficiaryAddress }</span>
                   <span>{ currentCoinsAmount }</span>
                 </div>
-                <div className="w-full flexJIC gap-16 mb-12">
-                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.DAO_MENU)}>DAO</motion.button>
-                  <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.FUND)}>Abonder la carte</motion.button>
-                  {isBeneficiary && <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => withdraw()}>Retirer mes fonds</motion.button>}
-                </div>
+                {
+                  dappContextState.currentCard?.coinsAmount === 0 ? <div className="w-full flexJIC mb-12">
+                    <span className="text-center text-3xl text-red-400">Cette carte a déjà été utilisée</span>
+                  </div> : !isBeneficiary ? <div className="w-full flexJIC gap-16 mb-12">
+                    <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.DAO_MENU)}>DAO</motion.button>
+                    <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.FUND)}>Abonder la carte</motion.button>
+                  </div> : <div className="w-full flexJIC flex-col gap-0 mb-12">
+                    <div className="w-full flexJIC gap-16 mb-8">
+                      <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.DAO_MENU)}>DAO</motion.button>
+                      <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => setCardMode(modalMode.FUND)}>Abonder la carte</motion.button>
+                    </div>
+                    <motion.button  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className={`${btnCss} p-4`} onClick={() => withdraw()}>Retirer mes fonds</motion.button>
+                  </div>
+                }
               </>}
             { cardMode === modalMode.DAO_MENU && <>
                 { !dappContextState.displayEvent ? <>

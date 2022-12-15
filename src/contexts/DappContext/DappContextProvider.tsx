@@ -21,11 +21,10 @@ let FactoryAddress: Address = process.env.REACT_APP_CONTRACT_ADDRESS ?? '';
 const DAppContextProvider: FC<IChildrenProps> = ({ children }) => {
   const [dappContextState, dappContextDispatch] = useReducer(reducer, initialState);
   const [error, setError] = useState('');
-  // const [timer, setTimer] = useState(new Date(Date.now()).getSeconds());
 
   async function getCardsAddressesList() {
     const newTime = Date.now();
-    console.log(newTime, dappContextState.functionCallTimer); 
+    // console.log(newTime, dappContextState.functionCallTimer); 
     if(dappContextState?.functionCallTimer && newTime > dappContextState.functionCallTimer){   
       if(typeof window.ethereum !== 'undefined' && dappContextState.giftFactoryContract != null && dappContextState.currentAccount != null) {      
         try {  
