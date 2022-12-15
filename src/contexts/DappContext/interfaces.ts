@@ -25,7 +25,6 @@ export enum DAOTypes {
 }
 
 export type IDappContextStateProps = {
-    functionCallTimer: number,
     currentAccount: Address | null,
     accounts: Address[] | null,
     provider: any,
@@ -61,7 +60,7 @@ export interface IDappContextProps extends IChildrenProps {
     createCard(newCard: INewCardProps): Promise<void>;
     releaseAllToCurrent(): Promise<void>;
     hideEventData(): void;
-    getCardsAddressesList(): void;
+    getCardsAddressesList(call: string): void;
     getCardData(cardAddress: Address): any;
     setCurrentCardFromIndex(currentCardIndex: number): void;
     setCurrentCardFromData(currentCardData: IGiftCardProps): void;

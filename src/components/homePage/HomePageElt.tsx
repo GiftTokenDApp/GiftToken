@@ -70,7 +70,7 @@ const CardCarousel = () => {
     }, [dappContextState.cardsDataList, indexes])
 
     useEffect(() => {
-        getCardsAddressesList();        
+        getCardsAddressesList("HomepageElt");        
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     
