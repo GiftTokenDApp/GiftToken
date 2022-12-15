@@ -12,7 +12,6 @@ const actions = {
 };
 
 const initialState = {
-  functionCallTimer: Date.now(),
   currentAccount: null,
   accounts: null,
   provider: null,

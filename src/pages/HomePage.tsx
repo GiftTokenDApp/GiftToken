@@ -4,8 +4,8 @@ import Footer from '../components/elements/footer/Footer';
 import Header from '../components/elements/header/Header';
 import HomePageElt from '../components/homePage/HomePageElt';
 import { useModalContext } from '../contexts/ModalContext';
-import CreateCardModal from '../components/modal/createCardModal/CreateCardModal';
-import DisplayCardModal from '../components/modal/createCardModal/DisplayCardModal';
+import CreateCardModal from '../components/modal/cardsModal/CreateCardModal';
+import DisplayCardModal from '../components/modal/cardsModal/DisplayCardModal';
 import { useDappContext } from '../contexts/DappContext';
 
 function HomePage() {

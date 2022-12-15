@@ -184,7 +184,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                               <DisplayCardModalButton title="Voter contre" css="bg-red-400" vote={false} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
                               <DisplayCardModalButton title="Voter pour" css="bg-emerald-400" vote={true} setVote={setVote} hasSubmittedVote={hasSubmittedVote} />
                             </div> : 
-                            dappContextState.cardDAOData?.currentProposal.proposalResult === 1 && dappContextState?.lastEvent?.name !== "PropositionClosed" ? <div className="w-full flexJIC gap-8 mt-4 text-3xl">
+                            dappContextState.cardDAOData?.currentProposal.proposalResult === 1 && dappContextState?.lastEvent?.name !== "PropositionClosed" ? <div className="w-full h-16 flexJIC gap-8 mt-4 text-3xl">
                               <span>Vous avez voté {dappContextState.cardDAOData?.currentProposalUserVote === '1' ? <span className="text-emerald-400">POUR</span>:<span className="text-red-400">CONTRE</span>}</span>
                               <CloseDAOButton title="Clôturer la DAO" css="bg-slate-500" closeDAO={closeDAO} hasSubmitted={hasSubmittedVote} />
                             </div> : <div className="w-full flexJIC gap-8 mt-4 text-3xl">
@@ -195,7 +195,7 @@ const Modal: FC<ModalProps> = ({ handleClose }) => {
                       }
                     </div>
                   </> : <> 
-                    { (dappContextState?.lastEvent?.name === "PropositionClosed" || dappContextState?.lastEvent?.name === "BeneficiaryChanged") ? <>
+                    { (dappContextState?.lastEvent?.name === "PropositionClosed" || dappContextState?.lastEvent?.name === "BeneficiaryChanged") && dappContextState.cardDAOData?.currentProposal ? <>
                         <div className="w-full h-full flexJIC mb-24 px-12 text-3xl text-center">
                           <span>La proposition a été {dappContextState.cardDAOData?.currentProposal[6] <= 3 ? <span className="text-emerald-400">ACCEPTÉE</span>:<span className="text-red-400">REJETÉE</span>}</span>
                         </div>
