@@ -45,6 +45,9 @@ const CreateCardModal: React.FC<ModalProps> = ({ handleClose }) => {
                   <div>Adresse de la carte : 
                     <span className="text-white">{` ${dappContextState.currentCard?.address}`}</span>
                   </div>
+                  <div>Bénéficiaire de la carte : 
+                    <span className="text-white">{` ${dappContextState.currentCard?.beneficiary}`}</span>
+                  </div>
                   <div>Somme versée à la création : 
                     <span className="text-white">{` ${dappContextState.currentCard?.coinsAmount} `}</span>
                     eth
